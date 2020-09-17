@@ -12,4 +12,12 @@ class User
     public function bla() {
         echo "blabla " . self::$counter;
     }
+
+    public function isAuthenticatedUser() {
+        return false;
+    }
+
+    public function hasRole($role) {
+        return false;
+    }
 }

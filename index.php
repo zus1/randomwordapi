@@ -1,4 +1,5 @@
 <?php
-//include_once($_SERVER['DOCUMENT_ROOT'] . "/classes/factory.php");
 include_once("config.php");
+Factory::getObject(Factory::TYPE_ROUTER)->routeAll();
+
 
