@@ -34,6 +34,7 @@ class HtmlParser
     }
 
     private function handleHeaderOfFooterFilename(string $holder) {
+        $holder = substr($holder, 0, strlen($holder) - 1); //now exclude ; we need it only for holder
         $holderParts = explode("-", $holder);
         $firstPart = substr($holderParts[0], 1);
         if(count($holderParts) === 1) {
@@ -92,7 +93,7 @@ class HtmlParser
 
     private function extractHeaderOrFooterHolder(string $contents, $baseHolder) {
         $start = strpos($contents, $baseHolder);
-        $end = strpos($contents, ";", $start);
+        $end = strpos($contents, ";", $start) + 1; //also include ;
         $holder = substr($contents, $start, $end - $start);
 
         return $holder;
@@ -146,10 +147,10 @@ class HtmlParser
     private function handleLoopForeachElement(string $contents, array $loopData, int $startIndex) {
         $previousContents = substr($contents, 0, $startIndex);
 
-        $endHolder = strpos($contents, ")", $startIndex);
+        $endHolder = strpos($contents, ")", $startIndex) + 1; //include )
         $holder = substr($contents, $startIndex, $endHolder - $startIndex);
 
-        $startElement = $endHolder + 1;
+        $startElement = $endHolder;
         $endElement = strpos($contents, "@endforeach", $startElement);
         $element = substr($contents, $startElement, $endElement - $startElement);
 
@@ -171,6 +172,6 @@ class HtmlParser
 
     private function extractHolderKeyForLoopData(string $holder) {
         $holderParts = explode(".", $holder);
-        return substr($holderParts[1], 1, strlen($holderParts[1]) - 1);
+        return substr($holderParts[1], 1, strlen($holderParts[1]) - 2);
     }
 }
