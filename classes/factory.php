@@ -53,7 +53,7 @@ class Factory
     }
 
     private function getController() {
-        return new Controller($this->getRequest());
+        return new Controller($this->getRequest(), $this->getHtmlParser());
     }
 
     private function getApiController() {

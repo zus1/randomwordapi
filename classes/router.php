@@ -14,6 +14,7 @@ class Router
 
     public function webRoutes() {
         return array(
+            '/',
             '/views/adm/insert.php',
             '/views/adm/modify.php',
             '/views/documentation.php',
@@ -31,9 +32,10 @@ class Router
 
     public function routeMapping() {
         return array(
+            '/' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'webRoot', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/adm/insert.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddWords', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/modify.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminModifyWords', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
-            '/views/documentation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'webApiDocs', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => false),
+            '/views/documentation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'webApiDocs', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/auth/login.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'login', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/auth/dologin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'doLogin', 'request' => self::REQUEST_POST, 'role' => "", 'auth' => false),
             '/views/error.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'error', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
@@ -66,9 +68,16 @@ class Router
             $this->redirect(HttpParser::baseUrl() . "views/error.php?error=" . $e->getMessage() . "&code=" . $e->getCode(), $e->getCode());
         }
 
+        $classObject = Factory::getObject($route['class']);
+        try {
+            $this->validateClassMethod($classObject, $route['method']);
+        } catch(Exception $e) {
+            $this->redirect(HttpParser::baseUrl() . "views/error.php?error=" . $e->getMessage() . "&code=" . $e->getCode(), $e->getCode());
+        }
+
         $result = "";
         try {
-            $result = call_user_func([Factory::getObject($route['class']), $route['method']]);
+            $result = call_user_func([$classObject, $route['method']]);
         } catch(Exception $e) {
             $this->redirect(HttpParser::baseUrl() . "views/error.php?error=" . $e->getMessage() . "&code=" . $e->getCode(), $e->getCode());
         }
@@ -87,8 +96,16 @@ class Router
             die();
         }
 
+        $classObject = Factory::getObject($route['class']);
         try {
-            $result = json_encode(call_user_func([Factory::getObject($route['class']), $route['method']]));
+            $this->validateClassMethod($classObject, $route['method']);
+        } catch(Exception $e) {
+            echo Factory::getObject(Factory::TYPE_API_EXCEPTION)->getApiException($e);
+            die();
+        }
+
+        try {
+            $result = json_encode(call_user_func([$classObject, $route['method']]));
         } catch(Exception $e) {
             echo Factory::getObject(Factory::TYPE_API_EXCEPTION)->getApiException($e);
             die();
@@ -121,6 +138,12 @@ class Router
         }
 
         return $route;
+    }
+
+    private function validateClassMethod(object $classObject, string $classMethod) {
+        if(!method_exists($classObject, $classMethod)) {
+            throw new Exception("Method not found", HttpCodes::INTERNAL_SERVER_ERROR);
+        }
     }
 
     private function returnResult(string $result) {
