@@ -1,0 +1,35 @@
+@header;
+<div class="container">
+    <div class="login-box">
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-sm-12">
+                @session.success?
+                    <div class="alert alert-success">
+                        @session.(success)
+                    </div>
+                @session?
+                @session.error?
+                    <div class="alert alert-danger">
+                        @session.(error)
+                    </div>
+                @session?
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-sm-12">
+                <form action="{base_url}/views/auth/dologin.php" method="post">
+                    <div class="form-group">
+                        <input type="text" name="user" class="form-control" placeholder="username or email">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" class="form-control" placeholder="password">
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="login" class="btn btn-lg btn-outline-secondary">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@footer;

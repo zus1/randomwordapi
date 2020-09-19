@@ -1,11 +1,27 @@
 @header;
 <div>
+
+
+    @session.success?
+    <div class="alert alert-success">
+        @session.(success)
+    </div>
+    @session?
+    <br><br>
+    @session.error?
+    <div class="alert alert-danger">
+        @session.(error)
+    </div>
+    @session?
     <br>
-    @session.(success) <br><br>
     <br>
-    @session.(error) <br><br>
-    <br>
-    @session.(warning) <br><br>
+    @session.warning?
+    <div class="alert alert-danger">
+        @session.(warning)
+    </div>
+    @session?
+
+    @session.(warning)
 
     {bootstrap_css}<br>
     {main_css} <br>

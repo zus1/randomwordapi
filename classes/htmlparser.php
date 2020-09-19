@@ -77,16 +77,74 @@ class HtmlParser
 
     private function includeOneTimeMessage(string $contents) {
         $this->startSession();
-        if((!strpos($contents, "@session") && substr($contents, 0, strlen("@session")) !== "@session") || !isset($_SESSION['view'])) {
+        if((!strpos($contents, "@session") && substr($contents, 0, strlen("@session")) !== "@session") && !isset($_SESSION['view'])) {
             return $contents;
         }
-
+        $contents = $this->checkOneTimeMessageElements($contents);
+        if(!isset($_SESSION['view'])) {
+            return $contents;
+        }
         $start = 0;
-        while(($start = strpos($contents, "@session", $start)) !== false) {
+        while(($start = strpos($contents, "@session.(", $start)) !== false) {
             $contents = $this->doIncludeOneTimeMessage($contents, $start);
+            $start++;
         }
 
         unset($_SESSION['view']);
+
+        return $contents;
+    }
+
+    private function checkOneTimeMessageElements(string $contents) {
+        if(strpos($contents, "@session.success?") && !isset($_SESSION['view'][self::ONE_TIME_SUCCESS_KEY])) {
+            $start = 0;
+            while(($start = strpos($contents, "@session.success?", $start)) !== false) {
+                $contents = $this->excludeNotUseOneTimeMessageElement($contents, $start);
+                $start++;
+            }
+        } else {
+            $contents = $this->excludeNotNeededOnTimeMessageCheckHolder($contents, "@session.success?");
+        }
+        if(strpos($contents, "@session.error?") && !isset($_SESSION['view'][self::ONE_TIME_ERROR_KEY])) {
+            $start = 0;
+            while(($start = strpos($contents, "@session.error?", $start)) !== false) {
+                $contents = $this->excludeNotUseOneTimeMessageElement($contents, $start);
+                $start++;
+            }
+        } else {
+            $contents = $this->excludeNotNeededOnTimeMessageCheckHolder($contents, "@session.error?");
+        }
+        if(strpos($contents, "@session.warning?") && !isset($_SESSION['view'][self::ONE_TIME_WARNING_KEY])) {
+            $start = 0;
+            while(($start = strpos($contents, "@session.warning?", $start)) !== false) {
+                $contents = $this->excludeNotUseOneTimeMessageElement($contents, $start);
+                $start++;
+            }
+        } else {
+            $contents = $this->excludeNotNeededOnTimeMessageCheckHolder($contents, "@session.warning?");
+        }
+
+        return $contents;
+    }
+
+    private function excludeNotUseOneTimeMessageElement(string $contents, int $startIndex) {
+        $previousContents = substr($contents, 0, $startIndex);
+        $endIndex = strpos($contents, "@session?", $startIndex);
+        $nextContents = substr($contents, $endIndex + strlen("@session?"));
+
+        return $previousContents . $nextContents;
+    }
+
+    private function excludeNotNeededOnTimeMessageCheckHolder(string $contents, $checkStartHolder) {
+        $start = 0;
+        while(($start = strpos($contents, $checkStartHolder, $start)) !== false) {
+            $previousStart = substr($contents, 0, $start);
+            $endHolderIndex = strpos($contents, "@session?", $start);
+            $messageElement = substr($contents, $start + strlen($checkStartHolder), ($endHolderIndex) - ($start + strlen($checkStartHolder)));
+            $nextEnd = substr($contents, $endHolderIndex + strlen("@session?"));
+            $contents = $previousStart . $messageElement . $nextEnd;
+            $start++;
+        }
 
         return $contents;
     }
@@ -95,7 +153,10 @@ class HtmlParser
         $endIndex = strpos($contents, ")", $startIndex) + 1;
         $holder = substr($contents, $startIndex, $endIndex - $startIndex);
         $sessionKey = $this->extractKeyFromHolder($holder);
-        $message = $_SESSION['view'][$sessionKey];
+        $message = "";
+        if(isset($_SESSION['view'][$sessionKey])) {
+            $message = $_SESSION['view'][$sessionKey];
+        }
         if($message) {
             $contents = str_replace($holder, $message, $contents);
         }
