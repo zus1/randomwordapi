@@ -7,9 +7,14 @@ class HtmlParser
     private $jsUrl;
     private $cssUrl;
 
+    const ONE_TIME_ERROR_KEY = "error";
+    const ONE_TIME_SUCCESS_KEY = "success";
+    const ONE_TIME_WARNING_KEY = "warning";
+
     const LOOP_HOLDERS = array(
         'foreach' => "@foreach.(data)",
-        'end_foreach' => '@foreach'
+        'end_foreach' => '@foreach',
+        'view_session' => "@session.(key)"
     );
 
     public function __construct() {
@@ -17,6 +22,12 @@ class HtmlParser
         $this->includesPath = HttpParser::root() . "/views/includes";
         $this->jsUrl = HttpParser::baseUrl() . "js";
         $this->cssUrl = HttpParser::baseUrl() . "css";
+    }
+
+    private function startSession() {
+        if(session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
     }
 
     private function handleDirectoryStructure(string $view) {
@@ -55,12 +66,52 @@ class HtmlParser
         }
 
         $contents = $this->includeHeaderAndFooter($contents);
+        $contents = $this->includeOneTimeMessage($contents);
         $contents = $this->handleGeneralHolders($contents);
         if(!empty($data)) {
             $contents = $this->handleViewSpecificHolders($contents, $data);
         }
 
         return $contents;
+    }
+
+    private function includeOneTimeMessage(string $contents) {
+        $this->startSession();
+        if((!strpos($contents, "@session") && substr($contents, 0, strlen("@session")) !== "@session") || !isset($_SESSION['view'])) {
+            return $contents;
+        }
+
+        $start = 0;
+        while(($start = strpos($contents, "@session", $start)) !== false) {
+            $contents = $this->doIncludeOneTimeMessage($contents, $start);
+        }
+
+        unset($_SESSION['view']);
+
+        return $contents;
+    }
+
+    private function doIncludeOneTimeMessage(string $contents, int $startIndex) {
+        $endIndex = strpos($contents, ")", $startIndex) + 1;
+        $holder = substr($contents, $startIndex, $endIndex - $startIndex);
+        $sessionKey = $this->extractKeyFromHolder($holder);
+        $message = $_SESSION['view'][$sessionKey];
+        if($message) {
+            $contents = str_replace($holder, $message, $contents);
+        }
+
+        return $contents;
+    }
+
+    public function oneTimeMessage($key, $message) {
+        $this->startSession();
+        if($key === self::ONE_TIME_ERROR_KEY) {
+            $_SESSION["view"][self::ONE_TIME_ERROR_KEY] = $message;
+        } elseif($key === self::ONE_TIME_SUCCESS_KEY) {
+            $_SESSION["view"][self::ONE_TIME_SUCCESS_KEY] = $message;
+        } elseif($key === self::ONE_TIME_WARNING_KEY) {
+            $_SESSION["view"][self::ONE_TIME_WARNING_KEY] = $message;
+        }
     }
 
     private function includeHeaderAndFooter(string $contents) {
@@ -122,7 +173,8 @@ class HtmlParser
         $holders = array(
             "{bootstrap_css}" => $this->cssUrl . "/bootstrap.css",
             "{main_css}" => $this->cssUrl . "/main.css",
-            "{bootstrap_js}" => $this->jsUrl . "/bootstrap.js"
+            "{bootstrap_js}" => $this->jsUrl . "/bootstrap.js",
+            "{base_url}" => HttpParser::baseUrl(),
         );
         array_walk($holders, function ($value, $key) use (&$contents) {
            if(strpos($contents, $key)) {
@@ -156,7 +208,7 @@ class HtmlParser
 
         $nextContents = substr($contents, $endElement + strlen("@endforeach"));
 
-        $loopDataKey = $this->extractHolderKeyForLoopData($holder);
+        $loopDataKey = $this->extractKeyFromHolder($holder);
         $data = $loopData[$loopDataKey];
 
         $tempElement = $element;
@@ -170,7 +222,7 @@ class HtmlParser
         return $previousContents . $nextContents;
     }
 
-    private function extractHolderKeyForLoopData(string $holder) {
+    private function extractKeyFromHolder(string $holder) {
         $holderParts = explode(".", $holder);
         return substr($holderParts[1], 1, strlen($holderParts[1]) - 2);
     }
