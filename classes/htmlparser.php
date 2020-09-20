@@ -17,17 +17,25 @@ class HtmlParser
         'view_session' => "@session.(key)"
     );
 
-    public function __construct() {
+    private $session;
+
+    public function __construct(Session $session) {
         $this->viewsPath = HttpParser::root() . "/views";
         $this->includesPath = HttpParser::root() . "/views/includes";
         $this->jsUrl = HttpParser::baseUrl() . "js";
         $this->cssUrl = HttpParser::baseUrl() . "css";
+        $this->session = $session;
     }
 
-    private function startSession() {
-        if(session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+    public function formatValidatorErrorMessages(array $errorMessages) {
+        $startTag = "<ul>";
+        $endTag = "</ul>";
+        $liTags = "";
+        array_walk($errorMessages, function($errorMessage) use (&$liTags) {
+           $liTags .= "<li>" . $errorMessage . "</li>";
+        });
+
+        return $startTag . $liTags . $endTag;
     }
 
     private function handleDirectoryStructure(string $view) {
@@ -76,7 +84,7 @@ class HtmlParser
     }
 
     private function includeOneTimeMessage(string $contents) {
-        $this->startSession();
+        $this->session->startSession();
         if((!strpos($contents, "@session") && substr($contents, 0, strlen("@session")) !== "@session") && !isset($_SESSION['view'])) {
             return $contents;
         }
@@ -165,7 +173,7 @@ class HtmlParser
     }
 
     public function oneTimeMessage($key, $message) {
-        $this->startSession();
+        $this->session->startSession();
         if($key === self::ONE_TIME_ERROR_KEY) {
             $_SESSION["view"][self::ONE_TIME_ERROR_KEY] = $message;
         } elseif($key === self::ONE_TIME_SUCCESS_KEY) {

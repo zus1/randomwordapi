@@ -14,7 +14,7 @@ class Request
         return $this->requestVars[$name];
     }
 
-    public function input($key, $default) {
+    public function input($key, ?string $default="") {
         if(isset($this->requestVars[$key])) {
             return $this->requestVars[$key];
         }

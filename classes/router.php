@@ -20,7 +20,8 @@ class Router
             '/views/documentation.php',
             '/views/auth/dologin.php',
             '/views/auth/login.php',
-            '/views/error.php'
+            '/views/error.php',
+            '/views/adm/home.php'
         );
     }
 
@@ -33,6 +34,7 @@ class Router
     public function routeMapping() {
         return array(
             '/' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'webRoot', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
+            '/views/adm/home.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminHome', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/insert.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddWords', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/modify.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminModifyWords', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/documentation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'webApiDocs', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
@@ -151,9 +153,13 @@ class Router
         echo $result;
     }
 
-    public function redirect(string $url, ?int $code=null) {
+    public function redirect(string $url, ?int $code=null, ?array $data = array()) {
         $code = ($code)? $code : HttpCodes::HTTP_OK;
         http_response_code($code);
+        if(!empty($data)) {
+            $httpQuery = http_build_query($data);
+            $url = $url . "?" . $httpQuery;
+        }
         header("Location: " . $url);
         die();
     }
