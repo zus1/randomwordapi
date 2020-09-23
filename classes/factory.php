@@ -13,6 +13,7 @@ class Factory
     const TYPE_API_EXCEPTION = 'apiexception';
     const TYPE_VALIDATOR = 'validator';
     const TYPE_SESSION = "session";
+    const TYPE_WORDS = "words";
     const TYPE_METHOD_MAPPING = array(
         self::TYPE_CONTROLLER => "getController",
         self::TYPE_DATABASE => "getDatabase",
@@ -25,13 +26,14 @@ class Factory
         self::TYPE_API_EXCEPTION => 'getApiException',
         self::TYPE_VALIDATOR => 'getValidator',
         self::TYPE_SESSION => "getSession",
+        self::TYPE_WORDS => "getWords",
     );
     private static $instances = array();
 
     /**
      * @param string $type
      * @param bool $singleton
-     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator
+     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words
      */
     public static function getObject(string $type, bool $singleton=false) {
         if(!array_key_exists($type, self::TYPE_METHOD_MAPPING)) {
@@ -92,5 +94,9 @@ class Factory
 
     private function getSession() {
         return new Session();
+    }
+
+    private function getWords() {
+        return new Words($this->getValidator());
     }
 }

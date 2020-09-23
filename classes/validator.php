@@ -52,8 +52,10 @@ class Validator
         return str_replace("{field}", $field, $this->errorMessages[$filter]);
     }
 
-    public function validate(string $field, array $filters, ?string $customPattern="") {
-        $value = $this->request->input($field);
+    public function validate(string $field, array $filters, $value=null, ?string $customPattern="") {
+        if(!$value) {
+            $value = $this->request->input($field);
+        }
         foreach($filters as $filter) {
             if(!in_array($filter, $this->validFilters)) {
                 throw new Exception("Validator filter invalid", HttpCodes::INTERNAL_SERVER_ERROR);

@@ -21,7 +21,10 @@ class Router
             '/views/auth/dologin.php',
             '/views/auth/login.php',
             '/views/error.php',
-            '/views/adm/home.php'
+            '/views/adm/home.php',
+            '/views/auth/logout.php',
+            '/views/adm/addAdmin.php',
+            '/views/adm/doinsert.php'
         );
     }
 
@@ -36,10 +39,13 @@ class Router
             '/' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'webRoot', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/adm/home.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminHome', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/insert.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddWords', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
+            '/views/adm/doinsert.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminDoAddWords', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
             '/views/adm/modify.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminModifyWords', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
+            '/views/adm/addAdmin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddAdmin', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/documentation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'webApiDocs', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
-            '/views/auth/login.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'login', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
+            '/views/auth/login.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'login', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false, 'redirect_auth' => true),
             '/views/auth/dologin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'doLogin', 'request' => self::REQUEST_POST, 'role' => "", 'auth' => false),
+            '/views/auth/logout.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'logout', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => true),
             '/views/error.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'error', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
         );
     }
@@ -131,6 +137,15 @@ class Router
         if($route['auth'] === true) {
             if(!$this->user->isAuthenticatedUser()) {
                 $this->redirect(HttpParser::baseUrl() . "views/auth/login.php", HttpCodes::HTTP_FORBIDDEN);
+            }
+        }
+        if(isset($route['redirect_auth']) &&  $route['redirect_auth'] === true) {
+            if($this->user->isAuthenticatedUser()) {
+                if($this->user->isAdmin()) {
+                    $this->redirect(Config::get(Config::ADMIN_HOME), HttpCodes::HTTP_FORBIDDEN);
+                } else {
+                    $this->redirect(Config::get(Config::USER_HOME), HttpCodes::HTTP_FORBIDDEN);
+                }
             }
         }
         if(!empty($route["role"])) {

@@ -21,4 +21,22 @@ class Request
 
         return $default;
     }
+
+    public function file($key) {
+        $file = null;
+        if(!empty($_FILES) && isset($_FILES[$key])) {
+            $file = $_FILES[$key];
+        }
+
+        if(is_null($file)) {
+            return array();
+        }
+
+        if(!is_array($file['name'])) {
+            return $file;
+        }
+
+        //TODO handle dealing with multiple file uploads
+        return array();
+    }
 }

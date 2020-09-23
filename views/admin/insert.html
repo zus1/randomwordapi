@@ -1,0 +1,54 @@
+@header;
+<div class="container">
+    <div class="nav-custom">
+        <ul>
+            <li><a href="{base_url}views/adm/home.php">Home</a></li>
+            <li><a href="{base_url}views/adm/insert.php">Add Words</a></li>
+            <li><a href="{base_url}views/adm/modify.php">Update/Remove Words</a></li>
+            <li><a href="{base_url}views/adm/addAdmin.php">Add Admin Account</a></li>
+        </ul>
+    </div>
+    <div class="row content-wrapper">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <form enctype="multipart/form-data", action="{base_url}views/adm/doinsert.php" method="post">
+                <div class="form-group">
+                    <select name="language" class="form-control">
+                        @foreach.(languages)
+                        <option value="@value.(tag)">@value.(name)</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
+                    <textarea cols="20" rows="10" class="form-control" name="words-bulk" placeholder="Add bulk"></textarea>
+                </div>
+                <div class="form-group">
+                    <textarea cols="20" rows="10" class="form-control" name="words-json" placeholder="Add from JSON"></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="file" id="csv-words" name="words-csv" style="display: none">
+                    <div class="files-box" id="csv-word-files"></div>
+                    <button type="button" class="btn btn-outline-secondary" id="csv-words-button">Add from csv</button>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Add Words" class="btn btn-lg btn-outline-secondary">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    const csvWordsButton = document.getElementById("csv-words-button");
+    const csvWords = document.getElementById("csv-words");
+    const csvWordFiles = document.getElementById("csv-word-files");
+
+    csvWordsButton.addEventListener("click", () => csvWords.click());
+    csvWords.addEventListener("change", () => displayFileName(event));
+
+    function displayFileName(evt) {
+        const file = evt.target.files[0]
+        csvWordFiles.innerHTML = "";
+        csvWordFiles. innerHTML = file.name;
+    }
+
+</script>
+@footer-admin;

@@ -282,13 +282,33 @@ class HtmlParser
 
         $tempElement = $element;
         foreach($data as $key => $value) {
+            if(is_array($value)) {
+                $tempElement = $this->handleParseArrayValueForLoops($tempElement, $value);
+            } else {
+                $tempElement = str_replace("@value", $value, $tempElement);
+            }
             $tempElement = str_replace("@key", $key, $tempElement);
-            $tempElement = str_replace("@value", $value, $tempElement);
             $previousContents .= $tempElement;
             $tempElement = $element;
         }
 
         return $previousContents . $nextContents;
+    }
+
+    private function handleParseArrayValueForLoops(string $element, array $subArray) {
+        $start = 0;
+        while(($start = strpos($element, "@value.(", $start)) !== false) {
+            $holderEnd = strpos($element, ")", $start);
+            $holder = substr($element, $start, ($holderEnd + 1) - $start);
+            $key = $this->extractKeyFromHolder($holder);
+            if(array_key_exists($key, $subArray)) {
+                $element = str_replace($holder, $subArray[$key], $element);
+            }
+
+            $start++;
+        }
+
+        return $element;
     }
 
     private function extractKeyFromHolder(string $holder) {

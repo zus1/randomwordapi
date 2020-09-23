@@ -55,7 +55,7 @@ class User
                 return false;
             }
             $userEmail = $_SESSION[self::USER_SESSION_KEY];
-            $role = Factory::getObject(Factory::TYPE_DATABASE)->select("SELECT role FROM user WHERE email = ?", array("string"), array($userEmail))['role'];
+            $role = Factory::getObject(Factory::TYPE_DATABASE)->select("SELECT role FROM user WHERE email = ?", array("string"), array($userEmail))[0]['role'];
         }
 
         if(intval($role) === $this->roleToDbRoleMapping[self::ROLE_ADMIN]) {

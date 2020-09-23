@@ -15,16 +15,11 @@ class Database
     }
 
     private function initDatabase() {
-        $initFile = HttpParser::root() . "/init.ini";
-        if(!file_exists($initFile)) {
-            throw new Exception("No init file");
-        }
-        $initVariables = parse_ini_file($initFile);
-        $username = $initVariables["DB_USERNAME"];
-        $password = $initVariables["DB_PASSWORD"];
-        $host = $initVariables["DB_HOST"];
-        $db = $initVariables["DB_NAME"];
-        $charset = $initVariables["DB_CHARSET"];
+        $username = Config::get(Config::DB_USERNAME, "");
+        $password = Config::get(Config::DB_PASSWORD, "");
+        $host = Config::get(Config::DB_HOST, "");
+        $db = Config::get(Config::DB_NAME, "");
+        $charset = Config::get(Config::DB_CHARSET, "");
 
         $dsn = sprintf("mysql:dbname=%s;host=%s;charset=%s;",$db, $host, $charset);
         try {
@@ -43,7 +38,7 @@ class Database
         $sth->execute();
     }
 
-    public function select($query, $types, $params, $assoc = true) {
+    public function select(string $query, ?array $types=array(), ?array $params = array(), $assoc = true) {
         $sth = $this->pdo->prepare($query);
         $this->bindParams($sth, $params, $types);
         if($assoc === true) {
