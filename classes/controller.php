@@ -96,15 +96,14 @@ class Controller
             if(empty($language)) {
                 throw new Exception($this->validator->getFormattedErrorMessagesForDisplay(array("Please select language")));
             }
-            Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language);
             if(!empty($bulk)) {
-                Factory::getObject(Factory::TYPE_WORDS)->bulkInsert($bulk);
+               Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language)->bulkInsert($bulk);
             }
             if(!empty($json)) {
-                Factory::getObject(Factory::TYPE_WORDS)->jsonInsert($json);
+                Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language)->jsonInsert($json);
             }
             if(!empty($csv)) {
-                Factory::getObject(Factory::TYPE_WORDS)->csvInsert($csv);
+                Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language)->csvInsert($csv);
             }
         } catch(Exception $e) {
             $exception = true;
@@ -115,6 +114,35 @@ class Controller
             $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_SUCCESS_KEY, "Words Added");
         }
         Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/adm/insert.php");
+    }
+
+    public function adminModifyWords() {
+        $languages = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT tag, name FROM languages", array(), array());
+        return $this->htmlParser->parseView("admin:modify", array("languages" => $languages));
+    }
+
+    public function adminModifyWordsLengths() {
+        $tag = $this->request->input("language");
+        $lengths = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT length FROM words WHERE tag = ?", array("string"), array($tag));
+        if(!$lengths) {
+            $lengths = array();
+        }
+        return json_encode(array("lengths" => $lengths));
+    }
+
+    public function adminModifyWordsGetWords() {
+        $tag = $this->request->input("language");
+        $length = $this->request->input("length");
+
+        $words = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT words FROM words WHERE tag = ? AND length = ?",
+            array("string", "string"), array($tag, $length));
+        if(!$words) {
+            $words = array();
+        } else {
+            $words = json_decode($words[0]["words"], true);
+        }
+
+        return json_encode(array("words" => $words));
     }
 
     public function error() {

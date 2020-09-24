@@ -24,7 +24,9 @@ class Router
             '/views/adm/home.php',
             '/views/auth/logout.php',
             '/views/adm/addAdmin.php',
-            '/views/adm/doinsert.php'
+            '/views/adm/doinsert.php',
+            '/views/adm/ajaxlengths.php',
+            '/views/adm/ajaxwords.php',
         );
     }
 
@@ -41,6 +43,8 @@ class Router
             '/views/adm/insert.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddWords', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/doinsert.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminDoAddWords', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
             '/views/adm/modify.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminModifyWords', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
+            '/views/adm/ajaxlengths.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminModifyWordsLengths', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
+            '/views/adm/ajaxwords.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminModifyWordsGetWords', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/addAdmin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddAdmin', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/documentation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'webApiDocs', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/auth/login.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'login', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false, 'redirect_auth' => true),
@@ -164,7 +168,7 @@ class Router
     }
 
     private function returnResult(string $result) {
-        http_response_code(HttpCodes::HTTP_ACCEPTED);
+        http_response_code(HttpCodes::HTTP_OK);
         echo $result;
     }
 

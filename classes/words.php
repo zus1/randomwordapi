@@ -12,24 +12,28 @@ class Words
 
     public function setLanguage(string $language) {
         $this->language = $language;
+        return $this;
     }
 
     public function bulkInsert(string $payload) {
-        $words = preg_split("/\r|\n|\r\n|,/", $payload);
+        $words = preg_split("/\n|\r\n|,/", $payload);
         $this->validateWords($words, "bulk");
         $this->insert($words);
     }
 
     public function csvInsert(array $payload) {
+        $allowedMimeTypes = array(
+            'text/csv', "text/plain", "text/x-csv", "application/csv", "application/x-csv"
+        );
         if($payload["error"] !== UPLOAD_ERR_OK ) {
             throw new Exception($this->validator->getFormattedErrorMessagesForDisplay(array("Error uploading file")));
         }
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $mimeType = $finfo->file($payload["tmp_name"]);
-        if($mimeType !== "text/csv") {
+        if(!in_array($mimeType, $allowedMimeTypes)) {
             throw new Exception($this->validator->getFormattedErrorMessagesForDisplay(array("File must me valid csv")));
         }
-        $contents = file_get_contents($payload["tmp_name"]);
+        $contents = trim(file_get_contents($payload["tmp_name"]));
         if(!$contents) {
             throw new Exception($this->validator->getFormattedErrorMessagesForDisplay(array("Error uploading file")));
         }
@@ -39,7 +43,7 @@ class Words
     }
 
     public function jsonInsert(string $payload) {
-        $words = json_decode($payload, true);
+        $words = json_decode(trim($payload), true);
         if(!isset($words["words"])) {
             throw new Exception($this->validator->getFormattedErrorMessagesForDisplay(array("Json is not properly formatted")));
         }
@@ -64,7 +68,7 @@ class Words
             if(!$existing) {
                 $toInsert = json_encode($words);
                 Factory::getObject(Factory::TYPE_DATABASE, true)->execute("INSERT INTO words (tag, length, words) VALUES (?,?,?)",
-                    array("string", "integer", "string"), array($this->language, $len, json_encode($toInsert)));
+                    array("string", "integer", "string"), array($this->language, $len, $toInsert));
             } else {
                 $existingDecoded = json_decode($existing[0]["words"], true);
                 $diff = array_diff($words, $existingDecoded);

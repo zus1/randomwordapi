@@ -33,6 +33,9 @@ class Request
         }
 
         if(!is_array($file['name'])) {
+            if($file["error"] === UPLOAD_ERR_NO_FILE ) {
+                return array();
+            }
             return $file;
         }
 

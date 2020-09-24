@@ -8,11 +8,26 @@
             <li><a href="{base_url}views/adm/addAdmin.php">Add Admin Account</a></li>
         </ul>
     </div>
+    <div class="row">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            @session.success?
+            <div class="alert alert-success">
+                @session.(success)
+            </div>
+            @session?
+            @session.error?
+            <div class="alert alert-danger">
+                @session.(error)
+            </div>
+            @session?
+        </div>
+    </div>
     <div class="row content-wrapper">
         <div class="col-md-12 col-lg-12 col-sm-12">
-            <form enctype="multipart/form-data", action="{base_url}views/adm/doinsert.php" method="post">
+            <form enctype="multipart/form-data" action="{base_url}views/adm/doinsert.php" method="post">
                 <div class="form-group">
                     <select name="language" class="form-control">
+                        <option value="">Select language</option>
                         @foreach.(languages)
                         <option value="@value.(tag)">@value.(name)</option>
                         @endforeach
