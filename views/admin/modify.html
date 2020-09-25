@@ -92,9 +92,61 @@
     const languageSelect = document.getElementById("language");
     const lengthSelect = document.getElementById("length");
     const wordsSelect = document.getElementById("words");
+    const singleButton = document.getElementById("single-button");
 
     languageSelect.addEventListener("change", () => loadAvailableWordLengthsForLanguage(event));
     lengthSelect.addEventListener("change", () => loadAvailableWordsForLength(event))
+    singleButton.addEventListener("click", () => sendSingleRemove())
+
+    function sendSingleRemove() {
+        if(languageSelect.value === "") {
+            addNotification("error", "Language must be selected", "single")
+        } else if(lengthSelect.value === "") {
+            addNotification("error", "Length must be selected", "single")
+        } else if(wordsSelect.value === "") {
+            addNotification("error", "No words selected", "single")
+        } else {
+            const wordsToRemove = [];
+            for(let i = 0; i < wordsSelect.options.length; i++) {
+                if(wordsSelect.options[i].selected) {
+                    wordsToRemove.push(wordsSelect.options[i].value)
+                }
+            }
+            console.log(wordsToRemove);
+
+            const formData = new FormData();
+            formData.append("language", languageSelect.value);
+            formData.append("words", JSON.stringify(wordsToRemove));
+
+            postAjax('/views/adm/removesingle.php', formData, singleRemoved)
+        }
+
+    }
+
+    function singleRemoved(data) {
+        let key;
+        if(data.error === 1) {
+            key = "error";
+        } else {
+            key = "success"
+        }
+        addNotification(key, data.message, "single");
+    }
+
+    function postAjax(endpoint, data, callback) {
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                //console.log(this.responseText);
+                callback(JSON.parse(this.responseText));
+            }
+        };
+
+        const http = getHttpParams();
+        xhttp.open("POST", http.protocol + "//" + http.host + endpoint, true);
+        //xhttp.setRequestHeader("Content-type","multipart/form-data");
+        xhttp.send(data);
+    }
 
     function loadAvailableWordLengthsForLanguage(event) {
         const element = event.target;

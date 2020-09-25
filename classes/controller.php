@@ -97,13 +97,13 @@ class Controller
                 throw new Exception($this->validator->getFormattedErrorMessagesForDisplay(array("Please select language")));
             }
             if(!empty($bulk)) {
-               Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language)->bulkInsert($bulk);
+               Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language)->bulkAction($bulk, Words::ACTION_INSERT);
             }
             if(!empty($json)) {
-                Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language)->jsonInsert($json);
+                Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language)->jsonAction($json, Words::ACTION_INSERT);
             }
             if(!empty($csv)) {
-                Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language)->csvInsert($csv);
+                Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language)->csvAction($csv, Words::ACTION_INSERT);
             }
         } catch(Exception $e) {
             $exception = true;
@@ -143,6 +143,39 @@ class Controller
         }
 
         return json_encode(array("words" => $words));
+    }
+
+    public function adminModifyWordsRemoveSingle() {
+        $tag = $this->request->input("language");
+        $words = $this->request->input("words");
+
+        $decodedWords = json_decode($words, true);
+        if(json_last_error() !== JSON_ERROR_NONE) {
+            return json_encode(array("error" => 1, "message" => json_last_error_msg()));
+        }
+
+        if($this->validator->validate("language", array(Validator::FILTER_ALPHA))->isFailed()) {
+            $messages = $this->validator->getMessages();
+            $this->validator->resetMessages();
+            return json_encode(array("error" => 1, "message" => $messages[0]));
+        }
+        if($this->validator->validate("length", array(Validator::FILTER_NUMERIC))->isFailed()) {
+            $messages = $this->validator->getMessages();
+            $this->validator->resetMessages();
+            return json_encode(array("error" => 1, "message" => $messages[0]));
+        }
+        foreach($decodedWords as $word) {
+            if($this->validator->validate("words", array(Validator::FILTER_ALPHA), $word)->isFailed()) {
+                return json_encode(array("error" => 1, "message" => "All words have to contain only letters"));
+            }
+        }
+
+        try {
+            Factory::getObject(Factory::TYPE_WORDS)->setLanguage($tag)->remove($decodedWords);
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage()));
+        }
+        return json_encode(array("error" => 0, "message" => "Words Removed"));
     }
 
     public function error() {

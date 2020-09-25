@@ -27,6 +27,7 @@ class Router
             '/views/adm/doinsert.php',
             '/views/adm/ajaxlengths.php',
             '/views/adm/ajaxwords.php',
+            '/views/adm/removesingle.php',
         );
     }
 
@@ -45,6 +46,7 @@ class Router
             '/views/adm/modify.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminModifyWords', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/ajaxlengths.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminModifyWordsLengths', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/ajaxwords.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminModifyWordsGetWords', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
+            '/views/adm/removesingle.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminModifyWordsRemoveSingle', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
             '/views/adm/addAdmin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddAdmin', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/documentation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'webApiDocs', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/auth/login.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'login', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false, 'redirect_auth' => true),

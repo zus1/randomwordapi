@@ -27,7 +27,7 @@
             <form enctype="multipart/form-data" action="{base_url}views/adm/doinsert.php" method="post">
                 <div class="form-group">
                     <select name="language" class="form-control">
-                        <option value="">Select language</option>
+                        <option value="" disabled selected>Select language</option>
                         @foreach.(languages)
                         <option value="@value.(tag)">@value.(name)</option>
                         @endforeach

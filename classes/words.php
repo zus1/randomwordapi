@@ -6,6 +6,9 @@ class Words
     private $validator;
     private $language;
 
+    const ACTION_INSERT = "insert";
+    const ACTION_REMOVE = "remove";
+
     public function __construct(Validator $validator) {
         $this->validator = $validator;
     }
@@ -15,13 +18,13 @@ class Words
         return $this;
     }
 
-    public function bulkInsert(string $payload) {
+    public function bulkAction(string $payload, string $action) {
         $words = preg_split("/\n|\r\n|,/", $payload);
         $this->validateWords($words, "bulk");
-        $this->insert($words);
+        $this->call($words, $action);
     }
 
-    public function csvInsert(array $payload) {
+    public function csvAction(array $payload, string $action) {
         $allowedMimeTypes = array(
             'text/csv', "text/plain", "text/x-csv", "application/csv", "application/x-csv"
         );
@@ -39,17 +42,27 @@ class Words
         }
         $words = explode(",", $contents);
         $this->validateWords($words, "csv");
-        $this->insert($words);
+        $this->call($words, $action);
     }
 
-    public function jsonInsert(string $payload) {
+    public function jsonAction(string $payload, string $action) {
         $words = json_decode(trim($payload), true);
         if(!isset($words["words"])) {
             throw new Exception($this->validator->getFormattedErrorMessagesForDisplay(array("Json is not properly formatted")));
         }
         $words = $words["words"];
         $this->validateWords($words, "json");
-        $this->insert($words);
+        $this->call($words, $action);
+    }
+
+    protected function call(array $words, string $action) {
+        if($action === self::ACTION_INSERT) {
+            $this->insert($words);
+        } elseif($action === self::ACTION_REMOVE) {
+            $this->remove($words);
+        } else {
+            throw new Exception("Invalid action", HttpCodes::INTERNAL_SERVER_ERROR);
+        }
     }
 
     private function validateWords(array $words, string $field) {
@@ -60,7 +73,7 @@ class Words
         }
     }
 
-    private function insert(array $words) {
+    public function insert(array $words) {
         $wordsByLength = $this->sortWordsByLength($words);
         foreach($wordsByLength as $len => $words) {
             $existing = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT words FROM words WHERE tag = ? AND length = ?",
@@ -71,12 +84,34 @@ class Words
                     array("string", "integer", "string"), array($this->language, $len, $toInsert));
             } else {
                 $existingDecoded = json_decode($existing[0]["words"], true);
-                $diff = array_diff($words, $existingDecoded);
+                $diff = array_values(array_diff($words, $existingDecoded));
                 if(!empty($diff)) {
                     $toInsert = json_encode(array_merge($existingDecoded, $diff));
                     Factory::getObject(Factory::TYPE_DATABASE, true)->execute("UPDATE words SET words = ? WHERE tag = ? AND length = ?",
                         array("string", "string", "integer"), array($toInsert, $this->language, $len));
                 }
+            }
+        }
+    }
+
+    public function remove(array $words) {
+        $wordsByLength = $this->sortWordsByLength($words);
+        foreach($wordsByLength as $len => $words) {
+            $existing = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT words FROM words WHERE tag = ? AND length = ?",
+                array("string", "string"), array($this->language, $len));
+            if(!$existing) {
+                throw new Exception("Could not find words", HttpCodes::INTERNAL_SERVER_ERROR);
+            }
+
+            $existingDecoded = json_decode($existing[0]["words"], true);
+            $diff = array_values(array_diff($existingDecoded, $words));
+            if(!empty($diff)) {
+                $toUpdate = json_encode($diff);
+                Factory::getObject(Factory::TYPE_DATABASE, true)->execute("UPDATE words SET words = ? WHERE tag = ? AND length = ?",
+                    array("string", "string", "integer"), array($toUpdate, $this->language, $len));
+            } else {
+                Factory::getObject(Factory::TYPE_DATABASE, true)->execute("DELETE FROM words WHERE tag = ? AND length = ?",
+                    array("string", "integer"), array($this->language, $len));
             }
         }
     }
