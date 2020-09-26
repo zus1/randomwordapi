@@ -5,12 +5,24 @@ class Words
 {
     private $validator;
     private $language;
+    private $filters = array();
+    private static $totalChange = 0;
 
     const ACTION_INSERT = "insert";
     const ACTION_REMOVE = "remove";
 
     public function __construct(Validator $validator) {
         $this->validator = $validator;
+        $this->initFilters();
+    }
+
+    private function initFilters() {
+        if(empty($this->filters)) {
+            $tagsAndFilters = Factory::getObject(Factory::TYPE_DATABASE)->select("SELECT tag, filters FROM languages", array(), array());
+            foreach($tagsAndFilters as $tagsAndFilter) {
+                $this->filters[$tagsAndFilter["tag"]] = explode(",", $tagsAndFilter["filters"]);
+            }
+        }
     }
 
     public function setLanguage(string $language) {
@@ -18,10 +30,42 @@ class Words
         return $this;
     }
 
+    public function getTotalChanged() {
+        return self::$totalChange;
+    }
+
+    public function addLanguage(string $tag, string $name, array $filters) {
+        $tag = strtolower($tag);
+        if($this->validator->validate("tag", array(Validator::FILTER_ALPHA), $tag)->validate("name", array(Validator::FILTER_ALPHA), $name)->isFailed()) {
+            throw new Exception($this->validator->getFormattedErrorMessagesForDisplay());
+        }
+        $availableFilters = $this->validator->getLanguageFilters();
+        $notValid = array_diff($filters, $availableFilters);
+        if(count($notValid) > 0) {
+            throw new Exception("Invalid filters: " . implode(",", $notValid));
+        }
+
+        $filtersStr = implode(",", $filters);
+        $exists = Factory::getObject(Factory::TYPE_DATABASE)->select("SELECT id FROM languages WHERE tag = ?", array("string"), array($tag));
+        if($exists) {
+            throw new Exception("Language already exists");
+        }
+        Factory::getObject(Factory::TYPE_DATABASE, true)->execute("INSERT INTO languages (tag, name, filters) VALUES (?,?,?)",
+            array("string", "string", "string"), array($tag, $name, $filtersStr));
+    }
+
+    public function removeLanguage(string $tag) {
+        if($this->validator->validate("tag", array(Validator::FILTER_ALPHA), $tag)->isFailed()) {
+            throw new Exception($this->validator->getFormattedErrorMessagesForDisplay());
+        }
+        Factory::getObject(Factory::TYPE_DATABASE)->execute("DELETE FROM languages WHERE tag = ?", array("string"), array($tag));
+        Factory::getObject(Factory::TYPE_DATABASE)->execute("DELETE FROM words WHERE tag = ?", array("string"), array($tag));
+    }
+
     public function bulkAction(string $payload, string $action) {
         $words = preg_split("/\n|\r\n|,/", $payload);
         $this->validateWords($words, "bulk");
-        $this->call($words, $action);
+        $this->doAction($words, $action);
     }
 
     public function csvAction(array $payload, string $action) {
@@ -42,7 +86,7 @@ class Words
         }
         $words = explode(",", $contents);
         $this->validateWords($words, "csv");
-        $this->call($words, $action);
+        $this->doAction($words, $action);
     }
 
     public function jsonAction(string $payload, string $action) {
@@ -52,10 +96,10 @@ class Words
         }
         $words = $words["words"];
         $this->validateWords($words, "json");
-        $this->call($words, $action);
+        $this->doAction($words, $action);
     }
 
-    protected function call(array $words, string $action) {
+    protected function doAction(array $words, string $action) {
         if($action === self::ACTION_INSERT) {
             $this->insert($words);
         } elseif($action === self::ACTION_REMOVE) {
@@ -67,7 +111,7 @@ class Words
 
     private function validateWords(array $words, string $field) {
         foreach($words as $word) {
-            if($this->validator->validate($field, array(Validator::FILTER_ALPHA), $word)->isFailed()) {
+            if($this->validator->validate($field, $this->filters[$this->language], $word)->isFailed()) {
                 throw new Exception($this->validator->getFormattedErrorMessagesForDisplay());
             }
         }
@@ -80,11 +124,13 @@ class Words
                 array("string", "string"), array($this->language, $len));
             if(!$existing) {
                 $toInsert = json_encode($words);
+                self::$totalChange += count($words);
                 Factory::getObject(Factory::TYPE_DATABASE, true)->execute("INSERT INTO words (tag, length, words) VALUES (?,?,?)",
                     array("string", "integer", "string"), array($this->language, $len, $toInsert));
             } else {
                 $existingDecoded = json_decode($existing[0]["words"], true);
                 $diff = array_values(array_diff($words, $existingDecoded));
+                self::$totalChange += count($diff);
                 if(!empty($diff)) {
                     $toInsert = json_encode(array_merge($existingDecoded, $diff));
                     Factory::getObject(Factory::TYPE_DATABASE, true)->execute("UPDATE words SET words = ? WHERE tag = ? AND length = ?",
@@ -100,12 +146,17 @@ class Words
             $existing = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT words FROM words WHERE tag = ? AND length = ?",
                 array("string", "string"), array($this->language, $len));
             if(!$existing) {
-                throw new Exception("Could not find words", HttpCodes::INTERNAL_SERVER_ERROR);
+                continue;
             }
 
             $existingDecoded = json_decode($existing[0]["words"], true);
             $diff = array_values(array_diff($existingDecoded, $words));
+            $removed = count($existingDecoded) - count($diff);
+            self::$totalChange += $removed;
             if(!empty($diff)) {
+                if($removed === 0) {
+                    continue;
+                }
                 $toUpdate = json_encode($diff);
                 Factory::getObject(Factory::TYPE_DATABASE, true)->execute("UPDATE words SET words = ? WHERE tag = ? AND length = ?",
                     array("string", "string", "integer"), array($toUpdate, $this->language, $len));

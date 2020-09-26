@@ -1,0 +1,163 @@
+@header;
+<div class="container">
+    <div class="nav-custom">
+        <ul>
+            <li><a href="{base_url}views/adm/home.php">Home</a></li>
+            <li><a href="{base_url}views/adm/insert.php">Add Words</a></li>
+            <li><a href="{base_url}views/adm/modify.php">Update/Remove Words</a></li>
+            <li><a href="{base_url}views/adm/managelanguages.php">Manage Languages</a></li>
+            <li><a href="{base_url}views/adm/addAdmin.php">Add Admin Account</a></li>
+        </ul>
+    </div>
+    <div class="row content-wrapper">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <div class="form-group">
+                <div style="height: 50px;">
+                    <div id="alert-add" class="notification" style="display: none">
+                        <div id="notification-add"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="text" id="tag" class="form-control" placeholder="tag">
+            </div>
+            <div class="form-group">
+                <input type="text" id="name" class="form-control" placeholder="name">
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="filters-add" multiple>
+                    <option value="" disabled selected>Select word filters</option>
+                    @foreach.(available_filters)
+                        <option value="@value">@value</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-lg btn-outline-secondary" id="add-button">Add Language</button>
+            </div>
+        </div>
+    </div>
+    <div class="row content-wrapper">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <div class="form-group">
+                <div style="height: 50px;">
+                    <div id="alert-remove" class="notification" style="display: none">
+                        <div id="notification-remove"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="language-remove">
+                    <option value="" disabled selected>Select language to remove</option>
+                    @foreach.(languages)
+                        <option value="@value.(tag)">@value.(name)</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-lg btn-outline-secondary" id="remove-button">Remove Language</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const tag = document.getElementById("tag");
+    const name = document.getElementById("name");
+    const filtersAdd = document.getElementById("filters-add")
+    const addButton = document.getElementById("add-button");
+
+    const languageRemove = document.getElementById("language-remove");
+    const removeButton = document.getElementById("remove-button");
+
+    addButton.addEventListener("click", () => addLanguage());
+    removeButton.addEventListener("click", () => removeLanguage());
+
+    function removeLanguage() {
+        if(languageRemove.value === "") {
+            addNotification("error", "Please select language", "remove");
+        } else {
+            const formData = new FormData();
+            formData.append("tag", languageRemove.value);
+
+            postAjax("/views/adm/removelanguage.php", formData, languageRemoved);
+        }
+    }
+
+    function languageRemoved(data) {
+        let key;
+        if(data.error === 1) {
+            key = "error";
+        } else {
+            key = "success"
+        }
+        addNotification(key, data.message, "remove");
+    }
+
+    function addLanguage() {
+       if(tag.value === "") {
+           addNotification("error", "Tag is missing", "add");
+       } else if(name.value === "") {
+           addNotification("error", "Name is missing", "add");
+       } else if(filtersAdd.value === "") {
+           addNotification("error", "Please choose filters", "add");
+       } else {
+           const filters = [];
+           for(let i = 0; i < filtersAdd.options.length; i++) {
+               if(filtersAdd.options[i].selected) {
+                   filters.push(filtersAdd.options[i].value);
+               }
+           }
+
+           const formData = new FormData();
+           formData.append("tag", tag.value);
+           formData.append("name", name.value);
+           formData.append("filters", JSON.stringify(filters));
+
+           postAjax("/views/adm/addlanguage.php", formData, languageAdded);
+       }
+    }
+
+    function languageAdded(data) {
+        let key;
+        if(data.error === 1) {
+            key = "error";
+        } else {
+            key = "success"
+        }
+        addNotification(key, data.message, "add");
+    }
+
+    function postAjax(endpoint, data, callback) {
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                callback(JSON.parse(this.responseText));
+            }
+        };
+
+        const http = getHttpParams();
+        xhttp.open("POST", http.protocol + "//" + http.host + endpoint, true);
+        xhttp.send(data);
+    }
+
+    function getHttpParams() {
+        return {
+            "host": window.location.hostname,
+            "protocol": window.location.protocol
+        }
+    }
+
+    function addNotification(type, text, target) {
+        const notification = document.getElementById("notification-" + target);
+        const alert = document.getElementById("alert-" + target);
+        notification.innerHTML = text;
+        if(type === "error") {
+            alert.className = "alert alert-danger";
+        } else if(type === "success") {
+            alert.className = "alert alert-success";
+        }
+
+        $("#alert-" + target).show().delay(5000).fadeOut();
+    }
+</script>
+@footer-admin;

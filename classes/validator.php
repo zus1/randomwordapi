@@ -10,16 +10,18 @@ class Validator
     const FILTER_EMAIL = "email";
     const FILTER_PASSWORD = "password";
     const FILTER_URL = 'url';
+    const FILTER_ALPHA_LATIN = "alpha_latin";
     const FILTER_CUSTOM = "custom";
 
     private $validFilters = array(
         self::FILTER_ALPHA_NUM, self::FILTER_ALPHA, self::FILTER_ALPHA_NUM_DASH, self::FILTER_NUMERIC,
-        self::FILTER_URL, self::FILTER_EMAIL, self::FILTER_PASSWORD, self::FILTER_CUSTOM
+        self::FILTER_URL, self::FILTER_EMAIL, self::FILTER_PASSWORD, self::FILTER_CUSTOM, self::FILTER_ALPHA_LATIN
     );
 
     private $filterToMethodMapping = array(
         self::FILTER_ALPHA_NUM => "filterAlphaNumeric",
         self::FILTER_ALPHA_NUM_DASH => "filterAlphaNumericDash",
+        self::FILTER_ALPHA_LATIN => "filterAlphaLatin",
         self::FILTER_NUMERIC => "filterNumeric",
         self::FILTER_ALPHA => 'filterAlpha',
         self::FILTER_EMAIL => 'filterEmail',
@@ -30,6 +32,7 @@ class Validator
     private $errorMessages = array(
         self::FILTER_ALPHA_NUM => "Field {field} can contain only letters and numbers",
         self::FILTER_ALPHA_NUM_DASH => "Field {field} can contain only latter, numbers and dashes",
+        self::FILTER_ALPHA_LATIN => "Field {field} can contain only letters and special characters č,ć,ž,š,đ",
         self::FILTER_NUMERIC => "Field {field} can contain only number and +- signs",
         self::FILTER_ALPHA => "Field {field} can contain only letters",
         self::FILTER_EMAIL => "Field {field} must be valid email",
@@ -46,6 +49,10 @@ class Validator
     public function __construct(Request $request, HtmlParser $htmlParser) {
         $this->request = $request;
         $this->htmlParser = $htmlParser;
+    }
+
+    public function getLanguageFilters() {
+        return array(self::FILTER_ALPHA, self::FILTER_ALPHA_LATIN, self::FILTER_ALPHA_NUM);
     }
 
     private function getErrorMessage(string $field, string $filter) {
@@ -126,6 +133,10 @@ class Validator
 
     public function filterAlpha($value) {
         return $this->filter($value, "/[^A-Za-z]/");
+    }
+
+    public function filterAlphaLatin($value) {
+        return $this->filter($value, "/[^A-Za-zČĆŽŠĐčćžšđ]/");
     }
 
     public function filterUrl($value) {

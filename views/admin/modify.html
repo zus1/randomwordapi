@@ -5,6 +5,7 @@
             <li><a href="{base_url}views/adm/home.php">Home</a></li>
             <li><a href="{base_url}views/adm/insert.php">Add Words</a></li>
             <li><a href="{base_url}views/adm/modify.php">Update/Remove Words</a></li>
+            <li><a href="{base_url}views/adm/managelanguages.php">Manage Languages</a></li>
             <li><a href="{base_url}views/adm/addAdmin.php">Add Admin Account</a></li>
         </ul>
     </div>
@@ -50,15 +51,24 @@
                 </div>
             </div>
             <div class="form-group">
+                <select id="language-multi" class="form-control">
+                    <option value="" disabled selected>Select language</option>
+                    @foreach.(languages)
+                    <option value="@value.(tag)">@value.(name)</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
                 <textarea cols="20" rows="10" class="form-control" id="words-bulk" placeholder="Remove from bulk"></textarea>
             </div>
             <div class="form-group">
                 <textarea cols="20" rows="10" class="form-control" id="words-json" placeholder="Remove from JSON"></textarea>
             </div>
             <div class="form-group">
-                <input type="file" id="csv-words" id="words-csv" style="display: none">
+                <input type="file" id="words-csv" style="display: none">
                 <div class="files-box" id="csv-word-files"></div>
-                <button type="button" class="btn btn-outline-secondary" id="csv-words-button">Remove from csv</button>
+                <button type="button" class="btn btn-outline-secondary" id="words-csv-button">Remove from csv</button>
+                <button type="button" class="btn btn-outline-secondary" id="words-csv-clear-button">Clear Csv</button>
             </div>
             <div class="form-group">
                 <button type="button" class="btn btn-lg btn-outline-secondary" id="multiple-button">Remove</button>
@@ -94,9 +104,57 @@
     const wordsSelect = document.getElementById("words");
     const singleButton = document.getElementById("single-button");
 
+    const languageMultiSelect = document.getElementById("language-multi")
+    const wordsBulk = document.getElementById("words-bulk");
+    const wordsJson = document.getElementById("words-json");
+    const wordsCsv = document.getElementById("words-csv");
+    const csvWordsFiles = document.getElementById("csv-word-files");
+    const wordsCsvButton = document.getElementById("words-csv-button");
+    const clearCsvButton = document.getElementById("words-csv-clear-button");
+    const multipleButton = document.getElementById("multiple-button");
+
     languageSelect.addEventListener("change", () => loadAvailableWordLengthsForLanguage(event));
-    lengthSelect.addEventListener("change", () => loadAvailableWordsForLength(event))
-    singleButton.addEventListener("click", () => sendSingleRemove())
+    lengthSelect.addEventListener("change", () => loadAvailableWordsForLength(event));
+    singleButton.addEventListener("click", () => sendSingleRemove());
+    wordsCsvButton.addEventListener("click", () => wordsCsv.click());
+    clearCsvButton.addEventListener("click", () => clearCsvFile());
+    multipleButton.addEventListener("click", () => sendMultiRemove());
+    wordsCsv.addEventListener("change", () =>displayFilename(event))
+
+    function displayFilename(event) {
+        csvWordsFiles.innerHTML = event.target.files[0].name;
+    }
+
+    function clearCsvFile() {
+        wordsCsv.value = "";
+        csvWordsFiles.innerHTML = "";
+    }
+
+    function sendMultiRemove() {
+        if(wordsBulk.value === "" && wordsJson.value === "" && wordsCsv.files.length === 0) {
+            addNotification("error", "No words to remove", "multi")
+        } else if(languageMultiSelect.value === "") {
+            addNotification("error", "No language selected", "multi")
+        } else {
+            const formData = new FormData();
+            formData.append("language", languageMultiSelect.value);
+            formData.append("words-bulk", wordsBulk.value);
+            formData.append("words-json", wordsJson.value);
+            formData.append("words-csv", wordsCsv.files[0]);
+
+            postAjax('/views/adm/removemulti.php', formData, multiRemoved)
+        }
+    }
+
+    function multiRemoved(data) {
+        let key;
+        if(data.error === 1) {
+            key = "error";
+        } else {
+            key = "success"
+        }
+        addNotification(key, data.message, "multi");
+    }
 
     function sendSingleRemove() {
         if(languageSelect.value === "") {
@@ -144,7 +202,6 @@
 
         const http = getHttpParams();
         xhttp.open("POST", http.protocol + "//" + http.host + endpoint, true);
-        //xhttp.setRequestHeader("Content-type","multipart/form-data");
         xhttp.send(data);
     }
 

@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="288e8d99-2ca2-423c-98ad-c98a0ae19105" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/views/admin/language.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/controller.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/router.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/router.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/validator.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/validator.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/words.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/words.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/views/admin/insert.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/admin/insert.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/views/admin/modify.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/admin/modify.html" afterDir="false" />
@@ -38,6 +40,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
+    <property name="nodejs_package_manager_path" value="npm" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -92,7 +95,8 @@
       <workItem from="1600603687413" duration="20870000" />
       <workItem from="1600858908760" duration="23579000" />
       <workItem from="1600971298193" duration="15910000" />
-      <workItem from="1601033123316" duration="8237000" />
+      <workItem from="1601033123316" duration="8242000" />
+      <workItem from="1601124908674" duration="15801000" />
     </task>
     <servers />
   </component>

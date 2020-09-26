@@ -28,6 +28,10 @@ class Router
             '/views/adm/ajaxlengths.php',
             '/views/adm/ajaxwords.php',
             '/views/adm/removesingle.php',
+            '/views/adm/removemulti.php',
+            '/views/adm/managelanguages.php',
+            '/views/adm/addlanguage.php',
+            '/views/adm/removelanguage.php',
         );
     }
 
@@ -47,6 +51,10 @@ class Router
             '/views/adm/ajaxlengths.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminModifyWordsLengths', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/ajaxwords.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminModifyWordsGetWords', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/removesingle.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminModifyWordsRemoveSingle', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
+            '/views/adm/removemulti.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminModifyWordsRemoveMulti', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
+            '/views/adm/managelanguages.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminManageLanguages', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
+            '/views/adm/addlanguage.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddLanguage', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
+            '/views/adm/removelanguage.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminRemoveLanguage', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
             '/views/adm/addAdmin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddAdmin', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/documentation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'webApiDocs', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/auth/login.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'login', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false, 'redirect_auth' => true),

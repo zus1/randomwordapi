@@ -86,10 +86,7 @@ class Controller
     }
 
     public function adminDoAddWords() {
-        $language = $this->request->input("language");
-        $bulk = $this->request->input("words-bulk");
-        $json = $this->request->input("words-json");
-        $csv = $this->request->file("words-csv");
+        list($language, $bulk, $json, $csv) = $this->getMultipleWordsParameters();
 
         $exception = false;
         try {
@@ -111,9 +108,20 @@ class Controller
         }
 
         if($exception === false) {
-            $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_SUCCESS_KEY, "Words Added");
+            $totalAdded = Factory::getObject(Factory::TYPE_WORDS)->getTotalChanged();
+            $suffix = ($totalAdded > 1 || $totalAdded === 0)? " Words" : " Word";
+            $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_SUCCESS_KEY, "Added " . $totalAdded . $suffix);
         }
         Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/adm/insert.php");
+    }
+
+    private function getMultipleWordsParameters() {
+        $language = $this->request->input("language");
+        $bulk = $this->request->input("words-bulk");
+        $json = $this->request->input("words-json");
+        $csv = $this->request->file("words-csv");
+
+        return array($language, $bulk, $json, $csv);
     }
 
     public function adminModifyWords() {
@@ -176,6 +184,71 @@ class Controller
             return json_encode(array("error" => 1, "message" => $e->getMessage()));
         }
         return json_encode(array("error" => 0, "message" => "Words Removed"));
+    }
+
+    public function adminModifyWordsRemoveMulti() {
+        list($language, $bulk, $json, $csv) = $this->getMultipleWordsParameters();
+
+        try {
+            if(empty($language)) {
+                throw new Exception($this->validator->getFormattedErrorMessagesForDisplay(array("Please select language")));
+            }
+            if(!empty($bulk)) {
+                Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language)->bulkAction($bulk, Words::ACTION_REMOVE);
+            }
+            if(!empty($json)) {
+                Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language)->jsonAction($json, Words::ACTION_REMOVE);
+            }
+            if(!empty($csv)) {
+                Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language)->csvAction($csv, Words::ACTION_REMOVE);
+            }
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage()));
+        }
+
+        $totalRemoved = Factory::getObject(Factory::TYPE_WORDS)->getTotalChanged();
+        $suffix = ($totalRemoved > 1 || $totalRemoved === 0)? " Words" : " Word";
+        return json_encode(array("error" => 0, "message" => "Removed " . $totalRemoved . $suffix));
+    }
+
+    public function adminManageLanguages() {
+        $availableFilters = $this->validator->getLanguageFilters();
+        $languages = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT tag, name, filters FROM languages", array(), array());
+        if(!$languages) {
+            $languages = array();
+        }
+
+        return $this->htmlParser->parseView("admin:language", array("available_filters" => $availableFilters, "languages" => $languages));
+    }
+
+    public function adminAddLanguage() {
+        $tag = $this->request->input("tag");
+        $name = $this->request->input("name");
+        $filters = $this->request->input("filters");
+        $decodedFilters = json_decode($filters, true);
+
+        if(json_last_error() !== JSON_ERROR_NONE) {
+            return json_encode(array("error" => 1, "message" => json_last_error_msg()));
+        }
+
+        try {
+            Factory::getObject(Factory::TYPE_WORDS)->addLanguage($tag, $name, $decodedFilters);
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage()));
+        }
+
+        return json_encode(array("error" => 0, "message" => "Language Added"));
+    }
+
+    public function adminRemoveLanguage() {
+        $tag = $this->request->input("tag");
+        try {
+            Factory::getObject(Factory::TYPE_WORDS)->removeLanguage($tag);
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage()));
+        }
+
+        return json_encode(array("error" => 0, "message" => "Language Removed"));
     }
 
     public function error() {
