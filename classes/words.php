@@ -62,6 +62,24 @@ class Words
         Factory::getObject(Factory::TYPE_DATABASE)->execute("DELETE FROM words WHERE tag = ?", array("string"), array($tag));
     }
 
+    public function updateLanguage(string $tag, string $newName, array $newFilters) {
+        $current = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT tag, name, filters FROM languages WHERE tag = ?",
+            array("string"), array($tag));
+        if(!$current) {
+            throw new Exception("No language to update");
+        }
+
+        $oldFilters = explode(",", $current[0]['filters']);
+        $additions = array_diff($newFilters, $oldFilters);
+        if($newName === $current[0]["name"] && count($additions) === 0) {
+            throw new Exception("Nothing to change");
+        }
+
+        $newFiltersStr = implode(",", $newFilters);
+        Factory::getObject(Factory::TYPE_DATABASE, true)->execute("UPDATE languages SET name = ?, filters = ? WHERE tag = ?",
+            array("string", "string", "string"), array($newName, $newFiltersStr, $tag));
+    }
+
     public function bulkAction(string $payload, string $action) {
         $words = preg_split("/\n|\r\n|,/", $payload);
         $this->validateWords($words, "bulk");
@@ -179,5 +197,24 @@ class Words
         });
 
         return $wordsByLength;
+    }
+
+    public function getNameAndFiltersForUpdate(string $tag) {
+        $availableFilters = $this->validator->getLanguageFilters();
+        $languageData = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT name, filters FROM languages WHERE tag =?",
+            array("string"), array($tag));
+        if(!$languageData) {
+            throw new Exception("No language found");
+        }
+        $languageFilters = explode(",", $languageData[0]['filters']);
+        $formattedFilters = array();
+        array_walk($availableFilters, function ($value) use (&$formattedFilters, $languageFilters) {
+            $formattedFilters[] = array(
+                'filter' => $value,
+                'is_selected' => (in_array($value, $languageFilters))? true : false
+            );
+        });
+
+        return array("name" => $languageData[0]["name"], "filters" => $formattedFilters);
     }
 }

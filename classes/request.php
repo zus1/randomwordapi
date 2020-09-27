@@ -42,4 +42,28 @@ class Request
         //TODO handle dealing with multiple file uploads
         return array();
     }
+
+    public function getParsedRequestUrl() {
+        return parse_url(strtolower($_SERVER["REQUEST_URI"]));
+    }
+
+    public function getParsedRequestQuery(array $output) {
+        $parsedUrl = $this->getParsedRequestUrl();
+        if(!$parsedUrl || !isset($parsedUrl["query"])) {
+            return $output;
+        }
+
+         parse_str($parsedUrl["query"], $output);
+
+        return $output;
+    }
+
+    public function getRequestPath() {
+        $parsedUrl = $this->getParsedRequestUrl();
+        if(!$parsedUrl || !isset($parsedUrl["path"])) {
+            return "";
+        }
+
+        return $parsedUrl["path"];
+    }
 }

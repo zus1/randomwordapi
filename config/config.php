@@ -9,6 +9,11 @@ class Config
     const DB_NAME = 'db_name';
     const DB_HOST = 'db_host';
     const DB_CHARSET = 'db_charset';
+    const API_VERSION = 'api_version';
+    const API_MAX_WORD_LENGTH = 'api_max_word_length';
+    const API_MAX_WORDS = 'api_max_words';
+    const API_MIN_WORD_LENGTH = "min_word_length";
+    const API_MIN_WORDS = "api_min_words";
     private static $_initialized = false;
     private static $_configArray = array(
         self::ADMIN_HOME => "",
@@ -17,7 +22,12 @@ class Config
         self::DB_PASSWORD => "",
         self::DB_NAME => "",
         self::DB_HOST => "",
-        self::DB_CHARSET => ""
+        self::DB_CHARSET => "",
+        self::API_VERSION => "",
+        self::API_MAX_WORD_LENGTH => "",
+        self::API_MAX_WORDS => "",
+        self::API_MIN_WORD_LENGTH => "",
+        self::API_MIN_WORDS => "",
     );
 
     private static function init() {
@@ -33,6 +43,11 @@ class Config
         self::$_configArray[self::DB_CHARSET] = $initVariables["DB_CHARSET"];
         self::$_configArray[self::ADMIN_HOME] = HttpParser::baseUrl() . "views/adm/home.php";
         self::$_configArray[self::USER_HOME] = HttpParser::baseUrl() . "views/documentation.php";
+        self::$_configArray[self::API_VERSION] = $initVariables["API_VERSION"];
+        self::$_configArray[self::API_MAX_WORD_LENGTH] = $initVariables["API_MAX_WORD_LENGTH"];
+        self::$_configArray[self::API_MAX_WORDS] = $initVariables["API_MAX_WORDS"];
+        self::$_configArray[self::API_MIN_WORD_LENGTH] = $initVariables["API_MIN_WORD_LENGTH"];
+        self::$_configArray[self::API_MIN_WORDS] = $initVariables["API_MIN_WORDS"];
 
         self::$_initialized = true;
     }

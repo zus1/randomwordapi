@@ -2,13 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="288e8d99-2ca2-423c-98ad-c98a0ae19105" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/views/admin/language.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/apivalidator.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/ajax.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/insert.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/language.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/modify.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/utilities.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/apicontroller.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/apicontroller.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/controller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/factory.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/factory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/request.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/request.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/router.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/router.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/validator.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/validator.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/words.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/words.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/init.ini" beforeDir="false" afterPath="$PROJECT_DIR$/init.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/views/admin/insert.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/admin/insert.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/admin/language.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/admin/language.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/views/admin/modify.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/admin/modify.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,6 +39,7 @@
       <list>
         <option value="CSS File" />
         <option value="HTML File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -96,7 +109,8 @@
       <workItem from="1600858908760" duration="23579000" />
       <workItem from="1600971298193" duration="15910000" />
       <workItem from="1601033123316" duration="8242000" />
-      <workItem from="1601124908674" duration="15801000" />
+      <workItem from="1601124908674" duration="16348000" />
+      <workItem from="1601201504929" duration="16844000" />
     </task>
     <servers />
   </component>

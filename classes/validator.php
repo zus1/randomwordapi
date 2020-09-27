@@ -12,34 +12,7 @@ class Validator
     const FILTER_URL = 'url';
     const FILTER_ALPHA_LATIN = "alpha_latin";
     const FILTER_CUSTOM = "custom";
-
-    private $validFilters = array(
-        self::FILTER_ALPHA_NUM, self::FILTER_ALPHA, self::FILTER_ALPHA_NUM_DASH, self::FILTER_NUMERIC,
-        self::FILTER_URL, self::FILTER_EMAIL, self::FILTER_PASSWORD, self::FILTER_CUSTOM, self::FILTER_ALPHA_LATIN
-    );
-
-    private $filterToMethodMapping = array(
-        self::FILTER_ALPHA_NUM => "filterAlphaNumeric",
-        self::FILTER_ALPHA_NUM_DASH => "filterAlphaNumericDash",
-        self::FILTER_ALPHA_LATIN => "filterAlphaLatin",
-        self::FILTER_NUMERIC => "filterNumeric",
-        self::FILTER_ALPHA => 'filterAlpha',
-        self::FILTER_EMAIL => 'filterEmail',
-        self::FILTER_PASSWORD => 'filterPassword',
-        self::FILTER_URL => 'filterUrl'
-    );
-
-    private $errorMessages = array(
-        self::FILTER_ALPHA_NUM => "Field {field} can contain only letters and numbers",
-        self::FILTER_ALPHA_NUM_DASH => "Field {field} can contain only latter, numbers and dashes",
-        self::FILTER_ALPHA_LATIN => "Field {field} can contain only letters and special characters č,ć,ž,š,đ",
-        self::FILTER_NUMERIC => "Field {field} can contain only number and +- signs",
-        self::FILTER_ALPHA => "Field {field} can contain only letters",
-        self::FILTER_EMAIL => "Field {field} must be valid email",
-        self::FILTER_PASSWORD => "Field {field} can contain only valid password characters",
-        self::FILTER_CUSTOM => "Field {field} contains invalid characters",
-        self::FILTER_URL => "Field {field} must be valid url"
-    );
+    const FILTER_ALPHA_DASH = "alpha_dash";
 
     private $messages = array();
 
@@ -51,12 +24,54 @@ class Validator
         $this->htmlParser = $htmlParser;
     }
 
+    protected function getValidFilters() {
+        return array(
+            self::FILTER_ALPHA_NUM, self::FILTER_ALPHA, self::FILTER_ALPHA_NUM_DASH, self::FILTER_NUMERIC,
+            self::FILTER_URL, self::FILTER_EMAIL, self::FILTER_PASSWORD, self::FILTER_CUSTOM, self::FILTER_ALPHA_LATIN,
+            self::FILTER_ALPHA_DASH
+        );
+    }
+
+    protected function getFilterToMethodMapping() {
+        return array(
+            self::FILTER_ALPHA_NUM => "filterAlphaNumeric",
+            self::FILTER_ALPHA_NUM_DASH => "filterAlphaNumericDash",
+            self::FILTER_ALPHA_LATIN => "filterAlphaLatin",
+            self::FILTER_NUMERIC => "filterNumeric",
+            self::FILTER_ALPHA => 'filterAlpha',
+            self::FILTER_EMAIL => 'filterEmail',
+            self::FILTER_PASSWORD => 'filterPassword',
+            self::FILTER_URL => 'filterUrl',
+            self::FILTER_ALPHA_DASH => 'filterAlphaDash'
+        );
+    }
+
+    protected function getErrorMessagesDefinition() {
+        return array(
+            self::FILTER_ALPHA_NUM => "Field {field} can contain only letters and numbers",
+            self::FILTER_ALPHA_NUM_DASH => "Field {field} can contain only latter, numbers and dashes",
+            self::FILTER_ALPHA_LATIN => "Field {field} can contain only letters and special characters č,ć,ž,š,đ",
+            self::FILTER_NUMERIC => "Field {field} can contain only number and +- signs",
+            self::FILTER_ALPHA => "Field {field} can contain only letters",
+            self::FILTER_EMAIL => "Field {field} must be valid email",
+            self::FILTER_PASSWORD => "Field {field} can contain only valid password characters",
+            self::FILTER_CUSTOM => "Field {field} contains invalid characters",
+            self::FILTER_URL => "Field {field} must be valid url",
+            self::FILTER_ALPHA_DASH => "Field {field} can contain only letters and dashes (including underscore)"
+        );
+    }
+
     public function getLanguageFilters() {
         return array(self::FILTER_ALPHA, self::FILTER_ALPHA_LATIN, self::FILTER_ALPHA_NUM);
     }
 
-    private function getErrorMessage(string $field, string $filter) {
-        return str_replace("{field}", $field, $this->errorMessages[$filter]);
+    protected function getErrorMessage(string $field, string $filter, ?string $num=null) {
+        $message = str_replace("{field}", $field, $this->getErrorMessagesDefinition()[$filter]);
+        if($num !== null) {
+            $message = str_replace("{num}", $num, $message);
+        }
+
+        return $message;
     }
 
     public function validate(string $field, array $filters, $value=null, ?string $customPattern="") {
@@ -64,7 +79,15 @@ class Validator
             $value = $this->request->input($field);
         }
         foreach($filters as $filter) {
-            if(!in_array($filter, $this->validFilters)) {
+            $filterCheck = explode(":", $filter);
+            $check = null;
+            $funcParams = array($value);
+            if(count($filterCheck) === 2) {
+                $filter = $filterCheck[0];
+                $check = $filterCheck[1];
+                $funcParams[] = intval($check);
+            }
+            if(!in_array($filter, $this->getValidFilters())) {
                 throw new Exception("Validator filter invalid", HttpCodes::INTERNAL_SERVER_ERROR);
             }
             if($filter === self::FILTER_CUSTOM) {
@@ -73,10 +96,10 @@ class Validator
                 }
                 $filtered = $this->filter($value, $customPattern);
             } else {
-                $filtered = call_user_func_array([$this, $this->filterToMethodMapping[$filter]], array($value));
+                $filtered = call_user_func_array([$this, $this->getFilterToMethodMapping()[$filter]], $funcParams);
             }
             if($filtered !== $value) {
-                $this->messages[] = $this->getErrorMessage($field, $filter);
+                $this->messages[] = $this->getErrorMessage($field, $filter, $check);
             } else {
                 $this->messages[] = "ok";
             }
@@ -156,6 +179,10 @@ class Validator
 
     public function filterPassword($value) {
         return $this->filter($value, "/[^A-Za-z0-9_@?.!*-+<>]/");
+    }
+
+    public function filterAlphaDash($value) {
+        return $this->filter($value, "/[^A-Za-z_ ]/");
     }
 
     public function filter($value, string $pattern) {

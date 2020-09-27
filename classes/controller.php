@@ -213,7 +213,7 @@ class Controller
 
     public function adminManageLanguages() {
         $availableFilters = $this->validator->getLanguageFilters();
-        $languages = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT tag, name, filters FROM languages", array(), array());
+        $languages = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT tag, name FROM languages", array(), array());
         if(!$languages) {
             $languages = array();
         }
@@ -249,6 +249,48 @@ class Controller
         }
 
         return json_encode(array("error" => 0, "message" => "Language Removed"));
+    }
+
+    public function adminUpdateLanguageNameAndFilters() {
+        $tag = $this->request->input("tag");
+        if($this->validator->validate("tag", array(Validator::FILTER_ALPHA))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getFormattedErrorMessagesForDisplay()));
+        }
+
+        try {
+            $data = Factory::getObject(Factory::TYPE_WORDS)->getNameAndFiltersForUpdate($tag);
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage()));
+        }
+
+        return json_encode(array_merge(array("error" => 0), $data));
+    }
+
+    public function adminUpdateLanguage() {
+        $tag = $this->request->input("tag");
+        $newName = $this->request->input("name");
+        $newFilters = $this->request->input("filters");
+        $decodedNewFilters = json_decode($newFilters, true);
+
+        if(json_last_error() !== JSON_ERROR_NONE) {
+            return json_encode(array("error" => 1, "message" => json_last_error_msg()));
+        }
+        if($this->validator->validate("tag", array(Validator::FILTER_ALPHA))->validate("name", array(Validator::FILTER_ALPHA))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getFormattedErrorMessagesForDisplay()));
+        }
+        foreach($decodedNewFilters as $newFilter) {
+            if($this->validator->validate("filters", array(Validator::FILTER_ALPHA_DASH), $newFilter)->isFailed()) {
+                return json_encode(array("error" => 1, "message" => $this->validator->getFormattedErrorMessagesForDisplay()));
+            }
+        }
+
+        try {
+            Factory::getObject(Factory::TYPE_WORDS)->updateLanguage($tag, $newName, $decodedNewFilters);
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage()));
+        }
+
+        return json_encode(array("error" => 0, 'message' => "Language updated"));
     }
 
     public function error() {

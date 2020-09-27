@@ -32,12 +32,14 @@ class Router
             '/views/adm/managelanguages.php',
             '/views/adm/addlanguage.php',
             '/views/adm/removelanguage.php',
+            '/views/adm/updatelanguageresources.php',
+            '/views/adm/doupdatelanguage.php',
         );
     }
 
     public function apiRoutes() {
         return array(
-            '/api/v1/generate.php'
+            '/api/v1/generate'
         );
     }
 
@@ -55,6 +57,8 @@ class Router
             '/views/adm/managelanguages.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminManageLanguages', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/addlanguage.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddLanguage', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
             '/views/adm/removelanguage.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminRemoveLanguage', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
+            '/views/adm/updatelanguageresources.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminUpdateLanguageNameAndFilters', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
+            '/views/adm/doupdatelanguage.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminUpdateLanguage', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
             '/views/adm/addAdmin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddAdmin', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/documentation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'webApiDocs', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/auth/login.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'login', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false, 'redirect_auth' => true),
@@ -66,7 +70,7 @@ class Router
 
     public function apiRouteMapping() {
         return array(
-            '/api/v1/generate.php' => array('class' => Factory::TYPE_API_CONTROLLER, 'method' => 'generateWords', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
+            '/api/v1/generate' => array('class' => Factory::TYPE_API_CONTROLLER, 'method' => 'generateWords', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
         );
     }
 

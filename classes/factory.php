@@ -14,6 +14,7 @@ class Factory
     const TYPE_VALIDATOR = 'validator';
     const TYPE_SESSION = "session";
     const TYPE_WORDS = "words";
+    const TYPE_API_VALIDATOR = 'api_validator';
     const TYPE_METHOD_MAPPING = array(
         self::TYPE_CONTROLLER => "getController",
         self::TYPE_DATABASE => "getDatabase",
@@ -27,6 +28,7 @@ class Factory
         self::TYPE_VALIDATOR => 'getValidator',
         self::TYPE_SESSION => "getSession",
         self::TYPE_WORDS => "getWords",
+        self::TYPE_API_VALIDATOR => 'getApiValidator'
     );
     private static $instances = array();
 
@@ -57,7 +59,7 @@ class Factory
     }
 
     private function getApiController() {
-        return new ApiController($this->getRequest());
+        return new ApiController($this->getRequest(), $this->getApiValidator(), $this->getApiException());
     }
 
     private function getDatabase() {
@@ -98,5 +100,9 @@ class Factory
 
     private function getWords() {
         return new Words($this->getValidator());
+    }
+
+    private function getApiValidator() {
+        return new ApiValidator($this->getRequest(), $this->getHtmlParser());
     }
 }
