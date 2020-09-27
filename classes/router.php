@@ -131,7 +131,7 @@ class Router
         }
 
         try {
-            $result = json_encode(call_user_func([$classObject, $route['method']]));
+            $result = json_encode(call_user_func([$classObject, $route['method']]), JSON_UNESCAPED_UNICODE);
         } catch(Exception $e) {
             echo Factory::getObject(Factory::TYPE_API_EXCEPTION)->getApiException($e);
             die();

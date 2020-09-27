@@ -88,6 +88,10 @@ class ApiValidator extends Validator
         if($this->validate("words_num", array(self::FILTER_MAX . ":" . $apiMaxWordsCount), $queryVariables[self::PARAM_WORDS_NUM])->isFailed()) {
             throw new Exception("Bad Request: Number fo words malformed. Expected integer with min value 1 and max value 10", HttpCodes::HTTP_BAD_REQUEST);
         }
+
+        if((int)$queryVariables[self::PARAM_MAX_LENGTH] < (int)$queryVariables[self::PARAM_MIN_LENGTH]) {
+            throw new Exception("Bad Request: Min length can't be grater then Max length", HttpCodes::HTTP_BAD_REQUEST);
+        }
     }
 
     public function validateAllowedParams() {

@@ -34,6 +34,42 @@ class Words
         return self::$totalChange;
     }
 
+    public function getWords(string $tag, int $minLength, int $maxLength, int $wordsNum) {
+        $words = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT words, length FROM words WHERE tag = ?",
+            array("string"), array($tag));
+        if(!$words) {
+            throw new Exception("Language not supported", HttpCodes::HTTP_NOT_FOUND);
+        }
+        $words = array_filter($words, function($word) use($minLength, $maxLength) {
+           return (int)$word["length"] >= $minLength && (int)$word["length"] <= $maxLength;
+        });
+        if(empty($words)) {
+            throw new Exception("Could not find words for requested length", HttpCodes::HTTP_NOT_FOUND);
+        }
+
+        $allWords = array();
+        array_walk($words, function ($word) use(&$allWords) {
+           $decoded = json_decode($word["words"], true);
+           $allWords = array_merge($allWords, $decoded);
+        });
+
+        if(count($allWords) < $wordsNum) {
+            throw new Exception("Not enough words found. Requested: " . $wordsNum . ", found: " . count($allWords));
+        }
+
+        shuffle($allWords);
+
+        $returnWords = array();
+        while($wordsNum > 0) {
+            $key = array_rand($allWords);
+            $returnWords[] = $allWords[$key];
+            unset($allWords[$key]);
+            $wordsNum--;
+        }
+
+        return $returnWords;
+    }
+
     public function addLanguage(string $tag, string $name, array $filters) {
         $tag = strtolower($tag);
         if($this->validator->validate("tag", array(Validator::FILTER_ALPHA), $tag)->validate("name", array(Validator::FILTER_ALPHA), $name)->isFailed()) {

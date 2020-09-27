@@ -59,7 +59,7 @@ class Factory
     }
 
     private function getApiController() {
-        return new ApiController($this->getRequest(), $this->getApiValidator(), $this->getApiException());
+        return new ApiController($this->getRequest(), $this->getApiValidator(), $this->getWords());
     }
 
     private function getDatabase() {
