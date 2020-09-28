@@ -23,6 +23,18 @@ class User
         echo "blabla " . self::$counter;
     }
 
+    public function addAdminAccount(string $email, string $username, string $password) {
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+        $existing = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT id FROM user WHERE email = ? OR username = ?",
+            array("string", "string"), array($email, $username));
+        if($existing) {
+            throw new Exception("Admin account already exists");
+        }
+
+        Factory::getObject(Factory::TYPE_DATABASE, true)->execute("INSERT INTO user (email, username, password, hashed_password, role) VALUES (?,?,?,?,?)",
+            array("string", "string", "string", "string", "integer") , array($email, $username, $password, $hashedPassword, $this->roleToDbRoleMapping[self::ROLE_ADMIN]));
+    }
+
     public function isAuthenticatedUser() {
         $this->session->startSession();
         if(isset($_SESSION[self::USER_SESSION_KEY])) {

@@ -1,25 +1,22 @@
 <?php
 
 spl_autoload_register(function () {
-    $classesRoot = $_SERVER['DOCUMENT_ROOT'] . "/classes";
-    $apiRoot = $_SERVER['DOCUMENT_ROOT'] . "/api";
-    $configRoot = $_SERVER['DOCUMENT_ROOT'] . "/config";
-    $classFiles = scandir($classesRoot);
-    $apiFiles = scandir($apiRoot);
-    $configFiles = scandir($configRoot);
-    foreach($classFiles as $file) {
-        if($file !== "." && $file !== "..") {
-            include_once($classesRoot . "/" . $file);
-        }
-    }
-    foreach($apiFiles as $file) {
-        if($file !== "." && $file !== "..") {
-            include_once($apiRoot . "/" . $file);
-        }
-    }
-    foreach($configFiles as $file) {
-        if($file !== "." && $file !== "..") {
-            include_once($configRoot . "/" . $file);
+    $root = $_SERVER["DOCUMENT_ROOT"];
+    $paths = array(
+        $root . "/classes",
+        $root . "/api",
+        $root . "/config",
+        $root . "/classes/words"
+    );
+
+    foreach($paths as $path) {
+        $files = scandir($path);
+        foreach($files as $file) {
+            if($file != "." && $file !== "..") {
+                if(!is_dir($path . "/" . $file)) {
+                    include_once($path . "/" . $file);
+                }
+            }
         }
     }
 });

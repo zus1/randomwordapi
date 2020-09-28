@@ -23,7 +23,7 @@ class Router
             '/views/error.php',
             '/views/adm/home.php',
             '/views/auth/logout.php',
-            '/views/adm/addAdmin.php',
+            '/views/adm/addadmin.php',
             '/views/adm/doinsert.php',
             '/views/adm/ajaxlengths.php',
             '/views/adm/ajaxwords.php',
@@ -34,6 +34,7 @@ class Router
             '/views/adm/removelanguage.php',
             '/views/adm/updatelanguageresources.php',
             '/views/adm/doupdatelanguage.php',
+            '/views/adm/doaddadmin.php',
         );
     }
 
@@ -59,7 +60,8 @@ class Router
             '/views/adm/removelanguage.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminRemoveLanguage', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
             '/views/adm/updatelanguageresources.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminUpdateLanguageNameAndFilters', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/doupdatelanguage.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminUpdateLanguage', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
-            '/views/adm/addAdmin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddAdmin', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
+            '/views/adm/addadmin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddAdmin', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
+            '/views/adm/doaddadmin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminDoAddAdmin', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
             '/views/documentation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'webApiDocs', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/auth/login.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'login', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false, 'redirect_auth' => true),
             '/views/auth/dologin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'doLogin', 'request' => self::REQUEST_POST, 'role' => "", 'auth' => false),

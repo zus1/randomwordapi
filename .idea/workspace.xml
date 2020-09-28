@@ -2,14 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="288e8d99-2ca2-423c-98ad-c98a0ae19105" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/classes/words/wordsbulk.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/classes/words/wordscsv.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/classes/words/wordsjson.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/views/admin/addAdmin.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/apicontroller.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/apicontroller.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/apiexception.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/apiexception.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/apivalidator.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/apivalidator.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/controller.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/factory.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/factory.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/router.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/router.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/words.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/words.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/user.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/user.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/words.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/words/words.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include.php" beforeDir="false" afterPath="$PROJECT_DIR$/include.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/admin/insert.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/admin/insert.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/admin/language.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/admin/language.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/admin/modify.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/admin/modify.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/includes/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/includes/footer.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/includes/footerAdmin.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/includes/footerAdmin.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/includes/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/includes/header.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -26,8 +36,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="CSS File" />
-        <option value="HTML File" />
         <option value="JavaScript File" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -45,6 +55,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\xampp\htdocs\randomwordapi\classes\words" />
       <recent name="C:\xampp\htdocs\randomwordapi\views\admin" />
     </key>
   </component>
@@ -67,7 +78,7 @@
     <configuration name="htmlparser.php" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/randomwordapi/classes/htmlparser.php" useBuiltInWebServerPort="true">
       <method v="2" />
     </configuration>
-    <configuration name="words.php" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/randomwordapi/classes/words.php" useBuiltInWebServerPort="true">
+    <configuration name="words.php" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/randomwordapi/classes/words/words.php" useBuiltInWebServerPort="true">
       <method v="2" />
     </configuration>
     <recent_temporary>
@@ -98,7 +109,8 @@
       <workItem from="1600971298193" duration="15910000" />
       <workItem from="1601033123316" duration="8242000" />
       <workItem from="1601124908674" duration="16348000" />
-      <workItem from="1601201504929" duration="21151000" />
+      <workItem from="1601201504929" duration="21549000" />
+      <workItem from="1601326943863" duration="8237000" />
     </task>
     <servers />
   </component>

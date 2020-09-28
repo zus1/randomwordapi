@@ -15,6 +15,9 @@ class Factory
     const TYPE_SESSION = "session";
     const TYPE_WORDS = "words";
     const TYPE_API_VALIDATOR = 'api_validator';
+    const TYPE_WORDS_BULK = "words_bulk";
+    const TYPE_WORDS_JSON = "words_json";
+    const TYPE_WORDS_CSV = "words_csv";
     const TYPE_METHOD_MAPPING = array(
         self::TYPE_CONTROLLER => "getController",
         self::TYPE_DATABASE => "getDatabase",
@@ -28,14 +31,17 @@ class Factory
         self::TYPE_VALIDATOR => 'getValidator',
         self::TYPE_SESSION => "getSession",
         self::TYPE_WORDS => "getWords",
-        self::TYPE_API_VALIDATOR => 'getApiValidator'
+        self::TYPE_API_VALIDATOR => 'getApiValidator',
+        self::TYPE_WORDS_BULK => "getWordsBulk",
+        self::TYPE_WORDS_CSV => "getWordsCsv",
+        self::TYPE_WORDS_JSON => "getWordsJson",
     );
     private static $instances = array();
 
     /**
      * @param string $type
      * @param bool $singleton
-     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words
+     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words|WordsBulk|WordsJson|WordsCsv
      */
     public static function getObject(string $type, bool $singleton=false) {
         if(!array_key_exists($type, self::TYPE_METHOD_MAPPING)) {
@@ -104,5 +110,17 @@ class Factory
 
     private function getApiValidator() {
         return new ApiValidator($this->getRequest(), $this->getHtmlParser());
+    }
+
+    private function getWordsBulk() {
+        return new WordsBulk($this->getValidator());
+    }
+
+    private function getWordsCsv() {
+        return new WordsCsv($this->getValidator());
+    }
+
+    private function getWordsJson() {
+        return new WordsJson($this->getValidator());
     }
 }

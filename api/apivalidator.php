@@ -58,7 +58,6 @@ class ApiValidator extends Validator
         $apiMinWordsCount = Config::get(Config::API_MIN_WORDS);
         $apiMaxWordsCount = Config::get(Config::API_MAX_WORDS);
         $params = array_keys($queryVariables);
-        $values = array_values($queryVariables);
         $extraParams = array_diff($params, $this->allowedApiParameters);
         if(count($extraParams) > 0) {
             throw new Exception("Bad Request: Invalid parameters", HttpCodes::HTTP_BAD_REQUEST);
@@ -92,10 +91,6 @@ class ApiValidator extends Validator
         if((int)$queryVariables[self::PARAM_MAX_LENGTH] < (int)$queryVariables[self::PARAM_MIN_LENGTH]) {
             throw new Exception("Bad Request: Min length can't be grater then Max length", HttpCodes::HTTP_BAD_REQUEST);
         }
-    }
-
-    public function validateAllowedParams() {
-
     }
 
     public function validateVersion(string $requestPath) {

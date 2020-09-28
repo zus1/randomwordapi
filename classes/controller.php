@@ -69,7 +69,7 @@ class Controller
     public function logout() {
         $this->session->startSession();
         unset($_SESSION[User::USER_SESSION_KEY]);
-        Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/auth/login.php");
+        Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/documentation.php");
     }
 
     public function adminHome() {
@@ -77,7 +77,58 @@ class Controller
     }
 
     public function adminAddAdmin() {
+        return $this->htmlParser->parseView("admin:addAdmin");
+    }
 
+    public function adminDoAddAdmin() {
+        $email = $this->request->input("email");
+        $userName = $this->request->input("username");
+        $password = $this->request->input("password");
+        $confirmPassword = $this->request->input("password-confirm");
+
+        try {
+            if(empty($email)) {
+                throw new Exception("Email can't be empty");
+            }
+            if(empty($userName)) {
+                throw new Exception("Username can't be empty");
+            }
+            if(empty($password)) {
+                throw new Exception("Password can't be empty");
+            }
+            if(empty($confirmPassword)) {
+                throw new Exception("Pleas confirm password");
+            }
+            if(
+                $this->validator->validate("email", array(Validator::FILTER_EMAIL))
+                ->validate("username", array(Validator::FILTER_ALPHA_NUM))
+                ->validate("password", array(Validator::FILTER_PASSWORD))
+                ->validate("password-confirm", array(Validator::FILTER_PASSWORD))
+                ->isFailed()
+            ) {
+                throw new Exception($this->validator->getFormattedErrorMessagesForDisplay());
+            }
+            if($password !== $confirmPassword) {
+                throw new Exception("Passwords do not match");
+            }
+        } catch (Exception $e) {
+            $this->onAddAdminException($e);
+        }
+
+        try {
+            $this->user->addAdminAccount($email, $userName, $password);
+        } catch(Exception $e) {
+            $this->onAddAdminException($e);
+        }
+
+
+        $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_SUCCESS_KEY, "Admin account added");
+        Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/adm/addadmin.php");
+    }
+
+    private function onAddAdminException(Exception $e) {
+        $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_ERROR_KEY, $e->getMessage());
+        Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/adm/addadmin.php");
     }
 
     public function adminAddWords() {
@@ -94,13 +145,13 @@ class Controller
                 throw new Exception($this->validator->getFormattedErrorMessagesForDisplay(array("Please select language")));
             }
             if(!empty($bulk)) {
-               Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language)->bulkAction($bulk, Words::ACTION_INSERT);
+                Factory::getObject(Factory::TYPE_WORDS_BULK)->setLanguage($language)->action($bulk, Words::ACTION_INSERT);
             }
             if(!empty($json)) {
-                Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language)->jsonAction($json, Words::ACTION_INSERT);
+                Factory::getObject(Factory::TYPE_WORDS_JSON)->setLanguage($language)->action($json, Words::ACTION_INSERT);
             }
             if(!empty($csv)) {
-                Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language)->csvAction($csv, Words::ACTION_INSERT);
+                Factory::getObject(Factory::TYPE_WORDS_CSV)->setLanguage($language)->action($csv, Words::ACTION_INSERT);
             }
         } catch(Exception $e) {
             $exception = true;
@@ -194,13 +245,13 @@ class Controller
                 throw new Exception($this->validator->getFormattedErrorMessagesForDisplay(array("Please select language")));
             }
             if(!empty($bulk)) {
-                Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language)->bulkAction($bulk, Words::ACTION_REMOVE);
+                Factory::getObject(Factory::TYPE_WORDS_BULK)->setLanguage($language)->action($bulk, Words::ACTION_REMOVE);
             }
             if(!empty($json)) {
-                Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language)->jsonAction($json, Words::ACTION_REMOVE);
+                Factory::getObject(Factory::TYPE_WORDS_JSON)->setLanguage($language)->action($json, Words::ACTION_REMOVE);
             }
             if(!empty($csv)) {
-                Factory::getObject(Factory::TYPE_WORDS)->setLanguage($language)->csvAction($csv, Words::ACTION_REMOVE);
+                Factory::getObject(Factory::TYPE_WORDS_CSV)->setLanguage($language)->action($csv, Words::ACTION_REMOVE);
             }
         } catch(Exception $e) {
             return json_encode(array("error" => 1, "message" => $e->getMessage()));

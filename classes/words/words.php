@@ -3,9 +3,9 @@
 
 class Words
 {
-    private $validator;
-    private $language;
-    private $filters = array();
+    protected $validator;
+    protected $language;
+    protected $filters = array();
     private static $totalChange = 0;
 
     const ACTION_INSERT = "insert";
@@ -116,43 +116,6 @@ class Words
             array("string", "string", "string"), array($newName, $newFiltersStr, $tag));
     }
 
-    public function bulkAction(string $payload, string $action) {
-        $words = preg_split("/\n|\r\n|,/", $payload);
-        $this->validateWords($words, "bulk");
-        $this->doAction($words, $action);
-    }
-
-    public function csvAction(array $payload, string $action) {
-        $allowedMimeTypes = array(
-            'text/csv', "text/plain", "text/x-csv", "application/csv", "application/x-csv"
-        );
-        if($payload["error"] !== UPLOAD_ERR_OK ) {
-            throw new Exception($this->validator->getFormattedErrorMessagesForDisplay(array("Error uploading file")));
-        }
-        $finfo = new finfo(FILEINFO_MIME_TYPE);
-        $mimeType = $finfo->file($payload["tmp_name"]);
-        if(!in_array($mimeType, $allowedMimeTypes)) {
-            throw new Exception($this->validator->getFormattedErrorMessagesForDisplay(array("File must me valid csv")));
-        }
-        $contents = trim(file_get_contents($payload["tmp_name"]));
-        if(!$contents) {
-            throw new Exception($this->validator->getFormattedErrorMessagesForDisplay(array("Error uploading file")));
-        }
-        $words = explode(",", $contents);
-        $this->validateWords($words, "csv");
-        $this->doAction($words, $action);
-    }
-
-    public function jsonAction(string $payload, string $action) {
-        $words = json_decode(trim($payload), true);
-        if(!isset($words["words"])) {
-            throw new Exception($this->validator->getFormattedErrorMessagesForDisplay(array("Json is not properly formatted")));
-        }
-        $words = $words["words"];
-        $this->validateWords($words, "json");
-        $this->doAction($words, $action);
-    }
-
     protected function doAction(array $words, string $action) {
         if($action === self::ACTION_INSERT) {
             $this->insert($words);
@@ -163,7 +126,7 @@ class Words
         }
     }
 
-    private function validateWords(array $words, string $field) {
+    protected function validateWords(array $words, string $field) {
         foreach($words as $word) {
             if($this->validator->validate($field, $this->filters[$this->language], $word)->isFailed()) {
                 throw new Exception($this->validator->getFormattedErrorMessagesForDisplay());

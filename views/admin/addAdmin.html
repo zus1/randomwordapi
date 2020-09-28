@@ -1,0 +1,69 @@
+@header;
+<div class="container">
+    <div class="nav-custom">
+        <ul>
+            <li><a href="{base_url}views/adm/home.php">Home</a></li>
+            <li><a href="{base_url}views/adm/insert.php">Add Words</a></li>
+            <li><a href="{base_url}views/adm/modify.php">Update/Remove Words</a></li>
+            <li><a href="{base_url}views/adm/managelanguages.php">Manage Languages</a></li>
+            <li><a href="{base_url}views/adm/addAdmin.php">Add Admin Account</a></li>
+            <li><a href="{base_url}views/auth/logout.php">Logout</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            @session.success?
+            <div class="alert alert-success">
+                @session.(success)
+            </div>
+            @session?
+            @session.error?
+            <div class="alert alert-danger">
+                @session.(error)
+            </div>
+            @session?
+        </div>
+    </div>
+    <div class="row content-wrapper">
+        <div class="col-md-12 col-log-12 col-sm-12">
+            <form action="{base_url}views/adm/doaddadmin.php" method="post">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="email" placeholder="email">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" name="username" placeholder="username">
+                </div>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="password" id="pswd" placeholder="password" autocomplete="off">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="generate-password">Generate</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" name="password-confirm" placeholder="confirm password" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-lg btn-outline-secondary" value="Add Admin">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    const passwordGenerateButton = document.getElementById("generate-password");
+    const password = document.getElementById("pswd");
+
+    passwordGenerateButton.addEventListener("click", () => generatePassword());
+
+    function generatePassword() {
+        const passwordLength = 16;
+        const chars = "123456789abcdefgahijklsABCDFLAQWERT_@?.!*-+<>";
+        let passwordStr = "";
+        for(let i = passwordLength; i > 0; i--) {
+            const rand = Math.floor(Math.random() * (chars.length - 1)) + 1;
+            passwordStr = passwordStr + chars[rand];
+        }
+        password.value = passwordStr;
+    }
+</script>
+@footer-admin;
