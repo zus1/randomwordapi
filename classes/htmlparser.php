@@ -10,11 +10,22 @@ class HtmlParser
     const ONE_TIME_ERROR_KEY = "error";
     const ONE_TIME_SUCCESS_KEY = "success";
     const ONE_TIME_WARNING_KEY = "warning";
+    const IF_TAG_AUTH = "@auth";
+    const IF_TAG_ROLE = "@role";
 
     const LOOP_HOLDERS = array(
         'foreach' => "@foreach.(data)",
         'end_foreach' => '@foreach',
         'view_session' => "@session.(key)"
+    );
+
+    private $ifTagToCallMapping = array(
+        self::IF_TAG_AUTH => array("object" => Factory::TYPE_USER, "method" => "isAuthenticatedUser"),
+        self::IF_TAG_ROLE => array("object" => Factory::TYPE_USER, "method" => "hasRole")
+    );
+
+    private $possibleIfTags = array(
+        self::IF_TAG_ROLE, self::IF_TAG_AUTH
     );
 
     private $session;
@@ -77,6 +88,9 @@ class HtmlParser
 
         $contents = $this->includeHeaderAndFooter($contents);
         $contents = $this->handleIncludes($contents);
+        foreach($this->possibleIfTags as $ifTag) {
+            $contents = $this->handleIfTags($contents, $ifTag);
+        }
         $contents = $this->includeOneTimeMessage($contents);
         $contents = $this->handleGeneralHolders($contents);
         if(!empty($data)) {
@@ -85,6 +99,83 @@ class HtmlParser
         $contents = $this->handleOlRequestData($contents);
 
         return $contents;
+    }
+
+    private function handleIfTags(string $contents, string $tag) {
+        //preventing errors with strpos, possible false value if all tags not present
+        if(!strpos($contents, $tag . ".") || !strpos($contents, $tag . "?")) {
+            return $contents;
+        }
+        $start = 0;
+        while(($start = strpos($contents, $tag . ".", $start)) !== false) {
+            $endFirst = strpos($contents, "?", $start);
+            $first = substr($contents, $start, ($endFirst + 1) - $start);
+
+            $secondStart = strpos($contents, "@else", $endFirst);
+            $thirdPresent = false;
+            if($secondStart) {
+                $thirdPresent = true;
+                $secondEnd = $secondStart + strlen("@else");
+            } else {
+                $secondStart = strpos($contents, $tag . "?", $endFirst);
+                $secondEnd = $secondStart + strlen($tag . "?");
+                $second = substr($contents, $secondStart, ($secondEnd + 1) - $secondStart);
+            }
+
+            if($thirdPresent === true) {
+                $thirdStart = strpos($contents, $tag . "?", $secondEnd);
+                $thirdEnd = $thirdStart + strlen($tag . "?");
+            }
+
+            $beforeElement = substr($contents, 0, $start);
+            $firstElement = substr($contents, $endFirst + 1, ($secondStart - 1) - $endFirst);
+            if($thirdPresent === true) {
+                $secondElement = substr($contents, $secondEnd + 1, ($thirdStart - 1) - $secondEnd);
+                $afterElement = substr($contents, $thirdEnd);
+            } else {
+                $afterElement = substr($contents, $secondEnd);
+            }
+
+            list($result, $condition) = $this->extractIfTagCondition($first);
+            $pass = $this->checkIfTagCondition($result, $condition, $tag);
+
+            if($pass === true) {
+                $contents = $beforeElement . $firstElement . $afterElement;
+            } elseif($thirdPresent === true) {
+                $contents = $beforeElement . $secondElement . $afterElement;
+            } else {
+                $contents = $beforeElement . $afterElement;
+            }
+            $start++;
+        }
+
+        return $contents;
+    }
+
+    private function extractIfTagCondition(string $holder) {
+        $tagResultRawCondition = explode(".", $holder);
+        if(empty($tagResultRawCondition[2])) {
+            return array($tagResultRawCondition[1], "");
+        }
+        $result = $tagResultRawCondition[1];
+        $condition = substr($tagResultRawCondition[2], 0, strlen($tagResultRawCondition[2]) - 1);
+        return array($result, $condition);
+    }
+
+    private function checkIfTagCondition(string $result, string $condition, string $tag) {
+        $result = array("true" => true, "false" => false)[$result];
+        $callVariables = $this->ifTagToCallMapping[$tag];
+        if($condition === "") {
+            $checkResult = call_user_func([Factory::getObject($callVariables["object"]), $callVariables["method"]]);
+        } else {
+            $checkResult = call_user_func_array([Factory::getObject($callVariables["object"]), $callVariables["method"]], array($condition));
+        }
+
+        if($checkResult === $result) {
+            return true;
+        }
+
+        return false;
     }
 
     private function handleOlRequestData(string $contents) {
