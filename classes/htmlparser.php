@@ -18,13 +18,15 @@ class HtmlParser
     );
 
     private $session;
+    private $request;
 
-    public function __construct(Session $session) {
+    public function __construct(Session $session, Request $request) {
         $this->viewsPath = HttpParser::root() . "/views";
         $this->includesPath = HttpParser::root() . "/views/includes";
         $this->jsUrl = HttpParser::baseUrl() . "js";
         $this->cssUrl = HttpParser::baseUrl() . "css";
         $this->session = $session;
+        $this->request = $request;
     }
 
     public function formatValidatorErrorMessages(array $errorMessages) {
@@ -74,10 +76,74 @@ class HtmlParser
         }
 
         $contents = $this->includeHeaderAndFooter($contents);
+        $contents = $this->handleIncludes($contents);
         $contents = $this->includeOneTimeMessage($contents);
         $contents = $this->handleGeneralHolders($contents);
         if(!empty($data)) {
             $contents = $this->handleViewSpecificHolders($contents, $data);
+        }
+        $contents = $this->handleOlRequestData($contents);
+
+        return $contents;
+    }
+
+    private function handleOlRequestData(string $contents) {
+       $oldRequestData = array();
+       if(isset($_SESSION["old_request"])) {
+           $oldRequestData = $_SESSION["old_request"];
+       }
+
+       if(empty($oldRequestData)) {
+           $contents = $this->excludeOldDataHolders($contents);
+       } else {
+           $contents = $this->includeOldRequestData($contents, $oldRequestData);
+           unset($_SESSION["old_request"]);
+       }
+
+       return $contents;
+    }
+
+    private function includeOldRequestData(string $contents, array $oldRequestData) {
+        $start = 0;
+        while(($start = strpos($contents, "@old.(", $start)) !== false) {
+            $endHolder = strpos($contents, ")", $start);
+            $holder = substr($contents, $start, ($endHolder + 1) - $start);
+            $requestKey = $this->extractKeyFromHolder($holder);
+            if(array_key_exists($requestKey, $oldRequestData)) {
+                $contents = str_replace($holder, $oldRequestData[$requestKey], $contents);
+            }
+        }
+
+        return $contents;
+    }
+
+    private function excludeOldDataHolders(string $contents) {
+        $start = 0;
+        while(($start = strpos($contents, "@old.(", $start)) !== false) {
+            $holderEnd = strpos($contents, ")", $start);
+            $holder = substr($contents, $start, ($holderEnd + 1) - $start);
+            $contents = str_replace($holder, "", $contents);
+            $start++;
+        }
+
+        return $contents;
+    }
+
+    private function handleIncludes(string $contents) {
+        $start = 0;
+        while(($start = strpos($contents, "@include.(", $start)) !== false) {
+            $endHolder = strpos($contents, ")", $start);
+            $holder = substr($contents, $start, ($endHolder + 1) - $start);
+            $fileName = $this->extractKeyFromHolder($holder);
+            $path = $this->includesPath . "/" . $fileName . ".html";
+            if(!file_exists($path)) {
+                throw new Exception("File not found", HttpCodes::INTERNAL_SERVER_ERROR);
+            }
+            $includeContents = file_get_contents($path);
+
+            $contents = str_replace($holder, $includeContents, $contents);
+
+            $start++;
         }
 
         return $contents;

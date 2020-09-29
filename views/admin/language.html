@@ -1,17 +1,11 @@
 @header;
 <div class="container">
     <div class="nav-custom">
-        <ul>
-            <li><a href="{base_url}views/adm/home.php">Home</a></li>
-            <li><a href="{base_url}views/adm/insert.php">Add Words</a></li>
-            <li><a href="{base_url}views/adm/modify.php">Update/Remove Words</a></li>
-            <li><a href="{base_url}views/adm/managelanguages.php">Manage Languages</a></li>
-            <li><a href="{base_url}views/adm/addAdmin.php">Add Admin Account</a></li>
-            <li><a href="{base_url}views/auth/logout.php">Logout</a></li>
-        </ul>
+        @include.(navigation)
     </div>
     <div class="row content-wrapper">
         <div class="col-md-12 col-lg-12 col-sm-12">
+            <div class="content-title">Add new Language</div>
             <div class="form-group">
                 <div style="height: 50px;">
                     <div id="alert-add" class="notification" style="display: none">
@@ -40,6 +34,7 @@
     </div>
     <div class="row content-wrapper">
         <div class="col-md-12 col-lg-12 col-sm-12">
+            <div class="content-title">Remove Language</div>
             <div class="form-group">
                 <div style="height: 50px;">
                     <div id="alert-remove" class="notification" style="display: none">
@@ -62,6 +57,7 @@
     </div>
     <div class="row content-wrapper">
         <div class="col-md-12 col-lg-12 col-sm-12">
+            <div class="content-title">Update Language</div>
             <div class="form-group">
                 <div style="height: 50px;">
                     <div id="alert-update" class="notification" style="display: none">

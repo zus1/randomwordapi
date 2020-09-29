@@ -18,6 +18,7 @@ class Factory
     const TYPE_WORDS_BULK = "words_bulk";
     const TYPE_WORDS_JSON = "words_json";
     const TYPE_WORDS_CSV = "words_csv";
+    const TYPE_RESPONSE = "response";
     const TYPE_METHOD_MAPPING = array(
         self::TYPE_CONTROLLER => "getController",
         self::TYPE_DATABASE => "getDatabase",
@@ -35,13 +36,14 @@ class Factory
         self::TYPE_WORDS_BULK => "getWordsBulk",
         self::TYPE_WORDS_CSV => "getWordsCsv",
         self::TYPE_WORDS_JSON => "getWordsJson",
+        self::TYPE_RESPONSE => "getResponse",
     );
     private static $instances = array();
 
     /**
      * @param string $type
      * @param bool $singleton
-     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words|WordsBulk|WordsJson|WordsCsv
+     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words|WordsBulk|WordsJson|WordsCsv|Response
      */
     public static function getObject(string $type, bool $singleton=false) {
         if(!array_key_exists($type, self::TYPE_METHOD_MAPPING)) {
@@ -61,7 +63,7 @@ class Factory
     }
 
     private function getController() {
-        return new Controller($this->getRequest(), $this->getHtmlParser(), $this->getValidator(), $this->getUser(), $this->getSession());
+        return new Controller($this->getRequest(), $this->getHtmlParser(), $this->getValidator(), $this->getUser(), $this->getSession(), $this->getResponse());
     }
 
     private function getApiController() {
@@ -73,7 +75,7 @@ class Factory
     }
 
     private function getHtmlParser() {
-        return new HtmlParser($this->getSession());
+        return new HtmlParser($this->getSession(), $this->getRequest());
     }
 
     private function getRouter() {
@@ -89,7 +91,7 @@ class Factory
     }
 
     private function getRequest() {
-        return new Request();
+        return new Request($this->getSession());
     }
 
     private function getApiException() {
@@ -122,5 +124,9 @@ class Factory
 
     private function getWordsJson() {
         return new WordsJson($this->getValidator());
+    }
+
+    private function getResponse() {
+        return new Response($this->getSession(), $this->getHtmlParser(), $this->getRequest());
     }
 }

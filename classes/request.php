@@ -2,11 +2,15 @@
 
 class Request
 {
-    private $requestVars = array();
+    private $session;
 
-    public function __construct() {
+    private $requestVars = array();
+    private static $_requestLoaded = false;
+
+    public function __construct(Session $session) {
+        $this->session = $session;
         array_walk($_REQUEST, function($value, $key) {
-           $this->requestVars[$key] = $value;
+            $this->requestVars[$key] = $value;
         });
     }
 
@@ -20,6 +24,10 @@ class Request
         }
 
         return $default;
+    }
+
+    public function getAll() {
+        return $this->requestVars;
     }
 
     public function file($key) {

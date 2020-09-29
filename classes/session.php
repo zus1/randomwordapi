@@ -13,4 +13,6 @@ class Session
         $this->startSession();
         $_SESSION[User::USER_SESSION_KEY] = $userEmail;
     }
+
+    //public function addOldRequest()
 }

@@ -4,17 +4,19 @@
 class Controller
 {
     private $request;
+    private $response;
     private $htmlParser;
     private $validator;
     private $user;
     private $session;
 
-    public function __construct(Request $request, HtmlParser $htmlParser, Validator $validator, User $user, Session $session) {
+    public function __construct(Request $request, HtmlParser $htmlParser, Validator $validator, User $user, Session $session, Response $response) {
         $this->request = $request;
         $this->htmlParser = $htmlParser;
         $this->validator = $validator;
         $this->user = $user;
         $this->session = $session;
+        $this->response = $response;
     }
 
     public function webRoot() {
@@ -29,7 +31,11 @@ class Controller
         //$this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_SUCCESS_KEY, "This is success message");
         $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_ERROR_KEY, "This is error message");
         $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_WARNING_KEY, "This is warning message");
-        return $this->htmlParser->parseView("admin:test", array("var1" => "value1", "var2" => "value2", "var3", "array_data" => $arrayData, "array_data2" => $arrayData2));
+        //return "bla";
+        return $this->response->returnView("admin:test", array("var1" => "value1", "var2" => "value2", "var3", "array_data" => $arrayData, "array_data2" => $arrayData2));
+        //return $this->htmlParser->parseView("admin:test", array("var1" => "value1", "var2" => "value2", "var3", "array_data" => $arrayData, "array_data2" => $arrayData2));
+        //Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/documentation.php");
+        //$this->response->withOldData()->returnRedirect(HttpParser::baseUrl() . "views/documentation.php");
     }
 
     public function login() {
@@ -73,7 +79,7 @@ class Controller
     }
 
     public function adminHome() {
-        return "home";
+        $this->response->returnRedirect(HttpParser::baseUrl() . "views/adm/insert.php");
     }
 
     public function adminAddAdmin() {
@@ -123,12 +129,12 @@ class Controller
 
 
         $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_SUCCESS_KEY, "Admin account added");
-        Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/adm/addadmin.php");
+        $this->response->withOldData()->returnRedirect(HttpParser::baseUrl() . "views/adm/addadmin.php");
     }
 
     private function onAddAdminException(Exception $e) {
         $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_ERROR_KEY, $e->getMessage());
-        Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/adm/addadmin.php");
+        $this->response->withOldData()->returnRedirect(HttpParser::baseUrl() . "views/adm/addadmin.php");
     }
 
     public function adminAddWords() {
@@ -163,7 +169,7 @@ class Controller
             $suffix = ($totalAdded > 1 || $totalAdded === 0)? " Words" : " Word";
             $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_SUCCESS_KEY, "Added " . $totalAdded . $suffix);
         }
-        Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/adm/insert.php");
+        $this->response->withOldData()->returnRedirect(HttpParser::baseUrl() . "views/adm/insert.php");
     }
 
     private function getMultipleWordsParameters() {

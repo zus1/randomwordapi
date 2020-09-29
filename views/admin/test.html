@@ -1,6 +1,10 @@
 @header;
 <div>
 
+    @old.(bla)
+    <br><br>
+    @include.(navigation)
+    <br><br>
 
     @session.success?
     <div class="alert alert-success">
@@ -43,6 +47,8 @@
     <b>this is value: @value</b><br><br>
     @endforeach
     <br>
+
+    @include.(navigation)
 
     <b>{bootstrap_css}</b><br>
     {main_css} <br>
