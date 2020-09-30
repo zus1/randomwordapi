@@ -21,6 +21,7 @@
                 </div>
             </div>
             <form action="{base_url}views/adm/doaddadmin.php" method="post">
+                {csrf_token}
                 <div class="form-group">
                     <input type="text" class="form-control" name="email" placeholder="email" value="@old.(email)">
                 </div>

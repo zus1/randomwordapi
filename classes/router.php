@@ -5,11 +5,13 @@ class Router
     const REQUEST_POST = 'post';
     const REQUEST_GET = "get";
     private $user;
+    private $guardian;
 
     private $supportedRequestMethods = array(self::REQUEST_GET, self::REQUEST_POST);
 
-    public function __construct(User $user) {
+    public function __construct(User $user, Guardian $guardian) {
         $this->user = $user;
+        $this->guardian = $guardian;
     }
 
     public function webRoutes() {
@@ -56,7 +58,7 @@ class Router
             '/' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'webRoot', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/adm/home.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminHome', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/insert.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddWords', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
-            '/views/adm/doinsert.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminDoAddWords', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
+            '/views/adm/doinsert.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminDoAddWords', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true, "csrf_protection" => true),
             '/views/adm/modify.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminModifyWords', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/ajaxlengths.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminModifyWordsLengths', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/ajaxwords.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminModifyWordsGetWords', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
@@ -68,7 +70,7 @@ class Router
             '/views/adm/updatelanguageresources.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminUpdateLanguageNameAndFilters', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/doupdatelanguage.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminUpdateLanguage', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
             '/views/adm/addadmin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddAdmin', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
-            '/views/adm/doaddadmin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminDoAddAdmin', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
+            '/views/adm/doaddadmin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminDoAddAdmin', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true, "csrf_protection" => true),
             '/views/adm/localization.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminLocalization', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/addlocal.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddLocal', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
             '/views/adm/removelocal.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminRemoveLocal', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
@@ -108,6 +110,8 @@ class Router
         } catch(Exception $e) {
             $this->redirect(HttpParser::baseUrl() . "views/error.php?error=" . $e->getMessage() . "&code=" . $e->getCode(), $e->getCode());
         }
+
+        $this->guardian->regenerateCsrfToken();
 
         $classObject = Factory::getObject($route['class']);
         try {
@@ -180,6 +184,9 @@ class Router
                     $this->redirect(Config::get(Config::USER_HOME), HttpCodes::HTTP_FORBIDDEN);
                 }
             }
+        }
+        if(isset($route["csrf_protection"]) && $route["csrf_protection"] === true) {
+            $this->guardian->checkCsrfToken();
         }
         if(!empty($route["role"])) {
             if(!$this->user->hasRole($route['role'])) {

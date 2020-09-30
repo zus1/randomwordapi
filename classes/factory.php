@@ -20,6 +20,7 @@ class Factory
     const TYPE_WORDS_CSV = "words_csv";
     const TYPE_RESPONSE = "response";
     const TYPE_LOCALIZATION = 'localization';
+    const TYPE_GUARDIAN = "guardian";
     const TYPE_METHOD_MAPPING = array(
         self::TYPE_CONTROLLER => "getController",
         self::TYPE_DATABASE => "getDatabase",
@@ -38,7 +39,8 @@ class Factory
         self::TYPE_WORDS_CSV => "getWordsCsv",
         self::TYPE_WORDS_JSON => "getWordsJson",
         self::TYPE_RESPONSE => "getResponse",
-        self::TYPE_LOCALIZATION => "getLocalization"
+        self::TYPE_LOCALIZATION => "getLocalization",
+        self::TYPE_GUARDIAN => "getGuardian",
     );
     private static $instances = array();
 
@@ -77,11 +79,11 @@ class Factory
     }
 
     private function getHtmlParser() {
-        return new HtmlParser($this->getSession(), $this->getRequest());
+        return new HtmlParser($this->getSession(), $this->getRequest(), $this->getGuardian());
     }
 
     private function getRouter() {
-        return new Router($this->getUser());
+        return new Router($this->getUser(), $this->getGuardian());
     }
 
     private function getUser() {
@@ -134,5 +136,9 @@ class Factory
 
     private function getLocalization() {
         return new Localization();
+    }
+
+    private function getGuardian() {
+        return new Guardian($this->getSession(), $this->getUser(), $this->getRequest());
     }
 }

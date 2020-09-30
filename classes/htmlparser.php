@@ -30,14 +30,16 @@ class HtmlParser
 
     private $session;
     private $request;
+    private $guardian;
 
-    public function __construct(Session $session, Request $request) {
+    public function __construct(Session $session, Request $request, Guardian $guardian) {
         $this->viewsPath = HttpParser::root() . "/views";
         $this->includesPath = HttpParser::root() . "/views/includes";
         $this->jsUrl = HttpParser::baseUrl() . "js";
         $this->cssUrl = HttpParser::baseUrl() . "css";
         $this->session = $session;
         $this->request = $request;
+        $this->guardian = $guardian;
     }
 
     public function formatValidatorErrorMessages(array $errorMessages) {
@@ -119,7 +121,6 @@ class HtmlParser
             } else {
                 $secondStart = strpos($contents, $tag . "?", $endFirst);
                 $secondEnd = $secondStart + strlen($tag . "?");
-                $second = substr($contents, $secondStart, ($secondEnd + 1) - $secondStart);
             }
 
             if($thirdPresent === true) {
@@ -401,6 +402,7 @@ class HtmlParser
             "{main_css}" => $this->cssUrl . "/main.css",
             "{bootstrap_js}" => $this->jsUrl . "/bootstrap.js",
             "{base_url}" => HttpParser::baseUrl(),
+            "{csrf_token}" => $this->generateCsrfTokenField()
         );
         array_walk($holders, function ($value, $key) use (&$contents) {
            if(strpos($contents, $key)) {
@@ -409,6 +411,15 @@ class HtmlParser
         });
 
         return $contents;
+    }
+
+    private function generateCsrfTokenField() {
+        $this->session->startSession();
+        $sessionKey = $this->guardian->getCsrfSessionKey();
+        $value = $_SESSION[$sessionKey];
+        $name = Guardian::CSRF_TOKEN_FIELD_NAME;
+
+        return sprintf("<input type='hidden' name='%s' value='%s'>", $name, $value);
     }
 
     private function handleLoops(string $contents, array $loopData) {
