@@ -35,6 +35,13 @@ class Router
             '/views/adm/updatelanguageresources.php',
             '/views/adm/doupdatelanguage.php',
             '/views/adm/doaddadmin.php',
+            '/views/test.php',
+            '/views/adm/localization.php',
+            '/views/adm/addlocal.php',
+            '/views/adm/removelocal.php',
+            '/views/adm/changegetlocalactive.php',
+            '/views/adm/changelocalactive.php',
+
         );
     }
 
@@ -62,11 +69,17 @@ class Router
             '/views/adm/doupdatelanguage.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminUpdateLanguage', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
             '/views/adm/addadmin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddAdmin', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/doaddadmin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminDoAddAdmin', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
+            '/views/adm/localization.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminLocalization', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
+            '/views/adm/addlocal.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddLocal', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
+            '/views/adm/removelocal.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminRemoveLocal', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
+            '/views/adm/changegetlocalactive.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminChangeLocalGetActive', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
+            '/views/adm/changelocalactive.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminChangeLocalActive', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
             '/views/documentation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'webApiDocs', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/auth/login.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'login', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false, 'redirect_auth' => true),
             '/views/auth/dologin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'doLogin', 'request' => self::REQUEST_POST, 'role' => "", 'auth' => false),
             '/views/auth/logout.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'logout', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => true),
             '/views/error.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'error', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
+            '/views/test.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'test', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
         );
     }
 

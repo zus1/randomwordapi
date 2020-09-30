@@ -9,14 +9,16 @@ class Controller
     private $validator;
     private $user;
     private $session;
+    private $localization;
 
-    public function __construct(Request $request, HtmlParser $htmlParser, Validator $validator, User $user, Session $session, Response $response) {
+    public function __construct(Request $request, HtmlParser $htmlParser, Validator $validator, User $user, Session $session, Response $response, Localization $local) {
         $this->request = $request;
         $this->htmlParser = $htmlParser;
         $this->validator = $validator;
         $this->user = $user;
         $this->session = $session;
         $this->response = $response;
+        $this->localization = $local;
     }
 
     public function webRoot() {
@@ -24,6 +26,10 @@ class Controller
     }
 
     public function webApiDocs() {
+        return $this->htmlParser->parseView("documentation");
+    }
+
+    public function test() {
         //return "added";
 
         $arrayData = array("key1" => "array_value_1", "key2" => "array_value_2");
@@ -348,6 +354,73 @@ class Controller
         }
 
         return json_encode(array("error" => 0, 'message' => "Language updated"));
+    }
+
+    public function adminLocalization() {
+        $availableLocals = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT tag FROM local", array(), array());
+        if(!$availableLocals) {
+            $availableLocals = array();
+        }
+
+        return $this->htmlParser->parseView("admin:localization", array("locals" => $availableLocals));
+    }
+
+    public function adminAddLocal() {
+        $tag = $this->request->input("tag");
+        if($this->validator->validate("tag", array(Validator::FILTER_ALPHA))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getFormattedErrorMessagesForDisplay()));
+        }
+        try {
+            $this->localization->addLocal($tag);
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage()));
+        }
+
+        return json_encode(array("error" => 0, "message" => "Local added"));
+    }
+
+    public function adminRemoveLocal() {
+        $tag = $this->request->input("tag");
+        if($this->validator->validate("tag", array(Validator::FILTER_ALPHA))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getFormattedErrorMessagesForDisplay()));
+        }
+        try {
+            $this->localization->removeLocal($tag);
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage()));
+        }
+
+        return json_encode(array("error" => 0, "message" => "Local removed"));
+    }
+
+    public function adminChangeLocalGetActive() {
+        $tag = $this->request->input("tag");
+        if($this->validator->validate("tag", array(Validator::FILTER_ALPHA))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getFormattedErrorMessagesForDisplay()));
+        }
+        try {
+            $activeState = $this->localization->getLocalActiveState($tag);
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage()));
+        }
+
+        return json_encode(array("error" => 0, "active" => $activeState));
+    }
+
+    public function adminChangeLocalActive() {
+        $tag = $this->request->input("tag");
+        $active = (int)$this->request->input("active");
+
+        if($this->validator->validate("tag", array(Validator::FILTER_ALPHA))->validate("active", array(Validator::FILTER_NUMERIC))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getFormattedErrorMessagesForDisplay()));
+        }
+        try {
+            $this->localization->changeActive($tag, $active);
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage()));
+        }
+
+        return json_encode(array("error" => 0, "message" => "New Local Activated, current moved to inactive"));
     }
 
     public function error() {

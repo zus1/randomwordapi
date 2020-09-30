@@ -1,4 +1,4 @@
-@header;
+@header-admin;
 <div class="container">
     <div class="login-box">
         <div class="row">
@@ -16,21 +16,23 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-12 col-lg-12 col-sm-12">
-                <div class="login-title">
-                    Login
+            <div class="col-md-6 col-lg-6 col-sm-6 offset-md-3 offset-sm-1">
+                <div class="content-wrapper-login">
+                    <div class="title">
+                        Login
+                    </div>
+                    <form action="{base_url}views/auth/dologin.php" method="post">
+                        <div class="form-group">
+                            <input type="text" name="user" class="form-control login-input" placeholder="username or email">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" name="password" class="form-control login-input" placeholder="password">
+                        </div>
+                        <div class="form-group" style="margin-top: 30px;">
+                            <input type="submit" value="login" class="login-button">
+                        </div>
+                    </form>
                 </div>
-                <form action="{base_url}views/auth/dologin.php" method="post">
-                    <div class="form-group">
-                        <input type="text" name="user" class="form-control login-input" placeholder="username or email">
-                    </div>
-                    <div class="form-group">
-                        <input type="password" name="password" class="form-control login-input" placeholder="password">
-                    </div>
-                    <div class="form-group login-button">
-                        <input type="submit" value="login" class="btn btn-lg btn-outline-secondary">
-                    </div>
-                </form>
             </div>
         </div>
     </div>
