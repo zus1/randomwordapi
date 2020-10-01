@@ -10,8 +10,9 @@ class Controller
     private $user;
     private $session;
     private $localization;
+    private $cms;
 
-    public function __construct(Request $request, HtmlParser $htmlParser, Validator $validator, User $user, Session $session, Response $response, Localization $local) {
+    public function __construct(Request $request, HtmlParser $htmlParser, Validator $validator, User $user, Session $session, Response $response, Localization $local, Cms $cms) {
         $this->request = $request;
         $this->htmlParser = $htmlParser;
         $this->validator = $validator;
@@ -19,6 +20,7 @@ class Controller
         $this->session = $session;
         $this->response = $response;
         $this->localization = $local;
+        $this->cms = $cms;
     }
 
     public function webRoot() {
@@ -421,6 +423,100 @@ class Controller
         }
 
         return json_encode(array("error" => 0, "message" => "New Local Activated, current moved to inactive"));
+    }
+
+    public function cmsPages() {
+        $pages = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT name, id FROM pages", array(), array());
+        if(!$pages) {
+            $pages = array();
+        }
+
+        return $this->htmlParser->parseView("cms:pages", array("pages" => $pages));
+    }
+
+    public function cmsAddPages() {
+        $name = $this->request->input("name");
+        $placeholders = $this->request->input("placeholders");
+
+        if($this->validator->validate("name", array(Validator::FILTER_ALPHA_NUM))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getFormattedErrorMessagesForDisplay()));
+        }
+
+        try {
+            $this->cms->addPage($name, $placeholders);
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage()));
+        }
+
+        return json_encode(array("error" => 0, "message" => "Page Added"));
+    }
+
+    public function cmsGetPageNameAndPlaceholders() {
+        $id = $this->request->input("id");
+
+        if($this->validator->validate("id", array(Validator::FILTER_NUMERIC))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getFormattedErrorMessagesForDisplay()));
+        }
+
+        $namePlaceholders = $this->cms->getPageNameAndPlaceholders($id);
+
+        return json_encode(array("error" => 0, "name" => $namePlaceholders["name"], "placeholders" => $namePlaceholders["placeholders"]));
+    }
+
+    public function cmsEditPages() {
+        $id = $this->request->input("id");
+        $name = $this->request->input("name");
+        $addHolders = $this->request->input("add-holders");
+        $changeHolders = $this->request->input("change-holders");
+        $decodedChangeHolders = json_decode($changeHolders, true);
+
+        if(json_last_error() !== JSON_ERROR_NONE) {
+            return json_encode(array("error" => 1, "message" => json_last_error_msg()));
+        }
+        if($this->validator->validate("id", array(Validator::FILTER_NUMERIC))->validate("name", array(Validator::FILTER_ALPHA_NUM))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getFormattedErrorMessagesForDisplay()));
+        }
+
+        $failedHoldersValidation = false;
+        if(!empty($decodedChangeHolders)) {
+            foreach($decodedChangeHolders as $holder) {
+                if($this->validator->validate("change_placeholders", array(Validator::FILTER_ALPHA_NUM_UNDERSCORE), $holder)->isFailed()) {
+                    $failedHoldersValidation = true;
+                    break;
+                }
+            }
+        }
+        if($failedHoldersValidation === true) {
+            return json_encode(array("error" => 1, "message" => "Change placeholders malformed"));
+        }
+
+        try {
+            $this->cms->editPage($id, $name, $addHolders, $decodedChangeHolders);
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage()));
+        }
+
+        return json_encode(array("error" => 0, "message" => "Page Edited"));
+    }
+
+    public function cmsRemovePages() {
+        $id = $this->request->input("id");
+
+        if($this->validator->validate("id", array(Validator::FILTER_NUMERIC))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getFormattedErrorMessagesForDisplay()));
+        }
+
+        try {
+            $this->cms->removePage($id);
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage()));
+        }
+
+        return json_encode(array("error" => 0, "message" => "Page Removed"));
+    }
+
+    public function cmsContent() {
+
     }
 
     public function error() {

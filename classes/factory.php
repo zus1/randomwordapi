@@ -21,6 +21,7 @@ class Factory
     const TYPE_RESPONSE = "response";
     const TYPE_LOCALIZATION = 'localization';
     const TYPE_GUARDIAN = "guardian";
+    const TYPE_CMS = "cms";
     const TYPE_METHOD_MAPPING = array(
         self::TYPE_CONTROLLER => "getController",
         self::TYPE_DATABASE => "getDatabase",
@@ -41,6 +42,7 @@ class Factory
         self::TYPE_RESPONSE => "getResponse",
         self::TYPE_LOCALIZATION => "getLocalization",
         self::TYPE_GUARDIAN => "getGuardian",
+        self::TYPE_CMS => "getCms",
     );
     private static $instances = array();
 
@@ -67,7 +69,7 @@ class Factory
     }
 
     private function getController() {
-        return new Controller($this->getRequest(), $this->getHtmlParser(), $this->getValidator(), $this->getUser(), $this->getSession(), $this->getResponse(), $this->getLocalization());
+        return new Controller($this->getRequest(), $this->getHtmlParser(), $this->getValidator(), $this->getUser(), $this->getSession(), $this->getResponse(), $this->getLocalization(), $this->getCms());
     }
 
     private function getApiController() {
@@ -140,5 +142,9 @@ class Factory
 
     private function getGuardian() {
         return new Guardian($this->getSession(), $this->getUser(), $this->getRequest());
+    }
+
+    private function getCms() {
+        return new Cms($this->getValidator());
     }
 }

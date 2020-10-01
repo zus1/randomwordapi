@@ -13,6 +13,7 @@ class Validator
     const FILTER_ALPHA_LATIN = "alpha_latin";
     const FILTER_CUSTOM = "custom";
     const FILTER_ALPHA_DASH = "alpha_dash";
+    const FILTER_ALPHA_NUM_UNDERSCORE = "alpha_num_underscore";
 
     private $messages = array();
 
@@ -28,7 +29,7 @@ class Validator
         return array(
             self::FILTER_ALPHA_NUM, self::FILTER_ALPHA, self::FILTER_ALPHA_NUM_DASH, self::FILTER_NUMERIC,
             self::FILTER_URL, self::FILTER_EMAIL, self::FILTER_PASSWORD, self::FILTER_CUSTOM, self::FILTER_ALPHA_LATIN,
-            self::FILTER_ALPHA_DASH
+            self::FILTER_ALPHA_DASH, self::FILTER_ALPHA_NUM_UNDERSCORE,
         );
     }
 
@@ -42,7 +43,8 @@ class Validator
             self::FILTER_EMAIL => 'filterEmail',
             self::FILTER_PASSWORD => 'filterPassword',
             self::FILTER_URL => 'filterUrl',
-            self::FILTER_ALPHA_DASH => 'filterAlphaDash'
+            self::FILTER_ALPHA_DASH => 'filterAlphaDash',
+            self::FILTER_ALPHA_NUM_UNDERSCORE => 'filterAlphaNumUnderscore',
         );
     }
 
@@ -57,7 +59,8 @@ class Validator
             self::FILTER_PASSWORD => "Field {field} can contain only valid password characters",
             self::FILTER_CUSTOM => "Field {field} contains invalid characters",
             self::FILTER_URL => "Field {field} must be valid url",
-            self::FILTER_ALPHA_DASH => "Field {field} can contain only letters and dashes (including underscore)"
+            self::FILTER_ALPHA_DASH => "Field {field} can contain only letters and dashes (including underscore)",
+            self::FILTER_ALPHA_NUM_UNDERSCORE => "Field {field} can contain only letters, numbers and underscore"
         );
     }
 
@@ -183,6 +186,10 @@ class Validator
 
     public function filterAlphaDash($value) {
         return $this->filter($value, "/[^A-Za-z_ ]/");
+    }
+
+    public function filterAlphaNumUnderscore($value) {
+        return $this->filter($value, "/[^A-Za-z0-9_]/");
     }
 
     public function filter($value, string $pattern) {
