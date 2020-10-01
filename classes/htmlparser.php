@@ -31,8 +31,9 @@ class HtmlParser
     private $session;
     private $request;
     private $guardian;
+    private $extender;
 
-    public function __construct(Session $session, Request $request, Guardian $guardian) {
+    public function __construct(Session $session, Request $request, Guardian $guardian, HtmlParserExtender $extender) {
         $this->viewsPath = HttpParser::root() . "/views";
         $this->includesPath = HttpParser::root() . "/views/includes";
         $this->jsUrl = HttpParser::baseUrl() . "js";
@@ -40,6 +41,7 @@ class HtmlParser
         $this->session = $session;
         $this->request = $request;
         $this->guardian = $guardian;
+        $this->extender = $extender;
     }
 
     public function formatValidatorErrorMessages(array $errorMessages) {
@@ -396,14 +398,21 @@ class HtmlParser
         return $contents;
     }
 
-    private function handleGeneralHolders(string $contents) {
-        $holders = array(
+    private function getGeneralHolders() {
+        $defaultHolders = array(
             "{bootstrap_css}" => $this->cssUrl . "/bootstrap.css",
             "{main_css}" => $this->cssUrl . "/main.css",
             "{bootstrap_js}" => $this->jsUrl . "/bootstrap.js",
             "{base_url}" => HttpParser::baseUrl(),
             "{csrf_token}" => $this->generateCsrfTokenField()
         );
+        $extend = $this->extender->includeToAllViews();
+
+        return array_merge($extend, $defaultHolders); //if keys overlap, override extend with defaults
+    }
+
+    private function handleGeneralHolders(string $contents) {
+        $holders = $this->getGeneralHolders();
         array_walk($holders, function ($value, $key) use (&$contents) {
            if(strpos($contents, $key)) {
                $contents = str_replace($key, $value, $contents);

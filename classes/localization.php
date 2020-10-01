@@ -68,4 +68,13 @@ class Localization
         Factory::getObject(Factory::TYPE_DATABASE, true)->execute("UPDATE local SET active = ? WHERE tag = ?",
             array("integer", "string"), array($active, $tag));
     }
+
+    public function getAllLocals() {
+        $locals = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT tag, active FROM local", array(), array());
+        if(!$locals) {
+            return array();
+        }
+
+        return $locals;
+    }
 }

@@ -22,6 +22,7 @@ class Factory
     const TYPE_LOCALIZATION = 'localization';
     const TYPE_GUARDIAN = "guardian";
     const TYPE_CMS = "cms";
+    const EXTENDER_HTML_PARSER = "extender_html_parser";
     const TYPE_METHOD_MAPPING = array(
         self::TYPE_CONTROLLER => "getController",
         self::TYPE_DATABASE => "getDatabase",
@@ -43,6 +44,9 @@ class Factory
         self::TYPE_LOCALIZATION => "getLocalization",
         self::TYPE_GUARDIAN => "getGuardian",
         self::TYPE_CMS => "getCms",
+    );
+    const EXTENDER_METHOD_MAPPING = array(
+        self::EXTENDER_HTML_PARSER => "getExtenderHtmlParser",
     );
     private static $instances = array();
 
@@ -68,6 +72,22 @@ class Factory
         return call_user_func([new self(), self::TYPE_METHOD_MAPPING[$type]]);
     }
 
+    /**
+     * @param string $extenderType
+     * @return HtmlParserExtender
+     */
+    public static function getExtender(string $extenderType) {
+        if(!in_array($extenderType, self::EXTENDER_METHOD_MAPPING)) {
+            return null;
+        }
+        if(!isset(self::$instances[$extenderType])) {
+            $object = call_user_func([new self(), self::EXTENDER_METHOD_MAPPING[$extenderType]]);
+            self::$instances[$extenderType] = $object;
+        }
+
+        return self::$instances[$extenderType];
+    }
+
     private function getController() {
         return new Controller($this->getRequest(), $this->getHtmlParser(), $this->getValidator(), $this->getUser(), $this->getSession(), $this->getResponse(), $this->getLocalization(), $this->getCms());
     }
@@ -81,7 +101,7 @@ class Factory
     }
 
     private function getHtmlParser() {
-        return new HtmlParser($this->getSession(), $this->getRequest(), $this->getGuardian());
+        return new HtmlParser($this->getSession(), $this->getRequest(), $this->getGuardian(), $this->getExtenderHtmlParser());
     }
 
     private function getRouter() {
@@ -146,5 +166,9 @@ class Factory
 
     private function getCms() {
         return new Cms($this->getValidator());
+    }
+
+    private function getExtenderHtmlParser() {
+        return new HtmlParserExtender();
     }
 }
