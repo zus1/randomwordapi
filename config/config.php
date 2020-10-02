@@ -14,6 +14,7 @@ class Config
     const API_MAX_WORDS = 'api_max_words';
     const API_MIN_WORD_LENGTH = "min_word_length";
     const API_MIN_WORDS = "api_min_words";
+    const LOCAL_DEFAULT = "local_default";
     private static $_initialized = false;
     private static $_configArray = array(
         self::ADMIN_HOME => "",
@@ -28,6 +29,7 @@ class Config
         self::API_MAX_WORDS => "",
         self::API_MIN_WORD_LENGTH => "",
         self::API_MIN_WORDS => "",
+        self::LOCAL_DEFAULT => "",
     );
 
     private static function init() {
@@ -48,6 +50,7 @@ class Config
         self::$_configArray[self::API_MAX_WORDS] = $initVariables["API_MAX_WORDS"];
         self::$_configArray[self::API_MIN_WORD_LENGTH] = $initVariables["API_MIN_WORD_LENGTH"];
         self::$_configArray[self::API_MIN_WORDS] = $initVariables["API_MIN_WORDS"];
+        self::$_configArray[self::LOCAL_DEFAULT] = $initVariables["LOCAL_DEFAULT"];
 
         self::$_initialized = true;
     }

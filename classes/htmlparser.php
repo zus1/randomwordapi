@@ -96,7 +96,7 @@ class HtmlParser
             $contents = $this->handleIfTags($contents, $ifTag);
         }
         $contents = $this->includeOneTimeMessage($contents);
-        $contents = $this->handleGeneralHolders($contents);
+        $contents = $this->handleGeneralHolders($contents, $view);
         if(!empty($data)) {
             $contents = $this->handleViewSpecificHolders($contents, $data);
         }
@@ -398,7 +398,7 @@ class HtmlParser
         return $contents;
     }
 
-    private function getGeneralHolders() {
+    private function getGeneralHolders(string $view) {
         $defaultHolders = array(
             "{bootstrap_css}" => $this->cssUrl . "/bootstrap.css",
             "{main_css}" => $this->cssUrl . "/main.css",
@@ -407,14 +407,17 @@ class HtmlParser
             "{csrf_token}" => $this->generateCsrfTokenField()
         );
         $extend = $this->extender->includeToAllViews();
+        $extendViewSpecific = $this->extender->includeToSpecificView($view);
 
-        return array_merge($extend, $defaultHolders); //if keys overlap, override extend with defaults
+        $defaultHolders = array_merge($defaultHolders, $extend);
+        $defaultHolders = array_merge($defaultHolders, $extendViewSpecific);
+        return $defaultHolders; //if keys overlap, override defaults with extended ones
     }
 
-    private function handleGeneralHolders(string $contents) {
-        $holders = $this->getGeneralHolders();
+    private function handleGeneralHolders(string $contents, string $view) {
+        $holders = $this->getGeneralHolders($view);
         array_walk($holders, function ($value, $key) use (&$contents) {
-           if(strpos($contents, $key)) {
+           if(strpos($contents, $key) || substr($contents, 0, strlen($key)) === $key) {
                $contents = str_replace($key, $value, $contents);
            }
         });

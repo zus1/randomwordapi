@@ -2,10 +2,39 @@
 
 class Cms
 {
+    const ACTION_INSERT = "insert";
+    const ACTION_UPDATE = "update";
+
+    const PAGE_DATA_FILTER_PAGE = "page_name";
+
+    private $occurredAction;
     private $validator;
 
     public function __construct(Validator $validator) {
         $this->validator = $validator;
+    }
+
+    public function getOccurredAction() {
+        return $this->occurredAction;
+    }
+
+    public function getPageDataForLocalWithFilter(string $local, string $filterKey="", ?string $filterValue="") {
+        $pageData = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT placeholder, content, page_name FROM page_content WHERE local = ?",
+            array("string"), array($local));
+        if(!$pageData) {
+            return array();
+        }
+        if($filterKey === "") {
+            return $pageData;
+        }
+
+        return $this->applyFilter($pageData, $filterKey, $filterValue);
+    }
+
+    private function applyFilter(array $pageData, string $filterKey, string $filterValue) {
+        return array_filter($pageData, function($value) use($filterValue, $filterKey) {
+           return $value[$filterKey] === $filterValue;
+        });
     }
 
     public function addPage(string $name, string $placeholders) {
@@ -75,6 +104,52 @@ class Cms
         }
 
         Factory::getObject(Factory::TYPE_DATABASE, true)->execute("DELETE FROM pages WHERE id = ?", array("integer"), array($pageId));
+    }
+
+    public function getPagePlaceholdersByName(string $pageName) {
+        $holders = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT placeholders FROM pages WHERE name = ?",
+            array("string"), array($pageName));
+        if(!$holders) {
+            return array();
+        }
+
+        return explode(",", $holders[0]["placeholders"]);
+    }
+
+    public function getContentForPlaceholder(string $pageName, string $local, string $placeholder, bool $contentOnly=true) {
+        $content = Factory::getObject(Factory::TYPE_DATABASE, true)->select(
+            "SELECT content, id FROM page_content WHERE page_name = ? AND local = ? AND placeholder = ?",
+            array("string", "string", "string"), array($pageName, $local, $placeholder)
+        );
+        if(!$content) {
+            return "";
+        }
+
+        if($contentOnly === true) {
+            return $content[0]["content"];
+        }
+
+        return $content;
+    }
+
+    public function editPagePlaceholderContent(string $pageName, string $local, string $placeholder, string $content) {
+        $existing = $this->getContentForPlaceholder($pageName, $local, $placeholder, false);
+        if(strip_tags($content) === "") {
+            $content = "";
+        }
+        if($existing) {
+            if($content === $existing[0]["content"]) {
+                throw new Exception("No change");
+            }
+            $this->occurredAction = self::ACTION_UPDATE;
+            Factory::getObject(Factory::TYPE_DATABASE, true)->execute("UPDATE page_content SET content = ? WHERE id = ?",
+                array("string", "integer"), array($content, $existing[0]['id']));
+        } else {
+            $this->occurredAction = self::ACTION_INSERT;
+            Factory::getObject(Factory::TYPE_DATABASE, true)->execute(
+                "INSERT INTO page_content (page_name, local, placeholder, content) VALUES (?,?,?,?)",
+                array("string", "string", "string", "string"), array($pageName, $local, $placeholder, $content));
+        }
     }
 
     private  function validatePagePlaceholders(array $holdersArray) {

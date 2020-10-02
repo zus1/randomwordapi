@@ -14,6 +14,7 @@ class Validator
     const FILTER_CUSTOM = "custom";
     const FILTER_ALPHA_DASH = "alpha_dash";
     const FILTER_ALPHA_NUM_UNDERSCORE = "alpha_num_underscore";
+    const FILTER_HTML = "html";
 
     private $messages = array();
 
@@ -29,7 +30,7 @@ class Validator
         return array(
             self::FILTER_ALPHA_NUM, self::FILTER_ALPHA, self::FILTER_ALPHA_NUM_DASH, self::FILTER_NUMERIC,
             self::FILTER_URL, self::FILTER_EMAIL, self::FILTER_PASSWORD, self::FILTER_CUSTOM, self::FILTER_ALPHA_LATIN,
-            self::FILTER_ALPHA_DASH, self::FILTER_ALPHA_NUM_UNDERSCORE,
+            self::FILTER_ALPHA_DASH, self::FILTER_ALPHA_NUM_UNDERSCORE, self::FILTER_HTML,
         );
     }
 
@@ -45,6 +46,7 @@ class Validator
             self::FILTER_URL => 'filterUrl',
             self::FILTER_ALPHA_DASH => 'filterAlphaDash',
             self::FILTER_ALPHA_NUM_UNDERSCORE => 'filterAlphaNumUnderscore',
+            self::FILTER_HTML => "filterHTML",
         );
     }
 
@@ -60,7 +62,8 @@ class Validator
             self::FILTER_CUSTOM => "Field {field} contains invalid characters",
             self::FILTER_URL => "Field {field} must be valid url",
             self::FILTER_ALPHA_DASH => "Field {field} can contain only letters and dashes (including underscore)",
-            self::FILTER_ALPHA_NUM_UNDERSCORE => "Field {field} can contain only letters, numbers and underscore"
+            self::FILTER_ALPHA_NUM_UNDERSCORE => "Field {field} can contain only letters, numbers and underscore",
+            self::FILTER_HTML => "Field {field} must contain valid html",
         );
     }
 
@@ -190,6 +193,16 @@ class Validator
 
     public function filterAlphaNumUnderscore($value) {
         return $this->filter($value, "/[^A-Za-z0-9_]/");
+    }
+
+    public function filterHTML($value) {
+        $plainText = strip_tags($value);
+        $sanitized = $this->filter($plainText, "/[^A-Za-z0-9_ ?()!.:&,;\/]/");
+        if($plainText !== $sanitized) {
+            return $value . "_suffix"; //make it fail
+        }
+
+        return $value; //make it pass
     }
 
     public function filter($value, string $pattern) {

@@ -49,6 +49,9 @@ class Router
             '/views/cms/getnameandholders.php',
             '/views/cms/editpages.php',
             '/views/cms/removepages.php',
+            '/views/cms/getcontentplaceholders.php',
+            '/views/cms/getplaceholdercontent.php',
+            '/views/cms/editpagecontent.php',
         );
     }
 
@@ -87,6 +90,9 @@ class Router
             '/views/cms/editpages.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'cmsEditPages', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
             '/views/cms/removepages.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'cmsRemovePages', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
             '/views/cms/content.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'cmsContent', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
+            '/views/cms/getcontentplaceholders.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'cmsGetContentPlaceholders', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
+            '/views/cms/getplaceholdercontent.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'cmsGetPlaceholderContent', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
+            '/views/cms/editpagecontent.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'cmsEditPageContent', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
             '/views/documentation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'webApiDocs', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/auth/login.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'login', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false, 'redirect_auth' => true),
             '/views/auth/dologin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'doLogin', 'request' => self::REQUEST_POST, 'role' => "", 'auth' => false),

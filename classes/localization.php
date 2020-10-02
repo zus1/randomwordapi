@@ -5,6 +5,22 @@ class Localization
 
     const STATE_ACTIVE = 1;
     const STATE_INACTIVE = 0;
+    private $defaultLocal;
+
+    public function __construct(){
+        $this->defaultLocal = Config::get(Config::LOCAL_DEFAULT, "en");
+    }
+
+    public function getActive() {
+        $active = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT tag FROM local WHERE active = ?",
+            array("integer"), array(self::STATE_ACTIVE));
+
+        if(!$active) {
+            return $this->defaultLocal;
+        }
+
+        return $active[0]["tag"];
+    }
 
     public function addLocal(string $tag) {
         $active = 0;

@@ -11,8 +11,9 @@ class Controller
     private $session;
     private $localization;
     private $cms;
+    private $web;
 
-    public function __construct(Request $request, HtmlParser $htmlParser, Validator $validator, User $user, Session $session, Response $response, Localization $local, Cms $cms) {
+    public function __construct(Request $request, HtmlParser $htmlParser, Validator $validator, User $user, Session $session, Response $response, Localization $local, Cms $cms, Web $web) {
         $this->request = $request;
         $this->htmlParser = $htmlParser;
         $this->validator = $validator;
@@ -21,6 +22,7 @@ class Controller
         $this->response = $response;
         $this->localization = $local;
         $this->cms = $cms;
+        $this->web = $web;
     }
 
     public function webRoot() {
@@ -28,7 +30,8 @@ class Controller
     }
 
     public function webApiDocs() {
-        return $this->htmlParser->parseView("documentation");
+        $pageData = $this->web->getPageData(Web::PAGE_DOCUMENTATION);
+        return $this->htmlParser->parseView("documentation", $pageData);
     }
 
     public function test() {
@@ -516,7 +519,82 @@ class Controller
     }
 
     public function cmsContent() {
+        $pages = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT name FROM pages", array(), array());
+        $locals = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT tag FROM local", array(), array());
 
+        return $this->htmlParser->parseView("cms:content", array("pages" => $pages, "locals" => $locals));
+    }
+
+    public function cmsGetContentPlaceholders() {
+        $pageName = $this->request->input("page-name");
+
+        if($this->validator->validate("page-name", array(Validator::FILTER_ALPHA_NUM))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getFormattedErrorMessagesForDisplay()));
+        }
+
+        $placeholders = $this->cms->getPagePlaceholdersByName($pageName);
+
+        return json_encode(array("error" => 0, "placeholders" => $placeholders));
+    }
+
+    public function cmsGetPlaceholderContent() {
+        $pageName = $this->request->input("page-name");
+        $local = $this->request->input("local");
+        $placeholder = $this->request->input("placeholder");
+
+        if(
+            $this->validator->validate("page_name", array(Validator::FILTER_ALPHA_NUM))
+                ->validate("local", array(Validator::FILTER_ALPHA))
+                ->validate("placeholder", array(Validator::FILTER_ALPHA_NUM_UNDERSCORE))->isFailed()
+        ) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getMessages()));
+        }
+
+        $placeholderContent = $this->cms->getContentForPlaceholder($pageName, $local, $placeholder);
+
+        return json_encode(array("error" => 0, "content" => $placeholderContent));
+    }
+
+    public function cmsEditPageContent() {
+        $pageName = $this->request->input("page-name");
+        $local= $this->request->input("local");
+        $placeholder = $this->request->input("placeholder");
+        $content = $this->request->input("content");
+
+        if($this->validator->validate("page-name", array(Validator::FILTER_ALPHA_NUM))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getMessages()[0]));
+        }
+        $this->validator->resetMessages();;
+        if($this->validator->validate("local", array(Validator::FILTER_ALPHA))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getMessages()[0]));
+        }
+        $this->validator->resetMessages();;
+        if($this->validator->validate("placeholder", array(Validator::FILTER_ALPHA_NUM_UNDERSCORE))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getMessages()[0]));
+        }
+        $this->validator->resetMessages();
+        if(!empty($content)) {
+            if($this->validator->validate("content", array(Validator::FILTER_HTML))->isFailed()) {
+                return json_encode(array("error" => 1, "message" => $this->validator->getMessages()[0]));
+            }
+        }
+
+        try {
+            $this->cms->editPagePlaceholderContent($pageName, $local, $placeholder, $content);
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage()));
+        }
+
+        $occurredAction = $this->cms->getOccurredAction();
+        if($occurredAction === Cms::ACTION_INSERT) {
+            $message = "Placeholder content added";
+        } elseif($occurredAction === Cms::ACTION_UPDATE) {
+            $message = "Placeholder content edited";
+        } else {
+            $message = "Unknown action occurred";
+        }
+
+        return json_encode(array("error" => 0, "message" => $message));
     }
 
     public function error() {

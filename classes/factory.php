@@ -22,6 +22,7 @@ class Factory
     const TYPE_LOCALIZATION = 'localization';
     const TYPE_GUARDIAN = "guardian";
     const TYPE_CMS = "cms";
+    const TYPE_WEB = "web";
     const EXTENDER_HTML_PARSER = "extender_html_parser";
     const TYPE_METHOD_MAPPING = array(
         self::TYPE_CONTROLLER => "getController",
@@ -44,6 +45,7 @@ class Factory
         self::TYPE_LOCALIZATION => "getLocalization",
         self::TYPE_GUARDIAN => "getGuardian",
         self::TYPE_CMS => "getCms",
+        self::TYPE_WEB => "getWeb",
     );
     const EXTENDER_METHOD_MAPPING = array(
         self::EXTENDER_HTML_PARSER => "getExtenderHtmlParser",
@@ -89,7 +91,7 @@ class Factory
     }
 
     private function getController() {
-        return new Controller($this->getRequest(), $this->getHtmlParser(), $this->getValidator(), $this->getUser(), $this->getSession(), $this->getResponse(), $this->getLocalization(), $this->getCms());
+        return new Controller($this->getRequest(), $this->getHtmlParser(), $this->getValidator(), $this->getUser(), $this->getSession(), $this->getResponse(), $this->getLocalization(), $this->getCms(), $this->getWeb());
     }
 
     private function getApiController() {
@@ -166,6 +168,10 @@ class Factory
 
     private function getCms() {
         return new Cms($this->getValidator());
+    }
+
+    private function getWeb() {
+        return new Web($this->getLocalization(), $this->getCms());
     }
 
     private function getExtenderHtmlParser() {
