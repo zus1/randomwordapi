@@ -24,6 +24,7 @@ class Factory
     const TYPE_CMS = "cms";
     const TYPE_WEB = "web";
     const EXTENDER_HTML_PARSER = "extender_html_parser";
+    const TYPE_TRANSLATOR = 'translator';
     const TYPE_METHOD_MAPPING = array(
         self::TYPE_CONTROLLER => "getController",
         self::TYPE_DATABASE => "getDatabase",
@@ -46,6 +47,7 @@ class Factory
         self::TYPE_GUARDIAN => "getGuardian",
         self::TYPE_CMS => "getCms",
         self::TYPE_WEB => "getWeb",
+        self::TYPE_TRANSLATOR => "getTranslator",
     );
     const EXTENDER_METHOD_MAPPING = array(
         self::EXTENDER_HTML_PARSER => "getExtenderHtmlParser",
@@ -159,7 +161,7 @@ class Factory
     }
 
     private function getLocalization() {
-        return new Localization();
+        return new Localization($this->getSession(), $this->getUser());
     }
 
     private function getGuardian() {
@@ -176,5 +178,9 @@ class Factory
 
     private function getExtenderHtmlParser() {
         return new HtmlParserExtender();
+    }
+
+    private function getTranslator() {
+        return new Translator();
     }
 }

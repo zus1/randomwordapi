@@ -7,19 +7,69 @@ class Localization
     const STATE_INACTIVE = 0;
     private $defaultLocal;
 
-    public function __construct(){
+    private $session;
+    private $user;
+
+    public function __construct(Session $session, User $user){
         $this->defaultLocal = Config::get(Config::LOCAL_DEFAULT, "en");
+        $this->session = $session;
+        $this->user = $user;
+    }
+
+    public function getDefault() {
+        return $this->defaultLocal;
     }
 
     public function getActive() {
-        $active = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT tag FROM local WHERE active = ?",
-            array("integer"), array(self::STATE_ACTIVE));
+        $this->session->startSession();
 
-        if(!$active) {
-            return $this->defaultLocal;
+        $active = "";
+        $this->getActiveLocalForAuthenticatedUser($active);
+        $this->getLocalForNonAuthenticatedUser($active);
+        $this->getAdminActiveLocal($active);
+
+        if($active === "") {
+            $active = $this->defaultLocal;
         }
 
-        return $active[0]["tag"];
+        return $active;
+    }
+
+    public function setActive(string $newLocal) {
+        $this->session->startSession();
+
+        if($this->user->isAuthenticatedUser()) {
+            $this->user->setAuthenticatedUser(array("local" => $newLocal));
+        } else {
+            $_SESSION["local"] = $newLocal;
+        }
+    }
+
+    private function getActiveLocalForAuthenticatedUser(&$active) {
+        if($this->user->isAuthenticatedUser()) {
+            $authUser = $this->user->getAuthenticatedUser(["local"]);
+            if(!empty($authUser["local"])) {
+                $active = $authUser["local"];
+            }
+        }
+    }
+
+    private function getLocalForNonAuthenticatedUser(&$active) {
+        if($active === "") {
+            if(isset($_SESSION[Session::LOCAL_KEY])) {
+                $active = $_SESSION[Session::LOCAL_KEY];
+            }
+        }
+    }
+
+    private function getAdminActiveLocal(&$active) {
+        if($active === "") {
+            $activeTag = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT tag FROM local WHERE active = ?",
+                array("integer"), array(self::STATE_ACTIVE));
+            if(!empty($activeTag)) {
+                $active = $activeTag[0]["tag"];
+            }
+        }
     }
 
     public function addLocal(string $tag) {
@@ -68,7 +118,7 @@ class Localization
         return $local[0]["active"];
     }
 
-    public function changeActive(string $tag, int $active) {
+    public function adminChangeActive(string $tag, int $active) {
         $current = Factory::getObject(Factory::TYPE_DATABASE)->select("SELECT active FROM local  WHERE tag = ?", array("string"), array($tag));
         if(!$current) {
             throw new Exception("Local not found");

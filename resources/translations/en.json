@@ -1,0 +1,7 @@
+{
+  "wapi.addAdmin.email": "email",
+  "wapi.addAdmin.username": "username",
+  "wapi.addAdmin.password": "password",
+  "wappi.addAdmin.confirm-password" : "confirm password",
+  "wappi.addAdmin.add-admin" : "Add Admin"
+}

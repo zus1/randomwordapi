@@ -51,9 +51,36 @@ class Database
         return $sth->fetchAll();
     }
 
+    public function buildUpdateQuery(array $uFields, ?array $wFields=array()) {
+        $query = "UPDATE user SET ";
+        foreach($uFields as $field) {
+            $query .= sprintf("%s=?,", $field);
+        }
+
+        $query = substr($query, 0, strlen($query) - 1);
+        if(!empty($wFields)) {
+            $query = $this->addWhere($wFields, $query);
+        }
+
+        return $query;
+    }
+
+    private function addWhere(array $wFields, string $query) {
+        $query .= " WHERE";
+        foreach($wFields as $wField) {
+            $query .= sprintf(" %s=? AND", $wField);
+        }
+        return substr($query, 0, strlen($query) - strlen(" AND"));
+    }
+
     private function bindParams($sth, array $params, array $types) {
         for($i = 1; $i <= count($params); $i++) {
-            $sth->bindParam($i, $params[$i -1], $this->typeToPdoMapping[$types[$i -1]]);
+            if(!empty($types)) {
+                $sth->bindParam($i, $params[$i -1], $this->typeToPdoMapping[$types[$i -1]]);
+            } else {
+                $sth->bindParam($i, $params[$i -1]);
+            }
         }
     }
+
 }

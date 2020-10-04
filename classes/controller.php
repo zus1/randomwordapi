@@ -420,7 +420,7 @@ class Controller
             return json_encode(array("error" => 1, "message" => $this->validator->getFormattedErrorMessagesForDisplay()));
         }
         try {
-            $this->localization->changeActive($tag, $active);
+            $this->localization->adminChangeActive($tag, $active);
         } catch(Exception $e) {
             return json_encode(array("error" => 1, "message" => $e->getMessage()));
         }

@@ -11,6 +11,7 @@ class User
         self::ROLE_USER => 1,
         self::ROLE_ADMIN => 2,
     );
+    private $dataset = array("id", "username", "email", "password", "role", "local");
 
     private $session;
 
@@ -19,8 +20,71 @@ class User
         $this->session = $session;
     }
 
+    private function checkIfAllowed(array $inputFields) {
+        $notAllowed = array_diff($inputFields, $this->dataset);
+        if(!empty($notAllowed)) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function bla() {
         echo "blabla " . self::$counter;
+    }
+
+    public function getAuthenticatedUser(?array $fields=array()) {
+        $this->session->startSession();
+        if(!isset($_SESSION[self::USER_SESSION_KEY])) {
+            return array();
+        }
+        if(!$this->checkIfAllowed($fields)) {
+            return array();
+        }
+
+        $userEmail = $_SESSION[self::USER_SESSION_KEY];
+        if(!empty($fields)) {
+            $fields = array_map(function ($field) {
+                return Factory::getObject(Factory::TYPE_VALIDATOR)->filterAlphaNumUnderscore($field);
+            }, $fields);
+            $fieldsStr = "'" . implode("','", $fields) . "'";
+        } else {
+            $fieldsStr = "*";
+        }
+
+        $authUser = Factory::getObject(Factory::TYPE_DATABASE)->select("SELECT " . $fieldsStr . " FROM user WHERE email = ?", array("string"), array($userEmail));
+
+        return $authUser[0];
+    }
+
+    public function setAuthenticatedUser(array $data) {
+        $this->session->startSession();
+        if(!isset($_SESSION[self::USER_SESSION_KEY])) {
+            return false;
+        }
+
+        $userEmail = $_SESSION[self::USER_SESSION_KEY];
+        $fields = array_keys($data);
+        $values = array_values($data);
+        if(!$this->checkIfAllowed($fields)) {
+            return false;
+        }
+
+        $fields = array_map(function($field) {
+            return Factory::getObject(Factory::TYPE_VALIDATOR)->filterAlphaNumUnderscore($field);
+        }, $fields);
+
+        //$query = Factory::getObject(Factory::TYPE_DATABASE, true)->buildUpdateQuery($fields, array("email"));
+        $query = "UPDATE user SET ";
+        foreach($fields as $field) {
+            $query .= sprintf("%s=?,", $field);
+        }
+
+        $query = substr($query, 0, strlen($query) - 1);
+        $query .= " WHERE email = ?";
+        $values[] = $userEmail;
+
+        Factory::getObject(Factory::TYPE_DATABASE, true)->execute($query, array(), $values);
     }
 
     public function addAdminAccount(string $email, string $username, string $password) {
