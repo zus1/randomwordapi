@@ -1,9 +1,9 @@
 {
-  "wapi_addAdmin_email": "email",
-  "wapi_addAdmin_username": "username",
-  "wapi_addAdmin_password": "password",
-  "wappi_addAdmin_confirm-password" : "confirm password",
-  "wappi_addAdmin_add-admin" : "Add Admin",
-  "wappi_modify_remove-language-not-selected" : "Language must be selected",
-  "wappi_modify_remove-by-select" : "Ukloni riječi izborom"
+    "wapi_addAdmin_email": "email",
+    "wapi_addAdmin_username": "username",
+    "wapi_addAdmin_password": "password",
+    "wappi_addAdmin_confirm-password": "confirm password",
+    "wappi_addAdmin_add-admin": "Add Admin",
+    "wappi_modify_remove-language-not-selected": "Language must be selected",
+    "wappi_modify_remove-by-select": "Ukloni riječi biranjem"
 }

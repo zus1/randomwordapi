@@ -623,6 +623,57 @@ class Controller
         return json_encode(array("error" => 0, "message" => "", "keys" => $keys));
     }
 
+    public function adminTranslationLoad() {
+        $local = $this->request->input("local");
+        $key = $this->request->input("key");
+
+        if($this->validator->validate("local", array(Validator::FILTER_ALPHA))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getMessages()[0]));
+        }
+        $this->validator->resetMessages();
+        if($this->validator->validate("key", array(Validator::FILTER_ALPHA_NUM_UNDERSCORE))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getMessages()[0]));
+        }
+
+        try {
+            $map = Factory::getObject(Factory::TYPE_TRANSLATOR)->getTranslationMap($local);
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage()));
+        }
+
+        if(empty($map) || !array_key_exists($key, $map)) {
+            return json_encode(array("error" => 1, "message" => "No translation found"));
+        }
+
+        return json_encode(array("error" => 0, "translation" => $map[$key]));
+    }
+
+    public function adminEditTranslation() {
+        $local = $this->request->input("local");
+        $key = $this->request->input("key");
+        $translation = $this->request->input("translation");
+
+        if($this->validator->validate("local", array(Validator::FILTER_ALPHA))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getMessages()[0]));
+        }
+        $this->validator->resetMessages();
+        if($this->validator->validate("key", array(Validator::FILTER_ALPHA_NUM_UNDERSCORE))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getMessages()[0]));
+        }
+        $this->validator->resetMessages();;
+        if($this->validator->validate("translation", array(Validator::FILTER_ALPHA_NUM_DASH))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getMessages()[0]));
+        }
+
+        try {
+            Factory::getObject(Factory::TYPE_TRANSLATOR)->changeTranslationMap($local, $key, $translation, Translator::ACTION_TRANSLATION_MAP_UPDATE);
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage()));
+        }
+
+        return json_encode(array("error" => 0, "message" => "Translation Updated"));
+    }
+
     public function ajaxGetTranslation() {
         $notifiKey = $this->request->input("notifi-key");
         $transKey = $this->request->input("trans-key");

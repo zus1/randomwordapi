@@ -2,6 +2,10 @@
 
 class Translator
 {
+    const ACTION_TRANSLATION_MAP_INSERT = "insert";
+    const ACTION_TRANSLATION_MAP_UPDATE = "update";
+    const ACTION_TRANSLATION_MAP_DELETE = "delete";
+
     private static $_default;
     private static $_translationsPath;
     private static $_initialized = false;
@@ -10,6 +14,14 @@ class Translator
 
     public function __construct(JsonParser $jsonParser) {
         $this->jsonParser = $jsonParser;
+    }
+
+    private function getTranslationMapActionToMethodMapping() {
+        return array(
+            self::ACTION_TRANSLATION_MAP_INSERT => "translationMapInsert",
+            self::ACTION_TRANSLATION_MAP_UPDATE => "translationMapUpdate",
+            self::ACTION_TRANSLATION_MAP_DELETE => "translationMapDelete"
+        );
     }
 
     private static function init() {
@@ -108,7 +120,43 @@ class Translator
         return $map;
     }
 
-    public function setTranslationMap(string $local, array $contents) {
+    public function changeTranslationMap(string $local, string $key, string $translation, string $action) {
+        $mapping = $this->getTranslationMapActionToMethodMapping();
+        if(!array_key_exists($action, $mapping)) {
+            throw new Exception("Action unknown");
+        }
 
+        call_user_func_array([$this, $mapping[$action]], array($local, $key, $translation));
+    }
+
+    private function translationMapInsert(string $local, string $key, string $translation) {
+
+    }
+
+    private function translationMapUpdate(string $local, string $key, string $translation) {
+        $currentMap = $this->getTranslationMap($local);
+        if(empty($currentMap) || !array_key_exists($key, $currentMap)) {
+            throw new Exception("Translation missing");
+        }
+        $currentTranslation = $currentMap[$key];
+        if($currentTranslation === $translation) {
+            throw new Exception("No change");
+        }
+
+        $currentMap[$key] = $translation;
+        $this->jsonParser->resetErrors();
+        $this->setTranslationMap($local, $currentMap);
+    }
+
+    private function translationMapDelete(string $local, string $key, string $translation) {
+
+    }
+
+    public function setTranslationMap(string $local, array $contents, ?bool $new=false) {
+        $fullPath = self::$_translationsPath . "/" . $local . ".json";
+        $this->jsonParser->putToFile($fullPath, $contents, $new);
+        if($this->jsonParser->isError()) {
+            throw new Exception($this->jsonParser->getLastErrorMessage());
+        }
     }
 }

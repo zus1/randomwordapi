@@ -56,6 +56,8 @@ class Router
             '/views/ajaxchangelocal',
             '/views/adm/translation.php',
             '/views/adm/translationgetkeys',
+            '/views/adm/translationload',
+            '/views/adm/edittranslation.php',
         );
     }
 
@@ -107,6 +109,8 @@ class Router
             '/views/ajaxchangelocal' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'ajaxChangeUserLocal', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/adm/translation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminTranslation', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/translationgetkeys' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminTranslationGetKeys', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
+            '/views/adm/translationload' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminTranslationLoad', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
+            '/views/adm/edittranslation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminEditTranslation', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
         );
     }
 

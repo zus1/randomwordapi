@@ -49,7 +49,7 @@ class JsonParser
             return;
         }
 
-        $encoded = json_encode($contents);
+        $encoded = json_encode($contents, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
         if(json_last_error() !== JSON_ERROR_NONE) {
             $this->addError(json_last_error_msg());
             return;
@@ -64,5 +64,11 @@ class JsonParser
         $this->errorMessages[] = $errorMessage;
         $this->lastError = $errorMessage;
         $this->error = true;
+    }
+
+    public function resetErrors() {
+        $this->errorMessages = array();
+        $this->lastError = "";
+        $this->error = false;
     }
 }
