@@ -597,6 +597,55 @@ class Controller
         return json_encode(array("error" => 0, "message" => $message));
     }
 
+    public function adminTranslation() {
+        $availableLocals = $this->localization->getAllLocals();
+        return $this->htmlParser->parseView("admin:translation", array("available_locals" => $availableLocals));
+    }
+
+    public function adminTranslationGetKeys() {
+        $local = $this->request->input("local");
+
+        if($this->validator->validate("local", array(Validator::FILTER_ALPHA))->isFailed()) {
+            return json_encode(array("error" => 1, "message" => $this->validator->getMessages()[0]));
+        }
+
+        $keys = array();
+        try {
+            $translationMap = Factory::getObject(Factory::TYPE_TRANSLATOR)->getTranslationMap($local);
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage(), "keys" => $keys));
+        }
+
+        if(!empty($translationMap)) {
+            $keys = array_keys($translationMap);
+        }
+
+        return json_encode(array("error" => 0, "message" => "", "keys" => $keys));
+    }
+
+    public function ajaxGetTranslation() {
+        $notifiKey = $this->request->input("notifi-key");
+        $transKey = $this->request->input("trans-key");
+        $target = $this->request->input("target");
+
+        if($this->validator->validate("trans-key", array(Validator::FILTER_ALPHA_NUM_UNDERSCORE))->isFailed()) {
+            return json_encode(array("translation" => "Translation missing, invalid key", "notifi_key" => $notifiKey, "target" => $target));
+        }
+
+        return json_encode(array("translation" => Translator::get($transKey), "notifi_key" => $notifiKey, "target" => $target));
+    }
+
+    public function ajaxChangeUserLocal() {
+        $newLocal = $this->request->input("local");
+
+        if($this->validator->validate("local", array(Validator::FILTER_ALPHA))->isFailed()) {
+            return json_encode(array("error" => 1));
+        }
+
+        $this->localization->setActive($newLocal);
+        return json_encode(array("error" => 0));
+    }
+
     public function error() {
         $error = $this->request->error;
         $code = $this->request->code;

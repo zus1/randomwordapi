@@ -47,7 +47,7 @@ class User
             $fields = array_map(function ($field) {
                 return Factory::getObject(Factory::TYPE_VALIDATOR)->filterAlphaNumUnderscore($field);
             }, $fields);
-            $fieldsStr = "'" . implode("','", $fields) . "'";
+            $fieldsStr = implode(",", $fields);
         } else {
             $fieldsStr = "*";
         }

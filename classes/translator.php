@@ -6,6 +6,12 @@ class Translator
     private static $_translationsPath;
     private static $_initialized = false;
 
+    private $jsonParser;
+
+    public function __construct(JsonParser $jsonParser) {
+        $this->jsonParser = $jsonParser;
+    }
+
     private static function init() {
         self::$_default = Config::get(Config::TRANSLATION_DEFAULT);
         self::$_translationsPath = $_SERVER["DOCUMENT_ROOT"] . "/resources/translations";
@@ -15,6 +21,7 @@ class Translator
     public static function get(string $key, ?string $default = "") {
         if(self::$_initialized === false) {
             self::init();
+            self::$_initialized = true;
         }
 
         $localObj = Factory::getObject(Factory::TYPE_LOCALIZATION);
@@ -85,5 +92,23 @@ class Translator
         }
 
         return $translation;
+    }
+
+    public function getTranslationMap(string $local) {
+        if(self::$_initialized === false) {
+            self::init();
+        }
+
+        $fullPath = self::$_translationsPath . "/" . $local . ".json";
+        $map = $this->jsonParser->parseFromFile($fullPath, true);
+        if($this->jsonParser->isError() && $this->jsonParser->getLastErrorMessage() !== JsonParser::ERROR_FILE_NOT_FOUND) {
+            throw new Exception($this->jsonParser->getLastErrorMessage());
+        }
+
+        return $map;
+    }
+
+    public function setTranslationMap(string $local, array $contents) {
+
     }
 }

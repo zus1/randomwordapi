@@ -1,0 +1,118 @@
+@header-admin;
+@include.(navigation)
+<div class="container">
+    <div class="row content-wrapper">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <div class="content-title">Add Translation</div>
+            <div class="form-group">
+                <div style="height: 50px;">
+                    <div id="alert-add" class="notification" style="display: none">
+                        <div id="notification-add"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="add-tag">
+                    <option value="" disabled selected>Select local</option>
+                    @foreach.(available_locals)
+                        <option value="@value.(tag)">@value.(tag)</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="add-key" placeholder="Key">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="add-translation" placeholder="Translation">
+            </div>
+            <div class="form-group content-footer">
+                <button type="button" class="login-button" id="add-button">Add</button>
+            </div>
+        </div>
+    </div>
+    <div class="row content-wrapper">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <div class="content-title">Edit Translation</div>
+            <div class="form-group">
+                <div style="height: 50px;">
+                    <div id="alert-edit" class="notification" style="display: none">
+                        <div id="notification-edit"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="edit-tag">
+                    <option value="" disabled selected>Select local</option>
+                    @foreach.(available_locals)
+                        <option value="@value.(tag)">@value.(tag)</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="edit-key">
+                    <option value="" disabled selected>Select key</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="edit-translation" placeholder="Add translation">
+            </div>
+            <div class="form-group content-footer">
+                <button type="button" class="login-button" id="edit-button">Edit</button>
+            </div>
+        </div>
+    </div>
+    <div class="row content-wrapper">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <div class="content-title">Remove Translation</div>
+            <div class="form-group">
+                <div style="height: 50px;">
+                    <div id="alert-remove" class="notification" style="display: none">
+                        <div id="notification-remove"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="remove-tag">
+                    <option value="" disabled selected>Select local</option>
+                    @foreach.(available_locals)
+                        <option value="@value.(tag)">@value.(tag)</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="remove-key">
+                    <option value="" disabled selected>Select key to remove</option>
+                </select>
+            </div>
+            <div class="form-group content-footer">
+                <button type="button" class="login-button" id="remove-button">Remove</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const editTag = document.getElementById("edit-tag");
+    const editKey = document.getElementById("edit-key");
+    const editTranslation = document.getElementById("edit-translation");
+    const editButton = document.getElementById("edit-button");
+
+    editTag.addEventListener("change", () => loadKeys(event));
+
+    function loadKeys(event) {
+        if(event.target.value === "") {
+            addNotification("error", "Please select local", "edit");
+        } else {
+            getAjax("/views/adm/translationgetkeys?local=" + event.target.value, postLoadKeys);
+        }
+    }
+
+    function postLoadKeys(data) {
+        if(parseInt(data.error) === 1) {
+            console.error(data.message);
+        } else {
+            resetOptionsAndPreserveFirstChild(editKey, true);
+            data.keys.forEach((key) => createOptionElement(key, key, editKey));
+        }
+    }
+</script>
+@footer-admin;

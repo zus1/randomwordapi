@@ -20,13 +20,19 @@ class HtmlParserExtender
 
     private function getLocalsForInclude() {
         $allLocals = Factory::getObject(Factory::TYPE_LOCALIZATION)->getAllLocals();
-        usort($allLocals, function ($value1, $value2) { return $value1["active"] < $value2["active"];});
+        $activeLocal = Factory::getObject(Factory::TYPE_LOCALIZATION)->getActive();
+        usort($allLocals, function ($value1, $value2) use($activeLocal) {
+            if($value1["tag"] === $activeLocal) {
+                return -1;
+            }
+            return 1;
+        });
         $html = "";
         foreach($allLocals as $local) {
             $html .= "<li>";
             $text = $local["tag"];
             $value = $local["tag"];
-            $checked = ($local["active"])? "checked" : "";
+            $checked = ($local["tag"] === $activeLocal)? "checked" : "";
             $html .= sprintf("<input type='radio' name='localization' value='%s' %s>%s", $value, $checked, $text);
             $html .= "</li>";
         }

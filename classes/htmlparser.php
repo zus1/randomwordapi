@@ -4,6 +4,7 @@ class HtmlParser
 {
     private $viewsPath;
     private $includesPath;
+    private $jsPath;
     private $jsUrl;
     private $cssUrl;
 
@@ -36,12 +37,26 @@ class HtmlParser
     public function __construct(Session $session, Request $request, Guardian $guardian, HtmlParserExtender $extender) {
         $this->viewsPath = HttpParser::root() . "/views";
         $this->includesPath = HttpParser::root() . "/views/includes";
+        $this->jsPath = HttpParser::root() . "/js";
         $this->jsUrl = HttpParser::baseUrl() . "js";
         $this->cssUrl = HttpParser::baseUrl() . "css";
         $this->session = $session;
         $this->request = $request;
         $this->guardian = $guardian;
         $this->extender = $extender;
+    }
+
+    private function getPlaceholderAndKey(string $contents, int $startIndex) {
+        $endHolder = strpos($contents, ")", $startIndex);
+        $holder = substr($contents, $startIndex, ($endHolder + 1) - $startIndex);
+        $requestKey = $this->extractKeyFromHolder($holder);
+
+        return array($holder, $requestKey);
+    }
+
+    private function extractKeyFromHolder(string $holder) {
+        $holderParts = explode(".", $holder);
+        return substr($holderParts[1], 1, strlen($holderParts[1]) - 2);
     }
 
     public function formatValidatorErrorMessages(array $errorMessages) {
@@ -101,6 +116,24 @@ class HtmlParser
             $contents = $this->handleViewSpecificHolders($contents, $data);
         }
         $contents = $this->handleOlRequestData($contents);
+        $contents = $this->handleTranslations($contents);
+
+        return $contents;
+    }
+
+    private function handleTranslations(string $contents) {
+        if(!strpos($contents, "@trans.(") && substr($contents, 0, strlen("@trans.(")) !== "@trans.(") {
+            return $contents;
+        }
+        $start = 0;
+        while(($start = strpos($contents, "@trans.(", $start)) !== false) {
+            list($holder, $translationKey) = $this->getPlaceholderAndKey($contents, $start);
+            $translation = Translator::get($translationKey);
+            if(!empty($translation)) {
+                $contents = str_replace($holder, $translation, $contents);
+            }
+            $start++;
+        }
 
         return $contents;
     }
@@ -200,9 +233,10 @@ class HtmlParser
     private function includeOldRequestData(string $contents, array $oldRequestData) {
         $start = 0;
         while(($start = strpos($contents, "@old.(", $start)) !== false) {
-            $endHolder = strpos($contents, ")", $start);
+            list($holder, $requestKey) = $this->getPlaceholderAndKey($contents, $start);
+            /*$endHolder = strpos($contents, ")", $start);
             $holder = substr($contents, $start, ($endHolder + 1) - $start);
-            $requestKey = $this->extractKeyFromHolder($holder);
+            $requestKey = $this->extractKeyFromHolder($holder);*/
             if(array_key_exists($requestKey, $oldRequestData)) {
                 $contents = str_replace($holder, $oldRequestData[$requestKey], $contents);
             }
@@ -226,9 +260,10 @@ class HtmlParser
     private function handleIncludes(string $contents) {
         $start = 0;
         while(($start = strpos($contents, "@include.(", $start)) !== false) {
-            $endHolder = strpos($contents, ")", $start);
+            list($holder, $fileName) = $this->getPlaceholderAndKey($contents, $start);
+            /*$endHolder = strpos($contents, ")", $start);
             $holder = substr($contents, $start, ($endHolder + 1) - $start);
-            $fileName = $this->extractKeyFromHolder($holder);
+            $fileName = $this->extractKeyFromHolder($holder);*/
             $path = $this->includesPath . "/" . $fileName . ".html";
             if(!file_exists($path)) {
                 throw new Exception("File not found", HttpCodes::INTERNAL_SERVER_ERROR);
@@ -318,9 +353,10 @@ class HtmlParser
     }
 
     private function doIncludeOneTimeMessage(string $contents, int $startIndex) {
-        $endIndex = strpos($contents, ")", $startIndex) + 1;
+        list($holder, $sessionKey) = $this->getPlaceholderAndKey($contents, $startIndex);
+        /*$endIndex = strpos($contents, ")", $startIndex) + 1;
         $holder = substr($contents, $startIndex, $endIndex - $startIndex);
-        $sessionKey = $this->extractKeyFromHolder($holder);
+        $sessionKey = $this->extractKeyFromHolder($holder);*/
         $message = "";
         if(isset($_SESSION['view'][$sessionKey])) {
             $message = $_SESSION['view'][$sessionKey];
@@ -478,9 +514,10 @@ class HtmlParser
     private function handleParseArrayValueForLoops(string $element, array $subArray) {
         $start = 0;
         while(($start = strpos($element, "@value.(", $start)) !== false) {
-            $holderEnd = strpos($element, ")", $start);
+            list($holder, $key) = $this->getPlaceholderAndKey($element, $start);
+            /*$holderEnd = strpos($element, ")", $start);
             $holder = substr($element, $start, ($holderEnd + 1) - $start);
-            $key = $this->extractKeyFromHolder($holder);
+            $key = $this->extractKeyFromHolder($holder);*/
             if(array_key_exists($key, $subArray)) {
                 $element = str_replace($holder, $subArray[$key], $element);
             }
@@ -489,10 +526,5 @@ class HtmlParser
         }
 
         return $element;
-    }
-
-    private function extractKeyFromHolder(string $holder) {
-        $holderParts = explode(".", $holder);
-        return substr($holderParts[1], 1, strlen($holderParts[1]) - 2);
     }
 }

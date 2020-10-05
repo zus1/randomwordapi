@@ -52,6 +52,10 @@ class Router
             '/views/cms/getcontentplaceholders.php',
             '/views/cms/getplaceholdercontent.php',
             '/views/cms/editpagecontent.php',
+            '/views/ajaxgetranslation',
+            '/views/ajaxchangelocal',
+            '/views/adm/translation.php',
+            '/views/adm/translationgetkeys',
         );
     }
 
@@ -99,6 +103,10 @@ class Router
             '/views/auth/logout.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'logout', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => true),
             '/views/error.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'error', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/test.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'test', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
+            '/views/ajaxgetranslation' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'ajaxGetTranslation', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
+            '/views/ajaxchangelocal' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'ajaxChangeUserLocal', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
+            '/views/adm/translation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminTranslation', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
+            '/views/adm/translationgetkeys' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminTranslationGetKeys', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
         );
     }
 

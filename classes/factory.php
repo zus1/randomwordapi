@@ -25,6 +25,7 @@ class Factory
     const TYPE_WEB = "web";
     const EXTENDER_HTML_PARSER = "extender_html_parser";
     const TYPE_TRANSLATOR = 'translator';
+    const TYPE_JSON_PARSER = "json.parser";
     const TYPE_METHOD_MAPPING = array(
         self::TYPE_CONTROLLER => "getController",
         self::TYPE_DATABASE => "getDatabase",
@@ -48,6 +49,7 @@ class Factory
         self::TYPE_CMS => "getCms",
         self::TYPE_WEB => "getWeb",
         self::TYPE_TRANSLATOR => "getTranslator",
+        self::TYPE_JSON_PARSER => "getJsonParser",
     );
     const EXTENDER_METHOD_MAPPING = array(
         self::EXTENDER_HTML_PARSER => "getExtenderHtmlParser",
@@ -57,7 +59,7 @@ class Factory
     /**
      * @param string $type
      * @param bool $singleton
-     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words|WordsBulk|WordsJson|WordsCsv|Response|Localization
+     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words|WordsBulk|WordsJson|WordsCsv|Response|Localization|Translator
      */
     public static function getObject(string $type, bool $singleton=false) {
         if(!array_key_exists($type, self::TYPE_METHOD_MAPPING)) {
@@ -181,6 +183,10 @@ class Factory
     }
 
     private function getTranslator() {
-        return new Translator();
+        return new Translator($this->getJsonParser());
+    }
+
+    private function getJsonParser() {
+        return new JsonParser();
     }
 }

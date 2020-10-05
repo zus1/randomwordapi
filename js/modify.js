@@ -57,7 +57,7 @@ function multiRemoved(data) {
 
 function sendSingleRemove() {
     if(languageSelect.value === "") {
-        addNotification("error", "Language must be selected", "single")
+        addNotificationWithTranslation("error", "wappi_modify_remove-language-not-selected", "single");
     } else if(lengthSelect.value === "") {
         addNotification("error", "Length must be selected", "single")
     } else if(wordsSelect.value === "") {

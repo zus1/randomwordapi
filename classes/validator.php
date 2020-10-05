@@ -192,7 +192,7 @@ class Validator
     }
 
     public function filterAlphaNumUnderscore($value) {
-        return $this->filter($value, "/[^A-Za-z0-9_]/");
+        return $this->filter($value, "/[^A-Za-z0-9_-]/");
     }
 
     public function filterHTML($value) {

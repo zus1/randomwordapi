@@ -5,5 +5,5 @@
   "wappi_addAdmin_confirm-password" : "confirm password",
   "wappi_addAdmin_add-admin" : "Add Admin",
   "wappi_modify_remove-language-not-selected" : "Language must be selected",
-  "wappi_modify_remove-by-select" : "Remove Words by Select"
+  "wappi_modify_remove-by-select" : "Ukloni riječi izborom"
 }
