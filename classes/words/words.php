@@ -54,7 +54,7 @@ class Words
         });
 
         if(count($allWords) < $wordsNum) {
-            throw new Exception("Not enough words found. Requested: " . $wordsNum . ", found: " . count($allWords));
+            throw new Exception("Not enough words found. Requested: " . $wordsNum . ", found: " . count($allWords), HttpCodes::INTERNAL_SERVER_ERROR);
         }
 
         shuffle($allWords);
@@ -140,7 +140,7 @@ class Words
             $existing = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT words FROM words WHERE tag = ? AND length = ?",
                 array("string", "string"), array($this->language, $len));
             if(!$existing) {
-                $toInsert = json_encode($words);
+                $toInsert = json_encode($words,JSON_UNESCAPED_UNICODE);
                 self::$totalChange += count($words);
                 Factory::getObject(Factory::TYPE_DATABASE, true)->execute("INSERT INTO words (tag, length, words) VALUES (?,?,?)",
                     array("string", "integer", "string"), array($this->language, $len, $toInsert));
@@ -149,7 +149,7 @@ class Words
                 $diff = array_values(array_diff($words, $existingDecoded));
                 self::$totalChange += count($diff);
                 if(!empty($diff)) {
-                    $toInsert = json_encode(array_merge($existingDecoded, $diff));
+                    $toInsert = json_encode(array_merge($existingDecoded, $diff), JSON_UNESCAPED_UNICODE);
                     Factory::getObject(Factory::TYPE_DATABASE, true)->execute("UPDATE words SET words = ? WHERE tag = ? AND length = ?",
                         array("string", "string", "integer"), array($toInsert, $this->language, $len));
                 }
@@ -187,7 +187,7 @@ class Words
     private function sortWordsByLength(array $words) {
         $wordsByLength = array();
         array_walk($words, function($value) use(&$wordsByLength) {
-            $wordLen = strlen($value);
+            $wordLen = mb_strlen($value);
             if(array_key_exists($wordLen, $wordsByLength)) {
                 $wordsByLength[$wordLen][] = $value;
             } else {

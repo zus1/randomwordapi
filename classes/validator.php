@@ -197,7 +197,7 @@ class Validator
 
     public function filterHTML($value) {
         $plainText = strip_tags($value);
-        $sanitized = $this->filter($plainText, "/[^A-Za-z0-9_ ?()!.:&,;\/]/");
+        $sanitized = $this->filter($plainText, "/[^A-Za-z0-9_ ?()!{}\"[].:&,=;\-\/]/");
         if($plainText !== $sanitized) {
             return $value . "_suffix"; //make it fail
         }

@@ -417,19 +417,31 @@ class HtmlParser
 
     private function handleViewSpecificHolders(string $contents, array $data) {
         $loopData = array();
-        array_walk($data, function ($value, $key) use (&$contents, &$loopData) {
+        $singleData = array();
+        array_walk($data, function ($value, $key) use (&$contents, &$loopData, &$singleData) {
            if(is_array($value)) {
                $loopData[$key] = $value;
-           }  else {
-               if(strpos($contents, "{" . $key . "}")) {
-                   $contents = str_replace("{" . $key . "}", $value, $contents);
-               }
+           } else {
+               $singleData[$key] = $value;
            }
         });
 
         if(!empty($loopData)) {
             $contents = $this->handleLoops($contents, $loopData);
         }
+        if(!empty($singleData)) {
+            $contents = $this->handleSingle($contents, $singleData);
+        }
+
+        return $contents;
+    }
+
+    private function handleSingle(string $contents, array $singleData) {
+        array_walk($singleData, function($value, $key) use (&$contents) {
+            if(strpos($contents, "{" . $key . "}")) {
+                $contents = str_replace("{" . $key . "}", $value, $contents);
+            }
+        });
 
         return $contents;
     }

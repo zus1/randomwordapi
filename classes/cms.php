@@ -18,9 +18,11 @@ class Cms
         return $this->occurredAction;
     }
 
-    public function getPageDataForLocalWithFilter(string $local, string $filterKey="", ?string $filterValue="") {
-        $pageData = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT placeholder, content, page_name FROM page_content WHERE local = ?",
-            array("string"), array($local));
+    public function getPageDataForLocalWithFilter(string $local, string $defaultLocal, string $filterKey="", ?string $filterValue="") {
+        $pageData = $this->loadPageData($local);
+        if(!$pageData) {
+            $pageData = $this->loadPageData($defaultLocal);
+        }
         if(!$pageData) {
             return array();
         }
@@ -29,6 +31,11 @@ class Cms
         }
 
         return $this->applyFilter($pageData, $filterKey, $filterValue);
+    }
+
+    private function loadPageData(string $local) {
+        return Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT placeholder, content, page_name FROM page_content WHERE local = ?",
+            array("string"), array($local));
     }
 
     private function applyFilter(array $pageData, string $filterKey, string $filterValue) {
