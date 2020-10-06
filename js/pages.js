@@ -28,13 +28,7 @@ function deletePage() {
 }
 
 function postDeletePage(data) {
-    let key;
-    if(data.error === 1) {
-        key = "error";
-    } else {
-        key = "success"
-    }
-    addNotification(key, data.message, "remove");
+    postActionMessage(data, "remove");
 }
 
 function editPage() {
@@ -61,13 +55,7 @@ function editPage() {
 }
 
 function postEditPage(data) {
-    let key;
-    if(data.error === 1) {
-        key = "error";
-    } else {
-        key = "success"
-    }
-    addNotification(key, data.message, "change");
+    postActionMessage(data, "change");
 }
 
 function loadNameAndPlaceholders(event) {
@@ -105,11 +93,5 @@ function addPage() {
 }
 
 function postAddPage(data) {
-    let key;
-    if(data.error === 1) {
-        key = "error";
-    } else {
-        key = "success"
-    }
-    addNotification(key, data.message, "add");
+    postActionMessage(data, "add");
 }

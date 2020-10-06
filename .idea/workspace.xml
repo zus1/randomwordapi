@@ -2,13 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="288e8d99-2ca2-423c-98ad-c98a0ae19105" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/js/translation.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/controller.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/jsonparser.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/jsonparser.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/router.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/router.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/translator.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/translator.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/translations/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/resources/translations/en.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/translations/hr.json" beforeDir="false" afterPath="$PROJECT_DIR$/resources/translations/hr.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/language.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/language.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/localization.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/localization.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/modify.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/modify.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/pages.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/pages.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/utilities.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/utilities.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/admin/language.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/admin/language.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/admin/localization.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/admin/localization.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/views/admin/translation.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/admin/translation.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -26,8 +31,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="CSS File" />
-        <option value="JavaScript File" />
         <option value="HTML File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -106,7 +111,7 @@
       <workItem from="1601539537912" duration="20964000" />
       <workItem from="1601626464869" duration="22914000" />
       <workItem from="1601814385357" duration="13678000" />
-      <workItem from="1601885884501" duration="27082000" />
+      <workItem from="1601885884501" duration="34254000" />
     </task>
     <servers />
   </component>

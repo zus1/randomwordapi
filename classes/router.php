@@ -58,6 +58,8 @@ class Router
             '/views/adm/translationgetkeys',
             '/views/adm/translationload',
             '/views/adm/edittranslation.php',
+            '/views/adm/addtranslation.php',
+            '/views/adm/removetranslation.php',
         );
     }
 
@@ -111,6 +113,8 @@ class Router
             '/views/adm/translationgetkeys' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminTranslationGetKeys', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/translationload' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminTranslationLoad', 'request' => self::REQUEST_GET, 'role' => "admin", 'auth' => true),
             '/views/adm/edittranslation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminEditTranslation', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
+            '/views/adm/addtranslation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminAddTranslation', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
+            '/views/adm/removetranslation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminRemoveTranslation', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
         );
     }
 

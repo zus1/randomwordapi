@@ -40,13 +40,7 @@ function updateLanguage() {
 }
 
 function languageUpdated(data) {
-    let key;
-    if(data.error === 1) {
-        key = "error";
-    } else {
-        key = "success"
-    }
-    addNotification(key, data.message, "update");
+    postActionMessage(data, "update");
 }
 
 function updateGetNameAndFilters(event) {
@@ -82,13 +76,7 @@ function removeLanguage() {
 }
 
 function languageRemoved(data) {
-    let key;
-    if(data.error === 1) {
-        key = "error";
-    } else {
-        key = "success"
-    }
-    addNotification(key, data.message, "remove");
+    postActionMessage(data, "remove");
 }
 
 function addLanguage() {
@@ -116,11 +104,5 @@ function addLanguage() {
 }
 
 function languageAdded(data) {
-    let key;
-    if(data.error === 1) {
-        key = "error";
-    } else {
-        key = "success"
-    }
-    addNotification(key, data.message, "add");
+    postActionMessage(data, "add");
 }

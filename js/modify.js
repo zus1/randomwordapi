@@ -46,13 +46,7 @@ function sendMultiRemove() {
 }
 
 function multiRemoved(data) {
-    let key;
-    if(data.error === 1) {
-        key = "error";
-    } else {
-        key = "success"
-    }
-    addNotification(key, data.message, "multi");
+    postActionMessage(data, "multi");
 }
 
 function sendSingleRemove() {
@@ -80,13 +74,7 @@ function sendSingleRemove() {
 }
 
 function singleRemoved(data) {
-    let key;
-    if(data.error === 1) {
-        key = "error";
-    } else {
-        key = "success"
-    }
-    addNotification(key, data.message, "single");
+    postActionMessage(data, "single");
 }
 
 function loadAvailableWordLengthsForLanguage(event) {

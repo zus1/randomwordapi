@@ -10,10 +10,15 @@ class Translator
     private static $_translationsPath;
     private static $_initialized = false;
 
+    private $unlinkEmpty = false;
     private $jsonParser;
 
     public function __construct(JsonParser $jsonParser) {
         $this->jsonParser = $jsonParser;
+    }
+
+    public function setUnlinkEmpty(bool $unlink) {
+        $this->unlinkEmpty = $unlink;
     }
 
     private function getTranslationMapActionToMethodMapping() {
@@ -130,7 +135,17 @@ class Translator
     }
 
     private function translationMapInsert(string $local, string $key, string $translation) {
+        $new = false;
+        $currentMap = $this->getTranslationMap($local);
+        if(empty($currentMap)) {
+            $new = true;
+        } elseif(array_key_exists($key, $currentMap)) {
+            throw new Exception("Translation already exists");
+        }
 
+        $currentMap[$key] = $translation;
+        $this->jsonParser->resetErrors();
+        $this->setTranslationMap($local, $currentMap, $new);
     }
 
     private function translationMapUpdate(string $local, string $key, string $translation) {
@@ -149,7 +164,24 @@ class Translator
     }
 
     private function translationMapDelete(string $local, string $key, string $translation) {
+        $currentMap = $this->getTranslationMap($local);
+        if(empty($currentMap) || !array_key_exists($key, $currentMap)) {
+            throw new Exception("Nothing to delete");
+        }
 
+        unset($currentMap[$key]);
+        if(empty($currentMap) && $this->unlinkEmpty === true) {
+            $this->unlinkTranslationFile($local);
+        } else {
+            $this->setTranslationMap($local, $currentMap);
+        }
+    }
+
+    public function unlinkTranslationFile(string $local) {
+        $fullPath = self::$_translationsPath . "/" . $local . ".json";
+        if(file_exists($fullPath)) {
+            unlink($fullPath);
+        }
     }
 
     public function setTranslationMap(string $local, array $contents, ?bool $new=false) {

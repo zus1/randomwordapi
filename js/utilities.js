@@ -26,6 +26,16 @@ function createOptionElement(value, text, object, isSelected=false) {
     object.appendChild(element);
 }
 
+function postActionMessage(data, target) {
+    let key;
+    if(data.error === 1) {
+        key = "error";
+    } else {
+        key = "success"
+    }
+    addNotification(key, data.message, target);
+}
+
 function getHttpParams() {
     return {
         "host": window.location.hostname,

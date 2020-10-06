@@ -45,13 +45,7 @@ function changeLocal() {
 }
 
 function postChangeLocal(data) {
-    let key;
-    if(data.error === 1) {
-        key = "error";
-    } else {
-        key = "success"
-    }
-    addNotification(key, data.message, "change");
+    postActionMessage(data, "change");
 }
 
 function removeLocal() {
@@ -66,13 +60,7 @@ function removeLocal() {
 }
 
 function postRemoveLocal(data) {
-    let key;
-    if(data.error === 1) {
-        key = "error";
-    } else {
-        key = "success"
-    }
-    addNotification(key, data.message, "remove");
+    postActionMessage(data, "remove");
 }
 
 function addLocal() {
@@ -87,11 +75,5 @@ function addLocal() {
 }
 
 function postAddLocal(data) {
-    let key;
-    if(data.error === 1) {
-        key = "error";
-    } else {
-        key = "success"
-    }
-    addNotification(key, data.message, "add");
+    postActionMessage(data, "add");
 }
