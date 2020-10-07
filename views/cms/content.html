@@ -1,0 +1,45 @@
+@header-admin;
+@include.(navigationCms)
+<div class="container">
+    <div class="roe content-wrapper">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <div class="content-title">Edit page content</div>
+            <div class="form-group">
+                <div style="height: 50px;">
+                    <div id="alert-edit" class="notification" style="display: none">
+                        <div id="notification-edit"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="edit-page">
+                    <option value="" selected disabled>Select page to edit</option>
+                    @foreach.(pages)
+                        <option value="@value.(name)">@value.(name)</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="edit-local">
+                    <option value="" disabled selected>Select local</option>
+                    @foreach.(locals)
+                        <option value="@value.(tag)">@value.(tag)</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="edit-holder">
+                    <option value="" disabled selected>Select placeholder</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" id="edit-content" cols="20" rows="10" placeholder="Edit placeholder content"></textarea>
+            </div>
+            <div class="form-group content-footer">
+                <button type="button" class="login-button" id="edit-button">Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{base_url}js/content.js"></script>
+@footer-admin;

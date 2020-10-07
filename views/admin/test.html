@@ -1,0 +1,71 @@
+@header;
+
+
+
+    @trans.(wapi_addAdmin_username)
+    <br> <br>
+    @trans.(wapi_addAdmin_email)
+    <br> <br>
+    @trans.(wappi_addAdmin_confirm-password)
+    <br> <br>
+    @role.false.admin?
+        <h3>In first</h3>
+    @else
+        <h3>In else</h3>
+    @role?
+    <br><br>
+    @old.(bla)
+    <br><br>
+    @include.(navigation)
+    <br><br>
+
+    @session.success?
+    <div class="alert alert-success">
+        @session.(success)
+    </div>
+    @session?
+    <br><br>
+    @session.error?
+    <div class="alert alert-danger">
+        @session.(error)
+    </div>
+    @session?
+    <br>
+    <br>
+    @session.warning?
+    <div class="alert alert-danger">
+        @session.(warning)
+    </div>
+    @session?
+
+    @session.(warning)
+
+    {bootstrap_css}<br>
+    {main_css} <br>
+    {var1} <br>
+    {var2}<br>
+
+    @foreach.(array_data2)
+    <b>this is key2: @key</b><br>
+    <b>this is value21: @value.(bla)</b>
+    <b>this is value22: @value.(blu)</b><br><br>
+    @endforeach
+    <br>
+
+    <b>{bootstrap_css}</b><br>
+    {main_css} <br><br>
+
+    @foreach.(array_data)
+    <b>this is key: @key</b><br>
+    <b>this is value: @value</b><br><br>
+    @endforeach
+    <br>
+
+    @include.(navigation)
+
+    <b>{bootstrap_css}</b><br>
+    {main_css} <br>
+    {bootstrap_js}<br><br>
+
+<script src="{base_url}js/modify.js"></script>
+@footer-admin;
