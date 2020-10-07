@@ -4,7 +4,8 @@ class HtmlParserExtender
 {
     public function includeToAllViews() {
         return array(
-            "{locals}" => $this->getLocalsForInclude()
+            "{locals}" => $this->getLocalsForInclude(),
+            "{logo}" => $this->getLogo()
         );
     }
 
@@ -38,5 +39,14 @@ class HtmlParserExtender
         }
 
         return $html;
+    }
+
+    private function getLogo() {
+        $navigationCmsData = Factory::getObject(Factory::TYPE_WEB)->getPageData(Web::NAVIGATION);
+        if(!array_key_exists("logo", $navigationCmsData)) {
+            return "";
+        }
+
+        return $navigationCmsData["logo"];
     }
 }

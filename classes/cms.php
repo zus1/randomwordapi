@@ -19,18 +19,15 @@ class Cms
     }
 
     public function getPageDataForLocalWithFilter(string $local, string $defaultLocal, string $filterKey="", ?string $filterValue="") {
-        $pageData = $this->loadPageData($local);
+        $pageData = $this->applyFilter($this->loadPageData($local), $filterKey, $filterValue);
         if(!$pageData) {
-            $pageData = $this->loadPageData($defaultLocal);
+            $pageData = $this->applyFilter($this->loadPageData($defaultLocal), $filterKey, $filterValue);
         }
         if(!$pageData) {
             return array();
         }
-        if($filterKey === "") {
-            return $pageData;
-        }
 
-        return $this->applyFilter($pageData, $filterKey, $filterValue);
+        return $pageData;
     }
 
     private function loadPageData(string $local) {
@@ -39,6 +36,9 @@ class Cms
     }
 
     private function applyFilter(array $pageData, string $filterKey, string $filterValue) {
+        if($filterKey === "") {
+            return $pageData;
+        }
         return array_filter($pageData, function($value) use($filterValue, $filterKey) {
            return $value[$filterKey] === $filterValue;
         });
@@ -105,12 +105,21 @@ class Cms
     }
 
     public function removePage(int $pageId) {
-        $pageToRemove = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT id FROM pages WHERE id = ?", array("integer"), array($pageId));
+        $pageToRemove = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT id, name FROM pages WHERE id = ?", array("integer"), array($pageId));
         if(!$pageToRemove) {
             throw new Exception("Page not found");
         }
 
-        Factory::getObject(Factory::TYPE_DATABASE, true)->execute("DELETE FROM pages WHERE id = ?", array("integer"), array($pageId));
+        $pageName = $pageToRemove[0]["name"];
+        Factory::getObject(Factory::TYPE_DATABASE, true)->beginTransaction();
+        try {
+            Factory::getObject(Factory::TYPE_DATABASE, true)->execute("DELETE FROM pages WHERE id = ?", array("integer"), array($pageId));
+            Factory::getObject(Factory::TYPE_DATABASE, true)->execute("DELETE FROM page_content WHERE page_name = ?", array("string"), array($pageName));
+            Factory::getObject(Factory::TYPE_DATABASE, true)->commit();
+        } catch(PDOException $e) {
+            Factory::getObject(Factory::TYPE_DATABASE, true)->rollBack();
+            throw $e;
+        }
     }
 
     public function getPagePlaceholdersByName(string $pageName) {

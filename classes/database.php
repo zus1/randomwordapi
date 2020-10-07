@@ -32,10 +32,28 @@ class Database
         }
     }
 
+    public function beginTransaction() {
+        if(!$this->pdo->inTransaction()) {
+            $this->pdo->beginTransaction();
+        }
+    }
+
+    public function commit() {
+        if($this->pdo->inTransaction()) {
+            $this->pdo->commit();
+        }
+    }
+
+    public function rollBack() {
+        if($this->pdo->inTransaction()) {
+            $this->pdo->rollBack();
+        }
+    }
+
     public function execute($query, $types, $params) {
         $sth = $this->pdo->prepare($query);
         $this->bindParams($sth, $params, $types);
-        $sth->execute();
+        return $sth->execute();
     }
 
     public function select(string $query, ?array $types=array(), ?array $params = array(), $assoc = true) {

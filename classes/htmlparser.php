@@ -148,10 +148,13 @@ class HtmlParser
             $endFirst = strpos($contents, "?", $start);
             $first = substr($contents, $start, ($endFirst + 1) - $start);
 
-            $secondStart = strpos($contents, "@else", $endFirst);
+            $startLast = strpos($contents, $tag . "?", $start);
+            $ifElement = substr($contents, $endFirst, $startLast - $endFirst);
+            $ifElement = $this->clearIfSubElements($ifElement); //clear all other if elements from sub element, to avoid detecting wrong tags
             $thirdPresent = false;
-            if($secondStart) {
+            if(strpos($ifElement, "@else")) {
                 $thirdPresent = true;
+                $secondStart = strpos($contents, "@else", $endFirst);
                 $secondEnd = $secondStart + strlen("@else");
             } else {
                 $secondStart = strpos($contents, $tag . "?", $endFirst);
@@ -186,6 +189,25 @@ class HtmlParser
         }
 
         return $contents;
+    }
+
+    private function clearIfSubElements(string $element) {
+        foreach($this->possibleIfTags as $tag) {
+            if(strpos($element, $tag . ".")) {
+                $subFirstStart = strpos($element, $tag . ".");
+                $subFirstEnd = strpos($element, "?", $subFirstStart);
+
+                $subLastStart = strpos($element, $tag . "?", $subFirstEnd);
+                $subLastEnd = $subLastStart + strlen($tag . "?");
+
+                $beforeElement = substr($element, 0, $subFirstStart);
+                $afterElement = substr($element, $subLastEnd);
+
+                $element = $beforeElement . $afterElement;
+            }
+        }
+
+        return $element;
     }
 
     private function extractIfTagCondition(string $holder) {
@@ -234,9 +256,6 @@ class HtmlParser
         $start = 0;
         while(($start = strpos($contents, "@old.(", $start)) !== false) {
             list($holder, $requestKey) = $this->getPlaceholderAndKey($contents, $start);
-            /*$endHolder = strpos($contents, ")", $start);
-            $holder = substr($contents, $start, ($endHolder + 1) - $start);
-            $requestKey = $this->extractKeyFromHolder($holder);*/
             if(array_key_exists($requestKey, $oldRequestData)) {
                 $contents = str_replace($holder, $oldRequestData[$requestKey], $contents);
             }
@@ -261,9 +280,6 @@ class HtmlParser
         $start = 0;
         while(($start = strpos($contents, "@include.(", $start)) !== false) {
             list($holder, $fileName) = $this->getPlaceholderAndKey($contents, $start);
-            /*$endHolder = strpos($contents, ")", $start);
-            $holder = substr($contents, $start, ($endHolder + 1) - $start);
-            $fileName = $this->extractKeyFromHolder($holder);*/
             $path = $this->includesPath . "/" . $fileName . ".html";
             if(!file_exists($path)) {
                 throw new Exception("File not found", HttpCodes::INTERNAL_SERVER_ERROR);
@@ -354,9 +370,6 @@ class HtmlParser
 
     private function doIncludeOneTimeMessage(string $contents, int $startIndex) {
         list($holder, $sessionKey) = $this->getPlaceholderAndKey($contents, $startIndex);
-        /*$endIndex = strpos($contents, ")", $startIndex) + 1;
-        $holder = substr($contents, $startIndex, $endIndex - $startIndex);
-        $sessionKey = $this->extractKeyFromHolder($holder);*/
         $message = "";
         if(isset($_SESSION['view'][$sessionKey])) {
             $message = $_SESSION['view'][$sessionKey];
@@ -527,9 +540,6 @@ class HtmlParser
         $start = 0;
         while(($start = strpos($element, "@value.(", $start)) !== false) {
             list($holder, $key) = $this->getPlaceholderAndKey($element, $start);
-            /*$holderEnd = strpos($element, ")", $start);
-            $holder = substr($element, $start, ($holderEnd + 1) - $start);
-            $key = $this->extractKeyFromHolder($holder);*/
             if(array_key_exists($key, $subArray)) {
                 $element = str_replace($holder, $subArray[$key], $element);
             }

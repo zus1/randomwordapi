@@ -18,6 +18,13 @@ body {
     background-color: black;
     margin-left: 200px;
     margin-right: 200px;
+    margin-bottom: 50px;
+}
+
+.nav-custom .logo-custom {
+    float: left;
+    padding: 7px;
+    margin-left: 10px;
 }
 
 .nav-custom ul {

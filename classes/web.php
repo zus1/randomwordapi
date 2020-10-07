@@ -6,6 +6,7 @@ class Web
     private $cms;
 
     const PAGE_DOCUMENTATION = "documentation";
+    const NAVIGATION = "navigation";
 
     public function __construct(Localization $localization, Cms $cms) {
         $this->localization = $localization;
@@ -14,7 +15,8 @@ class Web
 
     private function getPageToDataMethodMapping() {
         return array(
-            self::PAGE_DOCUMENTATION => "getDocumentationData"
+            self::PAGE_DOCUMENTATION => "getDocumentationData",
+            self::NAVIGATION => "getNavigationData",
         );
     }
 
@@ -26,11 +28,18 @@ class Web
         return call_user_func([$this, $this->getPageToDataMethodMapping()[$page]]);
     }
 
-    private function getDocumentationData() {
-        $activeLocal = $this->localization->getActive();
-        $defaultLocal = $this->localization->getDefault();
-        $pageCmsData = $this->cms->getPageDataForLocalWithFilter($activeLocal, $defaultLocal, Cms::PAGE_DATA_FILTER_PAGE, self::PAGE_DOCUMENTATION);
+    private function getNavigationData() {
+        $pageCmsData = $this->getCmsData(Cms::PAGE_DATA_FILTER_PAGE, self::NAVIGATION);
+        $returnData  = array();
+        array_walk($pageCmsData, function($value) use(&$returnData) {
+            $returnData[$value["placeholder"]] = $value["content"];
+        });
 
+        return $returnData;
+    }
+
+    private function getDocumentationData() {
+        $pageCmsData = $this->getCmsData(Cms::PAGE_DATA_FILTER_PAGE, self::PAGE_DOCUMENTATION);
         $returnData = array("statuses" => array(), "parameters" => array());
         array_walk($pageCmsData, function ($value) use(&$returnData, $pageCmsData) {
            $returnData[$value["placeholder"]] = $value["content"];
@@ -39,6 +48,12 @@ class Web
         });
 
         return $returnData;
+    }
+
+    private function getCmsData(string $filterKey, string $filterValue) {
+        $activeLocal = $this->localization->getActive();
+        $defaultLocal = $this->localization->getDefault();
+        return $this->cms->getPageDataForLocalWithFilter($activeLocal, $defaultLocal, $filterKey, $filterValue);
     }
 
     private function documentationPairValues(array $pageCmsData, &$returnData, $prefix, $returnArrayKey, $cmsDataValue) {

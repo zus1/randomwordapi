@@ -59,7 +59,7 @@ class Factory
     /**
      * @param string $type
      * @param bool $singleton
-     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words|WordsBulk|WordsJson|WordsCsv|Response|Localization|Translator
+     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words|WordsBulk|WordsJson|WordsCsv|Response|Localization|Translator|Web
      */
     public static function getObject(string $type, bool $singleton=false) {
         if(!array_key_exists($type, self::TYPE_METHOD_MAPPING)) {
