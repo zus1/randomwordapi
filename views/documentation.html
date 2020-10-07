@@ -1,0 +1,86 @@
+@header-admin;
+@include.(navigationWeb)
+<div class="container">
+    <div class="row content-wrapper">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <pre>{about}</pre>
+        </div>
+    </div>
+    <div class="row content-wrapper">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <pre>{info_params}</pre>
+            @foreach.(parameters)
+                <div class="row">
+                    <div class="col-md-3 col-lg-3 col-sm-3">
+                        <p class="example-box">{@value.(label)}</p>
+                    </div>
+                    <div class="col-md-9 col-lg-9 col-sm-9">
+                        <p class="example-box">{@value.(content)}</p>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+    <div class="row content-wrapper">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <pre>{info_statuses}</pre>
+            @foreach.(statuses)
+                <div class="row">
+                    <div class="col-md-3 col-lg-3 col-sm-3">
+                        <p class="example-box">{@value.(label)}</p>
+                    </div>
+                    <div class="col-md-9 col-lg-9 col-sm-9">
+                        <p class="example-box">{@value.(content)}</p>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+    <div class="row content-wrapper">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <pre>{example_info}</pre>
+            <div class="example-box">
+                <pre>{example_request}</pre>
+            </div>
+            <br>
+            <div class="example-box">
+                <pre>{example_response}</pre>
+            </div>
+        </div>
+    </div>
+    <div class="row content-wrapper">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <pre>{try_info}</pre>
+            <div class="row">
+                <div class="col-md-12 col-lg-12 col-md-12">
+                    <div class="example-box" id="try-url"></div>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-6 col-lg-6 col-sm-6">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="tag" placeholder="Language">
+                    </div>
+                    <div class="form-group">
+                        <input type="number" class="form-control" id="min-length" placeholder="Min word length" min="0">
+                    </div>
+                    <div class="form-group">
+                        <input type="number" class="form-control" id="max-length" placeholder="Max word length" min="0">
+                    </div>
+                    <div class="form-group">
+                        <input type="number" class="form-control" id="words-num" placeholder="Number of words" min="0">
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-lg btn-outline-secondary" id="try-button">Send request</button>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-sm-6">
+                    <div class="example-box" style="min-height: 200px;"><pre id="try-response"></pre></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{base_url}js/documentation.js"></script>
+@footer;

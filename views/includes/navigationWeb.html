@@ -1,0 +1,17 @@
+<div class="nav-custom">
+    <div class="logo-custom">
+        {logo}
+    </div>
+    <ul>
+        <li><a href="{base_url}views/documentation.php">Documentation</a></li>
+        @role.true.admin?
+            <li><a href="{base_url}views/adm/insert.php">Admin</a></li>
+        @role?
+        {locals}
+        @auth.true.?
+            <li><a href="{base_url}views/auth/logout.php">Logout</a></li>
+        @else
+            <li><a href="{base_url}views/auth/login.php">Login</a></li>
+        @auth?
+    </ul>
+</div>

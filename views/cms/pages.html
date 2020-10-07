@@ -1,0 +1,84 @@
+@header-admin;
+@include.(navigationCms)
+<div class="container">
+    <div class="row content-wrapper">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <div class="content-title">Add new page</div>
+            <div class="form-group">
+                <div style="height: 50px;">
+                    <div id="alert-add" class="notification" style="display: none">
+                        <div id="notification-add"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="add-name" placeholder="name">
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" cols="20" rows="10" id="add-holders" placeholder="Add placeholders"></textarea>
+            </div>
+            <div class="form-group content-footer">
+                <button type="button" class="login-button" id="add-button">Add Page</button>
+            </div>
+        </div>
+    </div>
+    <div class="row content-wrapper">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <div class="content-title">Edit page</div>
+            <div class="form-group">
+                <div style="height: 50px;">
+                    <div id="alert-change" class="notification" style="display: none">
+                        <div id="notification-change"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="change-page">
+                    <option value="" disabled selected>Select page to edit</option>
+                    @foreach.(pages)
+                    <option value="@value.(id)">@value.(name)</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="change-name" placeholder="name">
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="change-existing-holders" multiple>
+                    <option value="" disabled selected>Select holders to remove</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" id="change-new-holders" cols="20" rows="10" placeholder="Add new placeholders"></textarea>
+            </div>
+            <div class="form-group content-footer">
+                <button type="button" class="login-button" id="change-button">Edit</button>
+            </div>
+        </div>
+    </div>
+    <div class="row content-wrapper">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="content-title">Remove page</div>
+            <div class="form-group">
+                <div style="height: 50px;">
+                    <div id="alert-remove" class="notification" style="display: none">
+                        <div id="notification-remove"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="remove-page">
+                    <option value="" selected disabled>Select page to remove</option>
+                    @foreach.(pages)
+                    <option value="@value.(id)">@value.(name)</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group content-footer">
+                <button type="button" class="login-button" id="remove-button">Remove</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{base_url}js/pages.js"></script>
+@footer-admin;

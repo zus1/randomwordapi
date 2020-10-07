@@ -1,0 +1,136 @@
+body {
+    background-color: #23272b;
+    font-family: sans-serif;
+    color: white;
+}
+
+/*override bootstrap*/
+.form-control {
+    background-color: #545b62!important;
+    color: white!important;
+}
+
+.placeholder-custom {
+    color: #545b62!important;
+}
+
+.nav-custom {
+    background-color: black;
+    margin-left: 200px;
+    margin-right: 200px;
+    margin-bottom: 50px;
+}
+
+.nav-custom .logo-custom {
+    float: left;
+    padding: 7px;
+    margin-left: 10px;
+}
+
+.nav-custom ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.nav-custom li {
+    list-style-type: none;
+    margin-right: 10px;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.4s;
+}
+
+.nav-custom li:last-child {
+    margin-left: 250px;
+}
+
+.nav-custom li:HOVER {
+    background-color: #343a40;
+}
+
+.nav-custom a {
+    text-decoration: none;
+    color: white;
+    font-size: small;
+}
+
+.content-wrapper {
+    background-color: #343a40;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 100px;
+}
+
+.content-title {
+    color: white;
+    font-size: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid white;
+}
+
+.content-footer {
+    margin-top: 40px;
+    border-top: 1px solid white;
+    padding-top: 10px;
+    text-align: center;
+}
+
+.content-wrapper-login {
+    color: white;
+    border: 1px solid black;
+    border-radius: 10px;
+    margin-top: 200px;
+    padding: 20px;
+    background-color: #343a40;
+}
+
+.content-wrapper-login .title {
+    font-size: 30px;
+    padding: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.login-button {
+    width: 100%;
+    color:#6c757d;
+    background-color: #343a40;
+    border: 1px solid #5a6268;
+    border-radius: 10px;
+    text-align: center;
+    vertical-align: center;
+    padding: 10px;
+    transition: background-color 0.4s, color 0.4s;
+}
+
+.login-button:HOVER {
+    background-color: #6c757d;
+    color: white;
+}
+
+.files-box {
+    width: 100%;
+    height: 40px;
+    border: 1px solid black;
+    border-radius: 10px;
+    background-color: #6c757d;
+    padding-top: 7px;
+    padding-left: 10px;
+}
+
+.example-box {
+    width: 100%;
+    border-radius: 10px;
+    background-color: #6c757d;
+    padding: 15px;
+    min-height: 40px;
+}
+
+.alert-custom {
+    height: 70px;
+    margin-bottom: 10px;
+}

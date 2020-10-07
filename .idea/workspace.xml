@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="288e8d99-2ca2-423c-98ad-c98a0ae19105" name="Default Changelist" comment="" />
+    <list default="true" id="288e8d99-2ca2-423c-98ad-c98a0ae19105" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/js/documentation.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/documentation.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/documentation.html" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,10 +16,32 @@
       <executable />
     </execution>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CSS File" />
+        <option value="HTML File" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="1haenLxKPCOk9y8ZrFJwV0D3fj8" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="list.type.of.created.stylesheet" value="CSS" />
+    <property name="nodejs_package_manager_path" value="npm" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\xampp\htdocs\randomwordapi\classes\words" />
+      <recent name="C:\xampp\htdocs\randomwordapi\views\admin" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -30,6 +55,24 @@
       </list>
     </option>
   </component>
+  <component name="RunManager" selected="JavaScript Debug.words.php">
+    <configuration name="controller.php" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/randomwordapi/classes/controller.php" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="htmlparser.php" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/randomwordapi/classes/htmlparser.php" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="words.php" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/randomwordapi/classes/words/words.php" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JavaScript Debug.words.php" />
+        <item itemvalue="JavaScript Debug.controller.php" />
+        <item itemvalue="JavaScript Debug.htmlparser.php" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -40,11 +83,43 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1600253795724</updated>
-      <workItem from="1600253798664" duration="1072000" />
+      <workItem from="1600253798664" duration="17612000" />
+      <workItem from="1600336610059" duration="14373000" />
+      <workItem from="1600421290166" duration="19390000" />
+      <workItem from="1600521341635" duration="4451000" />
+      <workItem from="1600535841230" duration="11412000" />
+      <workItem from="1600603687413" duration="20870000" />
+      <workItem from="1600858908760" duration="23579000" />
+      <workItem from="1600971298193" duration="15910000" />
+      <workItem from="1601033123316" duration="8242000" />
+      <workItem from="1601124908674" duration="16348000" />
+      <workItem from="1601201504929" duration="21549000" />
+      <workItem from="1601326943863" duration="8356000" />
+      <workItem from="1601367151466" duration="27730000" />
+      <workItem from="1601452908883" duration="23651000" />
+      <workItem from="1601539537912" duration="20964000" />
+      <workItem from="1601626464869" duration="22914000" />
+      <workItem from="1601814385357" duration="13678000" />
+      <workItem from="1601885884501" duration="34318000" />
+      <workItem from="1601971302212" duration="18907000" />
+      <workItem from="1602058130296" duration="8823000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
