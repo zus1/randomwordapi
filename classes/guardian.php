@@ -9,7 +9,7 @@ class Guardian
     const CSRF_SESSION_KEY = "csrf_token";
     const CSRF_TOKEN_FIELD_NAME = "_csrf";
 
-    private $csrfChars = "abcdefg12345*+-()@ijkABCDEFG6789Yxhijklmnopr=&yxzqXYZQ";
+    protected $tokenChars = "abcdefg12345*+-()@ijkABCDEFG6789Yxhijklmnopr=&yxzqXYZQ";
 
     public function __construct(Session $session, User $user, Request $request) {
         $this->session = $session;
@@ -22,8 +22,8 @@ class Guardian
         $key = $this->getCsrfSessionKey();
         $csrfToken = "";
         while($this->csrfTokenSize > 0) {
-            $pos = rand(0, strlen($this->csrfChars) - 1);
-            $csrfToken .= $this->csrfChars[$pos];
+            $pos = rand(0, strlen($this->tokenChars) - 1);
+            $csrfToken .= $this->tokenChars[$pos];
             $this->csrfTokenSize--;
         }
 

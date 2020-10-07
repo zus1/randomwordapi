@@ -1,0 +1,93 @@
+@header-admin;
+@include.(navigationWeb)
+<div class="container">
+    <div class="row content-wrapper">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <div class="content-title">Create new App</div>
+            <div class="form-group">
+                <div class="alert-custom">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12 col-sm-12">
+                            @session.success?
+                            <div class="alert alert-success">
+                                @session.(success)
+                            </div>
+                            @session?
+                            @session.error?
+                            <div class="alert alert-danger">
+                                @session.(error)
+                            </div>
+                            @session?
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <form action="{base_url}views/api/addapp.php" method="post">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="app-name" placeholder="App Name">
+                    <div class="input-group-append">
+                        <input type="submit" class="btn btn-outline-secondary" value="Create">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    @foreach.(apps)
+        <div class="row content-wrapper">
+            <div class="col-md-12 col-lg-12 col-sm-12">
+                <div class="content-title">@value.(name)</div>
+                <div class="form-group">
+                    <div style="height: 50px;">
+                        <div id="alert-regenerate" class="notification" style="display: none">
+                            <div id="notification-regenerate"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <div id="@value.(id)" class="example-box">@value.(access_token)</div>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" id="regenerate-button-@value.(id)" onclick="regenerateAccessToken(this.id)">Regenerate</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-lg-4 col-sm-4">
+                        <div class="row files-box">
+                            <div class="col-md-6 col-lg-6 col-sm-6">
+                                Rate Limit
+                            </div>
+                            <div class="col-md-6 col-lg-6 col-sm-6">
+                                @value.(rate_limit)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-4">
+                        <div class="row files-box">
+                            <div class="col-md-6 col-lg-6 col-sm-6">
+                                Remaining
+                            </div>
+                            <div class="col-md-6 col-lg-6 col-sm-6">
+                                @value.(requests_remaining)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-4">
+                        <div class="row files-box">
+                            <div class="col-md-6 col-lg-6 col-sm-6">
+                                Limit Reached
+                            </div>
+                            <div class="col-md-6 col-lg-6 col-sm-6">
+                                @value.(limit_reached)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+</div>
+<script>
+    function regenerateAccessToken(buttonId) {
+        
+    }
+</script>
+@footer;

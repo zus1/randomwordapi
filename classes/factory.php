@@ -25,7 +25,11 @@ class Factory
     const TYPE_WEB = "web";
     const EXTENDER_HTML_PARSER = "extender_html_parser";
     const TYPE_TRANSLATOR = 'translator';
-    const TYPE_JSON_PARSER = "json.parser";
+    const TYPE_JSON_PARSER = "json-parser";
+    const TYPE_API_GUARDIAN = "api-guardian";
+    const TYPE_API_CONTROLLER_INTERNAL = 'api-controller-internal';
+    const TYPE_API_USER  = "api-user";
+    const TYPE_API_APP = "api-app";
     const TYPE_METHOD_MAPPING = array(
         self::TYPE_CONTROLLER => "getController",
         self::TYPE_DATABASE => "getDatabase",
@@ -50,6 +54,10 @@ class Factory
         self::TYPE_WEB => "getWeb",
         self::TYPE_TRANSLATOR => "getTranslator",
         self::TYPE_JSON_PARSER => "getJsonParser",
+        self::TYPE_API_GUARDIAN => "getApiGuardian",
+        self::TYPE_API_CONTROLLER_INTERNAL => "getApiControllerInternal",
+        self::TYPE_API_USER => "getApiUser",
+        self::TYPE_API_APP => "getApiApp",
     );
     const EXTENDER_METHOD_MAPPING = array(
         self::EXTENDER_HTML_PARSER => "getExtenderHtmlParser",
@@ -59,7 +67,7 @@ class Factory
     /**
      * @param string $type
      * @param bool $singleton
-     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words|WordsBulk|WordsJson|WordsCsv|Response|Localization|Translator|Web
+     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words|WordsBulk|WordsJson|WordsCsv|Response|Localization|Translator|Web|ApiGuardian|ApiApp
      */
     public static function getObject(string $type, bool $singleton=false) {
         if(!array_key_exists($type, self::TYPE_METHOD_MAPPING)) {
@@ -188,5 +196,21 @@ class Factory
 
     private function getJsonParser() {
         return new JsonParser();
+    }
+
+    private function getApiGuardian() {
+        return new ApiGuardian($this->getSession(), $this->getUser(), $this->getRequest());
+    }
+
+    private function getApiControllerInternal() {
+        return new ApiControllerInternal($this->getRequest(), $this->getApiValidator(), $this->getApiApp(), $this->getApiUser(), $this->getHtmlParser());
+    }
+
+    private function getApiUser() {
+        return new ApiUser($this->getSession());
+    }
+
+    private function getApiApp() {
+        return new ApiApp($this->getApiValidator());
     }
 }

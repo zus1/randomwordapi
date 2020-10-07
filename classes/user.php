@@ -6,7 +6,6 @@ class User
     const USER_SESSION_KEY = 'username';
     const ROLE_USER = 'user';
     const ROLE_ADMIN = 'admin';
-    private static $counter = 1;
     private $roleToDbRoleMapping = array(
         self::ROLE_USER => 1,
         self::ROLE_ADMIN => 2,
@@ -16,7 +15,6 @@ class User
     private $session;
 
     public function __construct(Session $session) {
-        self::$counter++;
         $this->session = $session;
     }
 
@@ -27,10 +25,6 @@ class User
         }
 
         return true;
-    }
-
-    public function bla() {
-        echo "blabla " . self::$counter;
     }
 
     public function getAuthenticatedUser(?array $fields=array()) {
