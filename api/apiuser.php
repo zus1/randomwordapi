@@ -4,6 +4,11 @@
 class ApiUser extends User
 {
     public function getAuthenticatedUserId() {
-        return $this->getAuthenticatedUser(array("id"));
+        $user = $this->getAuthenticatedUser(array("id"));
+        if(!$user) {
+            return 0;
+        }
+
+        return $user['id'];
     }
 }

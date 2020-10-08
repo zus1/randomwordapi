@@ -62,6 +62,8 @@ class Router
             '/views/adm/removetranslation.php',
             '/views/api/app.php',
             '/views/api/addapp.php',
+            '/views/api/regeneratetoken.php',
+            '/views/api/deleteapp.php',
         );
     }
 
@@ -119,6 +121,8 @@ class Router
             '/views/adm/removetranslation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'adminRemoveTranslation', 'request' => self::REQUEST_POST, 'role' => "admin", 'auth' => true),
             '/views/api/app.php' => array('class' => Factory::TYPE_API_CONTROLLER_INTERNAL, 'method' => 'getApp', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => true),
             '/views/api/addapp.php' => array('class' => Factory::TYPE_API_CONTROLLER_INTERNAL, 'method' => 'addApp', 'request' => self::REQUEST_POST, 'role' => "", 'auth' => true),
+            '/views/api/regeneratetoken.php' => array('class' => Factory::TYPE_API_CONTROLLER_INTERNAL, 'method' => 'regenerateToken', 'request' => self::REQUEST_POST, 'role' => "", 'auth' => true),
+            '/views/api/deleteapp.php' => array('class' => Factory::TYPE_API_CONTROLLER_INTERNAL, 'method' => 'deleteApp', 'request' => self::REQUEST_POST, 'role' => "", 'auth' => true),
         );
     }
 

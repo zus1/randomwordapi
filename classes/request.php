@@ -30,6 +30,19 @@ class Request
         return $this->requestVars;
     }
 
+    public function getHeaders() {
+        return getallheaders();
+    }
+
+    public function getHeader(string $key, $default=null) {
+        $allHeaders = $this->getHeaders();
+        if(array_key_exists($key, $allHeaders)) {
+            return $allHeaders[$key];
+        }
+
+        return ($default !== null)? $default : "";
+    }
+
     public function file($key) {
         $file = null;
         if(!empty($_FILES) && isset($_FILES[$key])) {

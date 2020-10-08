@@ -30,6 +30,7 @@ class Factory
     const TYPE_API_CONTROLLER_INTERNAL = 'api-controller-internal';
     const TYPE_API_USER  = "api-user";
     const TYPE_API_APP = "api-app";
+    const TYPE_DATE_HANDLER = "date-handler";
     const TYPE_METHOD_MAPPING = array(
         self::TYPE_CONTROLLER => "getController",
         self::TYPE_DATABASE => "getDatabase",
@@ -58,6 +59,7 @@ class Factory
         self::TYPE_API_CONTROLLER_INTERNAL => "getApiControllerInternal",
         self::TYPE_API_USER => "getApiUser",
         self::TYPE_API_APP => "getApiApp",
+        self::TYPE_DATE_HANDLER => "getDateHandler",
     );
     const EXTENDER_METHOD_MAPPING = array(
         self::EXTENDER_HTML_PARSER => "getExtenderHtmlParser",
@@ -67,7 +69,7 @@ class Factory
     /**
      * @param string $type
      * @param bool $singleton
-     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words|WordsBulk|WordsJson|WordsCsv|Response|Localization|Translator|Web|ApiGuardian|ApiApp
+     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words|WordsBulk|WordsJson|WordsCsv|Response|Localization|Translator|Web|ApiGuardian|ApiApp|DateHandler
      */
     public static function getObject(string $type, bool $singleton=false) {
         if(!array_key_exists($type, self::TYPE_METHOD_MAPPING)) {
@@ -107,7 +109,7 @@ class Factory
     }
 
     private function getApiController() {
-        return new ApiController($this->getRequest(), $this->getApiValidator(), $this->getWords());
+        return new ApiController($this->getRequest(), $this->getApiValidator(), $this->getWords(), $this->getApiApp());
     }
 
     private function getDatabase() {
@@ -135,7 +137,7 @@ class Factory
     }
 
     private function getApiException() {
-        return new ApiException();
+        return new ApiException($this->getApiApp());
     }
 
     private function getValidator() {
@@ -211,6 +213,10 @@ class Factory
     }
 
     private function getApiApp() {
-        return new ApiApp($this->getApiValidator());
+        return new ApiApp($this->getApiValidator(), $this->getApiGuardian(), $this->getApiUser(), $this->getRequest(), $this->getDateHandler());
+    }
+
+    public function getDateHandler() {
+        return new DateHandler();
     }
 }

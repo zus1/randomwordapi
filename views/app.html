@@ -38,19 +38,23 @@
                 <div class="content-title">@value.(name)</div>
                 <div class="form-group">
                     <div style="height: 50px;">
-                        <div id="alert-regenerate" class="notification" style="display: none">
-                            <div id="notification-regenerate"></div>
+                        <div id="alert-regenerate-@value.(id)" class="notification" style="display: none">
+                            <div id="notification-regenerate-@value.(id)"></div>
                         </div>
                     </div>
                 </div>
-                <div class="input-group mb-3">
-                    <div id="@value.(id)" class="example-box">@value.(access_token)</div>
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-outline-secondary" id="regenerate-button-@value.(id)" onclick="regenerateAccessToken(this.id)">Regenerate</button>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-9 col-lg-9 col-sm-12">
+                            <div id="@value.(id)" class="files-box">Access token:&#32;@value.(access_token)</div>
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-sm-12">
+                            <button type="button" class="btn btn-outline-secondary" id="regenerate-button-@value.(id)" onclick="regenerateAccessToken(this.id)">Regenerate</button>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-4 col-lg-4 col-sm-4">
+                <div class="row", style="margin-left: 1px;">
+                    <div class="col-md-4 col-lg-4 col-sm-12">
                         <div class="row files-box">
                             <div class="col-md-6 col-lg-6 col-sm-6">
                                 Rate Limit
@@ -60,17 +64,17 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 col-lg-4 col-sm-4">
+                    <div class="col-md-4 col-lg-4 col-sm-12">
                         <div class="row files-box">
                             <div class="col-md-6 col-lg-6 col-sm-6">
-                                Remaining
+                                Requests spent
                             </div>
                             <div class="col-md-6 col-lg-6 col-sm-6">
-                                @value.(requests_remaining)
+                                @value.(requests_spent)
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 col-lg-4 col-sm-4">
+                    <div class="col-md-4 col-lg-4 col-sm-12">
                         <div class="row files-box">
                             <div class="col-md-6 col-lg-6 col-sm-6">
                                 Limit Reached
@@ -81,13 +85,56 @@
                         </div>
                     </div>
                 </div>
+                <div class="form-group content-footer">
+                    <button type="button" class="login-button" id="remove-button-@value.(id)" onclick="deleteApp(this.id)">Delete app</button>
+                </div>
             </div>
         </div>
     @endforeach
 </div>
 <script>
     function regenerateAccessToken(buttonId) {
-        
+        const idParts = buttonId.split("-");
+        const id = idParts[idParts.length - 1];
+
+        const currentTokenDiv = document.getElementById(id);
+        const currentToken = currentTokenDiv.innerHTML.split(":")[1].trim();
+
+        const formData = new FormData();
+        formData.append("app_id", id);
+        formData.append("current_token", currentToken);
+
+        postAjax("/views/api/regeneratetoken.php", formData, tokenRegenerated);
+    }
+
+    function tokenRegenerated(data) {
+        if(parseInt(data.error === 1)) {
+            addNotification("error", data.message, "regenerate-" + data.id);
+        } else {
+            const tokenDiv = document.getElementById(data.id)
+            tokenDiv.innerHTML = "Access token: " + data.new_token;
+            addNotification("success", data.message, "regenerate-" + data.id);
+        }
+    }
+
+    function deleteApp(buttonId) {
+       const confirmation = confirm("You are about to delete app. This action is permanent and can't be reverted. Are you sure you want to proceed?");
+       if(confirmation === true) {
+           const idParts = buttonId.split("-");
+           const id = idParts[idParts.length - 1];
+           const formData = new FormData();
+           formData.append("app_id", id);
+
+           postAjax("/views/api/deleteapp.php", formData, afterAppDelete)
+       }
+    }
+
+    function afterAppDelete(data) {
+        if(parseInt(data.error) === 1) {
+            addNotification("error", data.message, "regenerate-" + data.id);
+        } else {
+            location.reload();
+        }
     }
 </script>
 @footer;

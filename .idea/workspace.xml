@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="288e8d99-2ca2-423c-98ad-c98a0ae19105" name="Default Changelist" comment="" />
+    <list default="true" id="288e8d99-2ca2-423c-98ad-c98a0ae19105" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/classes/datehandler.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/apiapp.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/apiapp.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/apicontroller.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/apicontroller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/apicontrollerinternal.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/apicontrollerinternal.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/apiexception.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/apiexception.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/apiuser.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/apiuser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/factory.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/factory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/request.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/request.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/router.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/router.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/init.ini" beforeDir="false" afterPath="$PROJECT_DIR$/init.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/app.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/app.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/includes/navigationWeb.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/includes/navigationWeb.html" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,7 +67,10 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="JavaScript Debug.words.php">
+  <component name="RunManager" selected="JavaScript Debug.apiapp.php">
+    <configuration name="apiapp.php" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/randomwordapi/api/apiapp.php" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
     <configuration name="controller.php" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/randomwordapi/classes/controller.php" useBuiltInWebServerPort="true">
       <method v="2" />
     </configuration>
@@ -64,6 +82,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JavaScript Debug.apiapp.php" />
         <item itemvalue="JavaScript Debug.words.php" />
         <item itemvalue="JavaScript Debug.controller.php" />
         <item itemvalue="JavaScript Debug.htmlparser.php" />
@@ -100,6 +119,7 @@
       <workItem from="1601885884501" duration="34318000" />
       <workItem from="1601971302212" duration="18907000" />
       <workItem from="1602058130296" duration="8823000" />
+      <workItem from="1602144705437" duration="21508000" />
     </task>
     <servers />
   </component>
