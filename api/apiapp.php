@@ -20,7 +20,7 @@ class ApiApp
     private $dataSet = array(
         "id", "name", "user_id", "access_token", "first_request", "rate_limit", "requests_spent",
         "requests_remaining", "time_left_until_reset", "deactivated", "soft_banned", "hard_banned",
-        "limit_reached", "last_request", "soft_banned_at"
+        "limit_reached", "last_request", "soft_banned_at", "token_regenerated_at"
     );
 
     public function getDbTpResponseHeaderMapping() {
@@ -41,10 +41,6 @@ class ApiApp
         $rateLimitInterval = (int)Config::get(Config::API_RATE_LIMIT_TIME_RANGE);
         $rateLimit = (int)Config::get(Config::API_DEFAULT_RATE_LIMIT);
         $accessToken = $this->request->getHeader($authHeader);
-        if(empty($accessToken)) {
-            throw new Exception("Access token missing", HttpCodes::UNAUTHORIZED);
-        }
-
         $fields = array(
             "id", "user_id", "first_request", "last_request", "rate_limit", "requests_spent", "requests_remaining", "limit_reached",
             "time_left_until_reset", "deactivated", "soft_banned", "hard_banned", "soft_banned_at"
@@ -56,9 +52,9 @@ class ApiApp
         }
         $app = $app[0];
 
-        $this->checkAppBan($app);
+        $this->apiGuardian->checkHardBan($app);
+        $this->apiGuardian->checkSoftBan($app, $softBanInterval);
         $this->checkAppDeactivated($app);
-        $this->checkAppSoftBan($app, $softBanInterval);
         $this->handleFirstRequest($app, $rateLimitInterval);
         $newInterval = $this->dateHandler->checkGreaterThenInterval($app["last_request"], date("Y-m-d H:i:s"), 0);
         $this->handleRateLimit($app, $accessToken, $newInterval);
@@ -72,27 +68,9 @@ class ApiApp
         }
     }
 
-    private function checkAppBan(array $app) {
-        if((int)$app["hard_banned"] === 1) {
-            throw new Exception("Banned", HttpCodes::HTTP_FORBIDDEN);
-        }
-    }
-
     private function checkAppDeactivated(array &$app) {
         if((int)$app["deactivated"] === 1) {
             throw new Exception("App is not active", HttpCodes::HTTP_BAD_REQUEST);
-        }
-    }
-
-    private function checkAppSoftBan(array &$app, int $softBanInterval) {
-        if((int)$app["soft_banned"] === 1) {
-            $banExpired = $this->dateHandler->checkGreaterThenInterval($app["soft_banned_at"], date("Y-m-d H:i:s"), $softBanInterval);
-            if($banExpired === false) {
-                throw new Exception("Banned", HttpCodes::HTTP_FORBIDDEN);
-            } else {
-                $app["soft_banned"] = 0;
-                $app["soft_banned_at"] = null;
-            }
         }
     }
 
@@ -121,7 +99,7 @@ class ApiApp
             $app["requests_spent"] = 0;
             $app["requests_remaining"] = $rateLimit;
             $app["rate_limit"] = $rateLimit;
-            $app["first_request"] = $app["last_request"];
+            $app["first_request"] = date("Y-m-d H:i:s");
             $app["last_request"] = date("Y-m-d H:i:s", $this->dateHandler->convertDateToTimestamp($app["first_request"]) + $rateLimitInterval *60);
         }
     }

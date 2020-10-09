@@ -43,6 +43,10 @@ class Request
         return ($default !== null)? $default : "";
     }
 
+    public function getRequestIp() {
+        return $_SERVER["REMOTE_ADDR"];
+    }
+
     public function file($key) {
         $file = null;
         if(!empty($_FILES) && isset($_FILES[$key])) {

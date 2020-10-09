@@ -4,17 +4,19 @@ class Guardian
 {
     private $session;
     private $user;
-    private $request;
+    protected $request;
+    protected $dateHandler;
     private $csrfTokenSize = 30;
     const CSRF_SESSION_KEY = "csrf_token";
     const CSRF_TOKEN_FIELD_NAME = "_csrf";
 
     protected $tokenChars = "abcdefg12345*+-()@ijkABCDEFG6789Yxhijklmnopr=&yxzqXYZQ";
 
-    public function __construct(Session $session, User $user, Request $request) {
+    public function __construct(Session $session, User $user, Request $request, DateHandler $dateHandler) {
         $this->session = $session;
         $this->user = $user;
         $this->request = $request;
+        $this->dateHandler = $dateHandler;
     }
 
     public function regenerateCsrfToken() {
@@ -52,5 +54,11 @@ class Guardian
         }
 
         return $key;
+    }
+
+    public function checkHardBan(array $app) {
+        if((int)$app["hard_banned"] === 1) {
+            throw new Exception("Banned", HttpCodes::HTTP_FORBIDDEN);
+        }
     }
 }

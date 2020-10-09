@@ -7,7 +7,8 @@ spl_autoload_register(function () {
         $root . "/api",
         $root . "/config",
         $root . "/classes/words",
-        $root . "/extenders"
+        $root . "/extenders",
+        $root . "/models",
     );
 
     foreach($paths as $path) {

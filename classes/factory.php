@@ -23,7 +23,6 @@ class Factory
     const TYPE_GUARDIAN = "guardian";
     const TYPE_CMS = "cms";
     const TYPE_WEB = "web";
-    const EXTENDER_HTML_PARSER = "extender_html_parser";
     const TYPE_TRANSLATOR = 'translator';
     const TYPE_JSON_PARSER = "json-parser";
     const TYPE_API_GUARDIAN = "api-guardian";
@@ -31,6 +30,12 @@ class Factory
     const TYPE_API_USER  = "api-user";
     const TYPE_API_APP = "api-app";
     const TYPE_DATE_HANDLER = "date-handler";
+    const TYPE_IP_CHECKER = "ip_checker";
+
+    const EXTENDER_HTML_PARSER = "extender_html_parser";
+
+    const MODEL_IP_CHECKER = "model-ip-checker";
+
     const TYPE_METHOD_MAPPING = array(
         self::TYPE_CONTROLLER => "getController",
         self::TYPE_DATABASE => "getDatabase",
@@ -60,16 +65,20 @@ class Factory
         self::TYPE_API_USER => "getApiUser",
         self::TYPE_API_APP => "getApiApp",
         self::TYPE_DATE_HANDLER => "getDateHandler",
+        self::TYPE_IP_CHECKER => "getIpChecker",
     );
     const EXTENDER_METHOD_MAPPING = array(
         self::EXTENDER_HTML_PARSER => "getExtenderHtmlParser",
+    );
+    const MODEL_TO_METHOD_MAPPING = array(
+        self::MODEL_IP_CHECKER => "getModelIpChecker",
     );
     private static $instances = array();
 
     /**
      * @param string $type
      * @param bool $singleton
-     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words|WordsBulk|WordsJson|WordsCsv|Response|Localization|Translator|Web|ApiGuardian|ApiApp|DateHandler
+     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words|WordsBulk|WordsJson|WordsCsv|Response|Localization|Translator|Web|ApiGuardian|ApiApp|DateHandler|IpChecker
      */
     public static function getObject(string $type, bool $singleton=false) {
         if(!array_key_exists($type, self::TYPE_METHOD_MAPPING)) {
@@ -93,7 +102,7 @@ class Factory
      * @return HtmlParserExtender
      */
     public static function getExtender(string $extenderType) {
-        if(!in_array($extenderType, self::EXTENDER_METHOD_MAPPING)) {
+        if(!array_key_exists($extenderType, self::EXTENDER_METHOD_MAPPING)) {
             return null;
         }
         if(!isset(self::$instances[$extenderType])) {
@@ -104,12 +113,28 @@ class Factory
         return self::$instances[$extenderType];
     }
 
+    /**
+     * @param string $modelType
+     * @return IpCheckerModel
+     */
+    public static function getModel(string $modelType) {
+        if(!array_key_exists($modelType, self::MODEL_TO_METHOD_MAPPING)) {
+            return null;
+        }
+
+        return call_user_func([new self(), self::MODEL_TO_METHOD_MAPPING[$modelType]]);
+    }
+
+    private function getModelIpChecker() {
+        return new IpCheckerModel($this->getValidator());
+    }
+
     private function getController() {
         return new Controller($this->getRequest(), $this->getHtmlParser(), $this->getValidator(), $this->getUser(), $this->getSession(), $this->getResponse(), $this->getLocalization(), $this->getCms(), $this->getWeb());
     }
 
     private function getApiController() {
-        return new ApiController($this->getRequest(), $this->getApiValidator(), $this->getWords(), $this->getApiApp());
+        return new ApiController($this->getRequest(), $this->getApiValidator(), $this->getWords(), $this->getApiApp(), $this->getApiGuardian(), $this->getIpChecker());
     }
 
     private function getDatabase() {
@@ -177,7 +202,7 @@ class Factory
     }
 
     private function getGuardian() {
-        return new Guardian($this->getSession(), $this->getUser(), $this->getRequest());
+        return new Guardian($this->getSession(), $this->getUser(), $this->getRequest(), $this->getDateHandler());
     }
 
     private function getCms() {
@@ -201,7 +226,7 @@ class Factory
     }
 
     private function getApiGuardian() {
-        return new ApiGuardian($this->getSession(), $this->getUser(), $this->getRequest());
+        return new ApiGuardian($this->getSession(), $this->getUser(), $this->getRequest(), $this->getDateHandler());
     }
 
     private function getApiControllerInternal() {
@@ -218,5 +243,9 @@ class Factory
 
     public function getDateHandler() {
         return new DateHandler();
+    }
+
+    public function getIpChecker() {
+        return new IpChecker($this->getApiApp(), $this->getRequest(), $this->getApiValidator(), $this->getDateHandler(), $this->getApiGuardian());
     }
 }
