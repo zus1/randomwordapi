@@ -1,5 +1,8 @@
 <?php
 
+//use PHPMailer\PHPMailer\PHPMailer;
+//use PHPMailer\PHPMailer\Exception;
+
 class Factory
 {
     const TYPE_CONTROLLER = "controller";
@@ -31,10 +34,16 @@ class Factory
     const TYPE_API_APP = "api-app";
     const TYPE_DATE_HANDLER = "date-handler";
     const TYPE_IP_CHECKER = "ip_checker";
+    const TYPE_MAIL = "mail";
+    const TYPE_RESET_PASSWORD_MAIL = "reset-password-mail";
+    const TYPE_ACCOUNT_VERIFICATION_MAIL = "account-verification-mail";
 
     const EXTENDER_HTML_PARSER = "extender_html_parser";
 
     const MODEL_IP_CHECKER = "model-ip-checker";
+    const MODEL_USER = "model_user";
+
+    const LIBRARY_PHP_MAILER = 'library-php-mailer';
 
     const TYPE_METHOD_MAPPING = array(
         self::TYPE_CONTROLLER => "getController",
@@ -66,19 +75,26 @@ class Factory
         self::TYPE_API_APP => "getApiApp",
         self::TYPE_DATE_HANDLER => "getDateHandler",
         self::TYPE_IP_CHECKER => "getIpChecker",
+        self::TYPE_MAIL => "getMail",
+        self::TYPE_RESET_PASSWORD_MAIL => "getResetPasswordMail",
+        self::TYPE_ACCOUNT_VERIFICATION_MAIL => "getAccountVerificationMail",
     );
     const EXTENDER_METHOD_MAPPING = array(
         self::EXTENDER_HTML_PARSER => "getExtenderHtmlParser",
     );
     const MODEL_TO_METHOD_MAPPING = array(
         self::MODEL_IP_CHECKER => "getModelIpChecker",
+        self::MODEL_USER => "getModelUser",
+    );
+    const LIBRARY_TO_TYPE_MAPPING = array(
+        self::LIBRARY_PHP_MAILER => "getLibraryPhpMailer",
     );
     private static $instances = array();
 
     /**
      * @param string $type
      * @param bool $singleton
-     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words|WordsBulk|WordsJson|WordsCsv|Response|Localization|Translator|Web|ApiGuardian|ApiApp|DateHandler|IpChecker
+     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words|WordsBulk|WordsJson|WordsCsv|Response|Localization|Translator|Web|ApiGuardian|ApiApp|DateHandler|IpChecker|AccountVerificationMail|ResetPasswordMail
      */
     public static function getObject(string $type, bool $singleton=false) {
         if(!array_key_exists($type, self::TYPE_METHOD_MAPPING)) {
@@ -121,8 +137,44 @@ class Factory
         if(!array_key_exists($modelType, self::MODEL_TO_METHOD_MAPPING)) {
             return null;
         }
+        if(!isset(self::$instances[$modelType])) {
+            $object = call_user_func([new self(), self::MODEL_TO_METHOD_MAPPING[$modelType]]);
+            self::$instances[$modelType] = $object;
+        }
 
-        return call_user_func([new self(), self::MODEL_TO_METHOD_MAPPING[$modelType]]);
+        return self::$instances[$modelType];
+    }
+
+    /**
+     * @param string $libraryType
+     * @return PHPMailer
+     */
+    public static function getLibrary(string $libraryType) {
+        if(!array_key_exists($libraryType, self::LIBRARY_TO_TYPE_MAPPING)) {
+            return null;
+        }
+
+        return call_user_func([new self(), self::LIBRARY_TO_TYPE_MAPPING[$libraryType]]);
+    }
+
+    private function getResetPasswordMail() {
+        return new ResetPasswordMail($this->getGuardian());
+    }
+
+    private function getAccountVerificationMail() {
+        return new AccountVerificationMail($this->getGuardian());
+    }
+
+    private function getMail() {
+        return new Mail($this->getGuardian());
+    }
+
+    private function getLibraryPhpMailer() {
+        return new PHPMailer();
+    }
+
+    private function getModelUser() {
+        return new UserModel($this->getValidator());
     }
 
     private function getModelIpChecker() {

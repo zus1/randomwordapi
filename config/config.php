@@ -27,6 +27,13 @@ class Config
     const RULE_PERIOD_FOR_NUM_REQUESTS = "RULE_PERIOD_FOR_NUM_REQUESTS";
     const RULE_NUM_REQUESTS = "RULE_NUM_REQUESTS";
     const API_MAX_SOFT_BANS = "API_MAX_SOFT_BANS";
+    const EMAIL_SMTP_SERVER = "EMAIL_SMTP_SERVER";
+    const EMAIL_USERNAME = "EMAIL_USERNAME";
+    const EMAIL_PASSWORD = "EMAIL_PASSWORD";
+    const EMAIL_PORT = "EMAIL_PORT";
+    const EMAIL_ENCRIPTION = "EMAIL_ENCRIPTION";
+    const VERIFICATION_TOKEN_SIZE = "VERIFICATION_TOKEN_SIZE";
+    const PASSWORD_RESET_TOKEN_SIZE = "PASSWORD_RESET_TOKEN_SIZE";
     private static $_initialized = false;
     private static $_configArray = array();
 

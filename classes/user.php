@@ -10,7 +10,7 @@ class User
         self::ROLE_USER => 1,
         self::ROLE_ADMIN => 2,
     );
-    private $dataset = array("id", "username", "email", "password", "role", "local");
+    //private $dataset = array("id", "username", "email", "password", "role", "local");
 
     private $session;
 
@@ -18,13 +18,8 @@ class User
         $this->session = $session;
     }
 
-    private function checkIfAllowed(array $inputFields) {
-        $notAllowed = array_diff($inputFields, $this->dataset);
-        if(!empty($notAllowed)) {
-            return false;
-        }
-
-        return true;
+    public function getModel() {
+        return Factory::getModel(Factory::MODEL_USER);
     }
 
     public function getAuthenticatedUser(?array $fields=array()) {
@@ -32,22 +27,9 @@ class User
         if(!isset($_SESSION[self::USER_SESSION_KEY])) {
             return array();
         }
-        if(!$this->checkIfAllowed($fields)) {
-            return array();
-        }
-
         $userEmail = $_SESSION[self::USER_SESSION_KEY];
-        if(!empty($fields)) {
-            $fields = array_map(function ($field) {
-                return Factory::getObject(Factory::TYPE_VALIDATOR)->filterAlphaNumUnderscore($field);
-            }, $fields);
-            $fieldsStr = implode(",", $fields);
-        } else {
-            $fieldsStr = "*";
-        }
 
-        $authUser = Factory::getObject(Factory::TYPE_DATABASE)->select("SELECT " . $fieldsStr . " FROM user WHERE email = ?", array("string"), array($userEmail));
-
+        $authUser = $this->getModel()->select($fields, array("email" => $userEmail));
         return $authUser[0];
     }
 
@@ -56,29 +38,9 @@ class User
         if(!isset($_SESSION[self::USER_SESSION_KEY])) {
             return false;
         }
-
         $userEmail = $_SESSION[self::USER_SESSION_KEY];
-        $fields = array_keys($data);
-        $values = array_values($data);
-        if(!$this->checkIfAllowed($fields)) {
-            return false;
-        }
 
-        $fields = array_map(function($field) {
-            return Factory::getObject(Factory::TYPE_VALIDATOR)->filterAlphaNumUnderscore($field);
-        }, $fields);
-
-        //$query = Factory::getObject(Factory::TYPE_DATABASE, true)->buildUpdateQuery($fields, array("email"));
-        $query = "UPDATE user SET ";
-        foreach($fields as $field) {
-            $query .= sprintf("%s=?,", $field);
-        }
-
-        $query = substr($query, 0, strlen($query) - 1);
-        $query .= " WHERE email = ?";
-        $values[] = $userEmail;
-
-        Factory::getObject(Factory::TYPE_DATABASE, true)->execute($query, array(), $values);
+        $this->getModel()->update($data, array("email" => $userEmail));
     }
 
     public function addAdminAccount(string $email, string $username, string $password) {
@@ -89,8 +51,13 @@ class User
             throw new Exception("Admin account already exists");
         }
 
-        Factory::getObject(Factory::TYPE_DATABASE, true)->execute("INSERT INTO user (email, username, password, hashed_password, role) VALUES (?,?,?,?,?)",
-            array("string", "string", "string", "string", "integer") , array($email, $username, $password, $hashedPassword, $this->roleToDbRoleMapping[self::ROLE_ADMIN]));
+        $this->getModel()->insert(array(
+            "email" => $email,
+            "username" => $username,
+            "password" => $password,
+            "hashed_password" => $hashedPassword,
+            "role" => $this->roleToDbRoleMapping[self::ROLE_ADMIN]
+        ));
     }
 
     public function isAuthenticatedUser() {
@@ -110,7 +77,7 @@ class User
 
         $roleInt = $this->roleToDbRoleMapping[$roleStr];
         $userEmail = $_SESSION[self::USER_SESSION_KEY];
-        $userRole = Factory::getObject(Factory::TYPE_DATABASE)->select("SELECT role FROM user WHERE email = ?", array("string"), array($userEmail))[0]['role'];
+        $userRole = $this->getModel()->select(array("role"), array("email" => $userEmail))[0]["role"];
         if(intval($userRole) !== $roleInt) {
             return false;
         }
@@ -125,7 +92,7 @@ class User
                 return false;
             }
             $userEmail = $_SESSION[self::USER_SESSION_KEY];
-            $role = Factory::getObject(Factory::TYPE_DATABASE)->select("SELECT role FROM user WHERE email = ?", array("string"), array($userEmail))[0]['role'];
+            $role = $this->getModel()->select(array("role"), array("email" => $userEmail))[0]["role"];
         }
 
         if(intval($role) === $this->roleToDbRoleMapping[self::ROLE_ADMIN]) {

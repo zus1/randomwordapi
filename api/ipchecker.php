@@ -18,7 +18,7 @@ class IpChecker
         $this->apiGuardian = $guardian;
     }
 
-    private function getModel() {
+    public function getModel() {
         return Factory::getModel(Factory::MODEL_IP_CHECKER);
     }
 

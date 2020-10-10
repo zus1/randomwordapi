@@ -10,7 +10,11 @@ class Guardian
     const CSRF_SESSION_KEY = "csrf_token";
     const CSRF_TOKEN_FIELD_NAME = "_csrf";
 
-    protected $tokenChars = "abcdefg12345*+-()@ijkABCDEFG6789Yxhijklmnopr=&yxzqXYZQ";
+    const TOKEN_TYPE_VERIFICATION = "verification";
+    const TOKEN_TYPE_PASSWORD_RESET = "password-reset";
+
+    protected $csrfTokenChars = "abcdefg12345*+-()@ijkABCDEFG6789Yxhijklmnopr=&yxzqXYZQ";
+    protected $tokenChars = "ABCDabcdEFGHefghIJKLijkl1234MNOPR56mnopr789stuvSTUVzZxXyYwW";
 
     public function __construct(Session $session, User $user, Request $request, DateHandler $dateHandler) {
         $this->session = $session;
@@ -19,15 +23,17 @@ class Guardian
         $this->dateHandler = $dateHandler;
     }
 
+    private function getTokenSize(string $type) {
+        return array(
+            self::TOKEN_TYPE_VERIFICATION => Config::get(Config::VERIFICATION_TOKEN_SIZE),
+            self::TOKEN_TYPE_PASSWORD_RESET => Config::get(Config::PASSWORD_RESET_TOKEN_SIZE),
+        )[$type];
+    }
+
     public function regenerateCsrfToken() {
         $this->session->startSession();
         $key = $this->getCsrfSessionKey();
-        $csrfToken = "";
-        while($this->csrfTokenSize > 0) {
-            $pos = rand(0, strlen($this->tokenChars) - 1);
-            $csrfToken .= $this->tokenChars[$pos];
-            $this->csrfTokenSize--;
-        }
+        $csrfToken = $this->makeTokenString($this->csrfTokenSize, $this->csrfTokenChars);
 
         $_SESSION[$key] = $csrfToken;
     }
@@ -60,5 +66,22 @@ class Guardian
         if((int)$app["hard_banned"] === 1) {
             throw new Exception("Banned", HttpCodes::HTTP_FORBIDDEN);
         }
+    }
+
+    public function getToken(string $type) {
+        $size = (int)$this->getTokenSize($type);
+        return $this->makeTokenString($size, $this->tokenChars);
+    }
+
+    protected function makeTokenString(int $size, string $charset) {
+        $token = "";
+        while($size > 0) {
+            $pos = rand(0, strlen($charset) - 1);
+            $char = $charset[$pos];
+            $token .= $char;
+            $size--;
+        }
+
+        return $token;
     }
 }

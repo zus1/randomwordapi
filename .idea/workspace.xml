@@ -2,19 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="288e8d99-2ca2-423c-98ad-c98a0ae19105" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/api/ipchecker.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/models/ipcheckermodel.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/models/model.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/classes/mail/accountverificationmail.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/classes/mail/mail.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/classes/mail/mailinterface.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/classes/mail/resetpasswordmail.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/usermodel.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/mail/confirmEmail.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/apiapp.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/apiapp.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/apicontroller.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/apicontroller.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/apiguardian.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/apiguardian.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/ipchecker.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/ipchecker.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/factory.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/factory.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/guardian.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/guardian.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/request.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/request.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/user.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/user.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include.php" beforeDir="false" afterPath="$PROJECT_DIR$/include.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/init.ini" beforeDir="false" afterPath="$PROJECT_DIR$/init.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/model.php" beforeDir="false" afterPath="$PROJECT_DIR$/models/model.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -50,6 +53,8 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\xampp\htdocs\randomwordapi\classes\mail" />
+      <recent name="C:\xampp\htdocs\randomwordapi\library" />
       <recent name="C:\xampp\htdocs\randomwordapi\classes\words" />
       <recent name="C:\xampp\htdocs\randomwordapi\views\admin" />
     </key>
@@ -66,7 +71,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="JavaScript Debug.apiapp.php">
+  <component name="RunManager" selected="JavaScript Debug.mail.php">
     <configuration name="apiapp.php" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/randomwordapi/api/apiapp.php" useBuiltInWebServerPort="true">
       <method v="2" />
     </configuration>
@@ -76,11 +81,15 @@
     <configuration name="htmlparser.php" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/randomwordapi/classes/htmlparser.php" useBuiltInWebServerPort="true">
       <method v="2" />
     </configuration>
+    <configuration name="mail.php" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/randomwordapi/classes/mail/mail.php" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
     <configuration name="words.php" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/randomwordapi/classes/words/words.php" useBuiltInWebServerPort="true">
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JavaScript Debug.mail.php" />
         <item itemvalue="JavaScript Debug.apiapp.php" />
         <item itemvalue="JavaScript Debug.words.php" />
         <item itemvalue="JavaScript Debug.controller.php" />
@@ -119,7 +128,8 @@
       <workItem from="1601971302212" duration="18907000" />
       <workItem from="1602058130296" duration="8823000" />
       <workItem from="1602144705437" duration="23271000" />
-      <workItem from="1602231043763" duration="17066000" />
+      <workItem from="1602231043763" duration="24656000" />
+      <workItem from="1602347511077" duration="11852000" />
     </task>
     <servers />
   </component>

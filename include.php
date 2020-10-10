@@ -9,6 +9,8 @@ spl_autoload_register(function () {
         $root . "/classes/words",
         $root . "/extenders",
         $root . "/models",
+        $root . "/library/phpmailer",
+        $root . "/classes/mail"
     );
 
     foreach($paths as $path) {

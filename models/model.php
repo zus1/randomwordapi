@@ -24,7 +24,7 @@ abstract class Model
 
         $keysStr = implode(",", $keys);
         $holdersStr = implode(",", $holders);
-        $query = sprintf("INSERT INTO %s (%s) VALUES (%s)", $$this->table, $keysStr, $holdersStr);
+        $query = sprintf("INSERT INTO %s (%s) VALUES (%s)", $this->table, $keysStr, $holdersStr);
 
         Factory::getObject(Factory::TYPE_DATABASE, true)->execute($query, array(), $values);
     }
