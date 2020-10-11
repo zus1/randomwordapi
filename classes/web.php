@@ -7,6 +7,7 @@ class Web
 
     const PAGE_DOCUMENTATION = "documentation";
     const NAVIGATION = "navigation";
+    const MAIL = "Mail";
 
     public function __construct(Localization $localization, Cms $cms) {
         $this->localization = $localization;
@@ -17,6 +18,7 @@ class Web
         return array(
             self::PAGE_DOCUMENTATION => "getDocumentationData",
             self::NAVIGATION => "getNavigationData",
+            self::MAIL => "getMailData",
         );
     }
 
@@ -45,6 +47,16 @@ class Web
            $returnData[$value["placeholder"]] = $value["content"];
            $this->documentationPairValues($pageCmsData,$returnData, "status", "statuses", $value);
            $this->documentationPairValues($pageCmsData,$returnData, "params", "parameters", $value);
+        });
+
+        return $returnData;
+    }
+
+    private function getMailData() {
+        $pageCmsData = $this->getCmsData(Cms::PAGE_DATA_FILTER_PAGE, self::MAIL);
+        $returnData  = array();
+        array_walk($pageCmsData, function($value) use(&$returnData) {
+            $returnData[$value["placeholder"]] = $value["content"];
         });
 
         return $returnData;

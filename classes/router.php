@@ -64,6 +64,8 @@ class Router
             '/views/api/addapp.php',
             '/views/api/regeneratetoken.php',
             '/views/api/deleteapp.php',
+            '/views/auth/register.php',
+            '/views/auth/doregister.php',
         );
     }
 
@@ -108,6 +110,9 @@ class Router
             '/views/documentation.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'webApiDocs', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/auth/login.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'login', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false, 'redirect_auth' => true),
             '/views/auth/dologin.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'doLogin', 'request' => self::REQUEST_POST, 'role' => "", 'auth' => false),
+            '/views/auth/register.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'register', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false, 'redirect_auth' => true),
+            '/views/auth/doregister.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'doRegister', 'request' => self::REQUEST_POST, 'role' => "", 'auth' => false),
+            '/views/auth/verifyemail.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'verifyEmail', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/auth/logout.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'logout', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => true),
             '/views/error.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'error', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/test.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'test', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),

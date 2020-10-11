@@ -62,7 +62,7 @@ class Localization
         }
     }
 
-    private function getAdminActiveLocal(&$active) {
+    public function getAdminActiveLocal(&$active) {
         if($active === "") {
             $activeTag = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT tag FROM local WHERE active = ?",
                 array("integer"), array(self::STATE_ACTIVE));

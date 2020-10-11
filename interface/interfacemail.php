@@ -1,6 +1,6 @@
 <?php
 
-interface MailInterface
+interface InterfaceMail
 {
     public function getBodyContent() : string;
 

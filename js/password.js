@@ -1,9 +1,5 @@
-const passwordGenerateButton = document.getElementById("generate-password");
-const password = document.getElementById("pswd");
-
-passwordGenerateButton.addEventListener("click", () => generatePassword());
-
 function generatePassword() {
+    const password = document.getElementById("pswd");
     const passwordLength = 16;
     const chars = "123456789abcdefgahijklsABCDFLAQWERT_@?.!*-+<>";
     let passwordStr = "";

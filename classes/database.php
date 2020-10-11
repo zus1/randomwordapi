@@ -69,6 +69,14 @@ class Database
         return $sth->fetchAll();
     }
 
+    public function getLastInsertedId(string $table) {
+        $lastId =$this->select(sprintf("SELECT id FROM %s ORDER BY id DESC LIMIT 1", $table), array(), array());
+        if(!$lastId) {
+            return 0;
+        }
+        return $lastId[0]["id"];
+    }
+
     public function buildUpdateQuery(array $uFields, ?array $wFields=array()) {
         $query = "UPDATE user SET ";
         foreach($uFields as $field) {

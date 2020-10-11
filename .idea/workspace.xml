@@ -2,22 +2,30 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="288e8d99-2ca2-423c-98ad-c98a0ae19105" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/classes/mail/accountverificationmail.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classes/mail/mail.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classes/mail/mailinterface.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classes/mail/resetpasswordmail.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/models/usermodel.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/mail/confirmEmail.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/views/auth/register.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/views/auth/verify.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/apiguardian.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/apiguardian.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/ipchecker.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/ipchecker.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/controller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/database.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/database.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/factory.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/factory.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/guardian.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/guardian.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/localization.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/localization.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/mail/accountverificationmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/mail/accountverificationmail.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/mail/mail.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/mail/mail.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/mail/mailinterface.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/mail/resetpasswordmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/mail/resetpasswordmail.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/router.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/router.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/user.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/user.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/web.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include.php" beforeDir="false" afterPath="$PROJECT_DIR$/include.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/init.ini" beforeDir="false" afterPath="$PROJECT_DIR$/init.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/addAdmin.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/models/model.php" beforeDir="false" afterPath="$PROJECT_DIR$/models/model.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/mail/confirmEmail.html" beforeDir="false" afterPath="$PROJECT_DIR$/resources/mail/confirmEmail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/admin/addAdmin.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/admin/addAdmin.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/auth/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/auth/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/includes/navigationWeb.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/includes/navigationWeb.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -54,9 +62,10 @@
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\xampp\htdocs\randomwordapi\classes\mail" />
-      <recent name="C:\xampp\htdocs\randomwordapi\library" />
-      <recent name="C:\xampp\htdocs\randomwordapi\classes\words" />
-      <recent name="C:\xampp\htdocs\randomwordapi\views\admin" />
+      <recent name="C:\xampp\htdocs\randomwordapi\classes" />
+      <recent name="C:\xampp\htdocs\randomwordapi\interface" />
+      <recent name="C:\xampp\htdocs\randomwordapi\models" />
+      <recent name="C:\xampp\htdocs\randomwordapi\config" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -129,7 +138,8 @@
       <workItem from="1602058130296" duration="8823000" />
       <workItem from="1602144705437" duration="23271000" />
       <workItem from="1602231043763" duration="24656000" />
-      <workItem from="1602347511077" duration="11852000" />
+      <workItem from="1602347511077" duration="12052000" />
+      <workItem from="1602419352649" duration="20684000" />
     </task>
     <servers />
   </component>

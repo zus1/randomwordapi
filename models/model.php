@@ -13,7 +13,7 @@ abstract class Model
         $this->validator = $validator;
     }
 
-    public function insert(array $insertData) {
+    public function insert(array $insertData, ?bool $lastId=false) {
         $keys = array_keys($insertData);
         $this->validateDataSet($keys, "insert");
         $keys = array_map(function($key) {
@@ -27,6 +27,9 @@ abstract class Model
         $query = sprintf("INSERT INTO %s (%s) VALUES (%s)", $this->table, $keysStr, $holdersStr);
 
         Factory::getObject(Factory::TYPE_DATABASE, true)->execute($query, array(), $values);
+        if($lastId === true) {
+            return Factory::getObject(Factory::TYPE_DATABASE, true)->getLastInsertedId($this->table);
+        }
     }
 
     public function select(?array $fields=array(), ?array $where=array()) {

@@ -12,8 +12,9 @@ class Controller
     private $localization;
     private $cms;
     private $web;
+    private $guardian;
 
-    public function __construct(Request $request, HtmlParser $htmlParser, Validator $validator, User $user, Session $session, Response $response, Localization $local, Cms $cms, Web $web) {
+    public function __construct(Request $request, HtmlParser $htmlParser, Validator $validator, User $user, Session $session, Response $response, Localization $local, Cms $cms, Web $web, Guardian $guardian) {
         $this->request = $request;
         $this->htmlParser = $htmlParser;
         $this->validator = $validator;
@@ -23,6 +24,7 @@ class Controller
         $this->localization = $local;
         $this->cms = $cms;
         $this->web = $web;
+        $this->guardian = $guardian;
     }
 
     public function webRoot() {
@@ -54,6 +56,9 @@ class Controller
     }
 
     public function doLogin() {
+        $usernameOrEmail = $this->request->input("user");
+        $password = $this->request->input("password");
+
         if(strpos($this->request->input("user"), "@") && strpos($this->request->input("user"), ".")) {
             $this->validator->validate("user", array("email"));
         } else {
@@ -65,28 +70,69 @@ class Controller
             Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/auth/login.php");
         }
 
-        $usernameOrEmail = $this->request->input("user");
-        $hashedPassword = password_hash($this->request->input("password"), PASSWORD_BCRYPT );
-        $user = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT role, email FROM user WHERE (username = ? OR email = ?) AND hashed_password = ?",
-            array("string", "string", "integer"), array($usernameOrEmail, $usernameOrEmail, $hashedPassword))[0];
-
-        if(!empty($user)) {
-            $this->session->startUserSession($user['email']);
-            if($this->user->isAdmin(intval($user['role']))) {
-                Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/adm/home.php");
-            } else {
-                Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/documentation.php");
-            }
+        try {
+            $this->user->login($usernameOrEmail, $password);
+        } catch(Exception $e) {
+            $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_ERROR_KEY, $e->getMessage());
+            Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/auth/login.php");
         }
-
-        $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_ERROR_KEY, "User Not Found");
-        Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/auth/login.php");
     }
 
     public function logout() {
         $this->session->startSession();
         unset($_SESSION[User::USER_SESSION_KEY]);
         Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/documentation.php");
+    }
+
+    public function register() {
+        $captcha = $this->guardian->generateCaptcha();
+        return $this->response->withOldData()->returnView("auth:register", array("captcha" => $captcha));
+    }
+
+    public function doRegister() {
+        $email = $this->request->input("email");
+        $username = $this->request->input("username");
+        $password = $this->request->input("password");
+        $passwordConfirm = $this->request->input("password-confirm");
+        $captcha = $this->request->input("captcha");
+
+        try {
+            if($this->validator->validate("email", array(Validator::FILTER_EMAIL))->isFailed()) {
+                throw new Exception($this->validator->getMessages()[0]);
+            }
+            $this->validator->resetMessages();
+            if($this->validator->validate("username", array(Validator::FILTER_ALPHA_NUM))->isFailed()) {
+                throw new Exception($this->validator->getMessages()[0]);
+            }
+            $this->validator->resetMessages();
+            if($this->validator->validate("password", array(Validator::FILTER_PASSWORD))->isFailed()) {
+                throw new Exception($this->validator->getMessages()[0]);
+            }
+            $this->validator->resetMessages();
+            if($this->validator->validate("confirm-password", array(Validator::FILTER_PASSWORD))->isFailed()) {
+                throw new Exception($this->validator->getMessages()[0]);
+            }
+            $this->validator->resetMessages();
+            if($this->validator->validate("captcha", array(Validator::FILTER_ALPHA_NUM))->isFailed()) {
+                throw new Exception($this->validator->getMessages()[0]);
+            }
+            if($password !== $passwordConfirm) {
+                throw new Exception("Passwords do not match");
+            }
+            $this->guardian->checkCaptcha($captcha);
+        } catch(Exception $e) {
+            $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_ERROR_KEY, $e->getMessage());
+            Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "auth/register.php");
+        }
+
+        try {
+            $newUserId = $this->user->register($email, $username, $password);
+        } catch(Exception $e) {
+            $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_ERROR_KEY, $e->getMessage());
+            Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "auth/register.php");
+        }
+
+        Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/auth/verifyemail.php", HttpCodes::HTTP_OK, array("id" => $newUserId));
     }
 
     public function adminHome() {

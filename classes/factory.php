@@ -158,15 +158,15 @@ class Factory
     }
 
     private function getResetPasswordMail() {
-        return new ResetPasswordMail($this->getGuardian());
+        return new ResetPasswordMail($this->getGuardian(), $this->getWeb());
     }
 
     private function getAccountVerificationMail() {
-        return new AccountVerificationMail($this->getGuardian());
+        return new AccountVerificationMail($this->getGuardian(), $this->getWeb());
     }
 
     private function getMail() {
-        return new Mail($this->getGuardian());
+        return new Mail($this->getGuardian(), $this->getWeb());
     }
 
     private function getLibraryPhpMailer() {
@@ -182,7 +182,7 @@ class Factory
     }
 
     private function getController() {
-        return new Controller($this->getRequest(), $this->getHtmlParser(), $this->getValidator(), $this->getUser(), $this->getSession(), $this->getResponse(), $this->getLocalization(), $this->getCms(), $this->getWeb());
+        return new Controller($this->getRequest(), $this->getHtmlParser(), $this->getValidator(), $this->getUser(), $this->getSession(), $this->getResponse(), $this->getLocalization(), $this->getCms(), $this->getWeb(), $this->getGuardian());
     }
 
     private function getApiController() {

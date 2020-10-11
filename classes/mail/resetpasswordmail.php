@@ -1,7 +1,7 @@
 <?php
 
 
-class ResetPasswordMail extends Mail implements MailInterface
+class ResetPasswordMail extends Mail implements InterfaceMail
 {
     public function getBodyContent() : string {
 

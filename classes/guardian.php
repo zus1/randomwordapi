@@ -9,6 +9,7 @@ class Guardian
     private $csrfTokenSize = 30;
     const CSRF_SESSION_KEY = "csrf_token";
     const CSRF_TOKEN_FIELD_NAME = "_csrf";
+    const CAPTCHA_SESSION_KEY = "captcha";
 
     const TOKEN_TYPE_VERIFICATION = "verification";
     const TOKEN_TYPE_PASSWORD_RESET = "password-reset";
@@ -71,6 +72,25 @@ class Guardian
     public function getToken(string $type) {
         $size = (int)$this->getTokenSize($type);
         return $this->makeTokenString($size, $this->tokenChars);
+    }
+
+    public function generateCaptcha() {
+        $this->session->startSession();
+        $size = Config::get(Config::CAPTCHA_SIZE);
+        $captcha = $this->makeTokenString($size, $this->tokenChars);
+        $_SESSION[self::CAPTCHA_SESSION_KEY] = $captcha;
+
+        return $captcha;
+    }
+
+    public function checkCaptcha(string $inputCaptcha) {
+        $this->session->startSession();
+        if(!isset($_SESSION[self::CAPTCHA_SESSION_KEY])) {
+            throw new Exception("Captcha not found", HttpCodes::INTERNAL_SERVER_ERROR);
+        }
+        if($inputCaptcha !== $_SESSION[self::CAPTCHA_SESSION_KEY]) {
+            throw new Exception("Invalid captcha");
+        }
     }
 
     protected function makeTokenString(int $size, string $charset) {

@@ -1,22 +1,27 @@
 <?php
 
 
-class Mail
+class Mail implements InterfaceMail
 {
     const SMTP = "smtp";
     const TLS = "tls";
+    const MAIL_CMS_PAGE = "Mail";
 
     protected $guardian;
+    protected $web;
 
     protected $mailer;
     protected $resourceObject;
     protected $resourceDataId;
     protected $mailContentsPath;
-    protected $resource = ""; //override in child class
 
-    public function __construct(Guardian $guardian) {
+    protected $resource = ""; //override in child class
+    protected $cmsHolders = array(); //override in child classes
+
+    public function __construct(Guardian $guardian, Web $web) {
         $this->mailContentsPath = HttpParser::root() . "/resources/mail";
         $this->guardian = $guardian;
+        $this->web = $web;
         $this->init();
     }
 
@@ -30,10 +35,12 @@ class Mail
 
     public function setResourceObject(Object $object) {
         $this->resourceObject = $object;
+        return $this;
     }
 
     public function setResourceDataId($id) {
         $this->resourceDataId = $id;
+        return $this;
     }
 
     private function init() {
@@ -70,6 +77,8 @@ class Mail
                 $this->mailer->addAddress($address["address"]);
             }
         }
+
+        return $this;
     }
 
     public function setSender(array $sender) {
@@ -78,6 +87,8 @@ class Mail
         } else {
             $this->mailer->setFrom($sender["sender"]);
         }
+
+        return $this;
     }
 
     public function setCC(array $ccs) {
@@ -88,6 +99,8 @@ class Mail
                 $this->mailer->addCC($cc["cc"]);
             }
         }
+
+        return $this;
     }
 
     public function setBcc(array $bccs) {
@@ -98,21 +111,28 @@ class Mail
                 $this->mailer->addCC($bcc["cc"]);
             }
         }
+
+        return $this;
     }
 
     public function setSubject(string $subject) {
         $this->mailer->Subject = $subject;
+        return $this;
     }
 
     public function setText(string $text) {
         $this->mailer->isHTML(false);
         $this->mailer->Body = $text;
+
+        return $this;
     }
 
     public function setBody() {
         $body = $this->getMailBody();
         $this->mailer->Body = $body;
         $this->mailer->AltBody = strip_tags($body);
+
+        return $this;
     }
 
     public function send() {
