@@ -1,7 +1,7 @@
 <?php
 
 
-class Mail implements MailInterface
+class Mail
 {
     const SMTP = "smtp";
     const TLS = "tls";

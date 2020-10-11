@@ -1,7 +1,7 @@
 <?php
 
 
-class AccountVerificationMail extends Mail implements MailInterface
+class AccountVerificationMail extends Mail implements InterfaceMail
 {
     protected $resource = "confirmEmail";
 
