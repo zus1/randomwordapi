@@ -1,0 +1,25 @@
+@header-admin;
+@include.(navigationWeb)
+<div class="container">
+    <div class="row content-wrapper">
+        <div class="cols-md-12 col-lg-12 col-sm-12">
+            <input type="hidden", id="status-indicator" value="{status}">
+            <div class="form-group">
+                <div style="height: 50px;">
+                    <div id="alert-verify" class="notification" style="display: none">
+                        <div id="notification-verify"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="example-box">
+                    <p>{message}</p>
+                </div>
+            </div>
+            <div class="form-group content-footer", style="display: none">
+                <button type="button" class="btn btn-outline-secondary" onclick="resendEmail()">Resend Email</button>
+            </div>
+        </div>
+    </div>
+</div>
+@footer;

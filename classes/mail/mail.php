@@ -3,12 +3,13 @@
 
 class Mail implements InterfaceMail
 {
-    const SMTP = "smtp";
+    const SSL = "ssl";
     const TLS = "tls";
     const MAIL_CMS_PAGE = "Mail";
 
     protected $guardian;
     protected $web;
+    protected $userToken;
 
     protected $mailer;
     protected $resourceObject;
@@ -18,10 +19,11 @@ class Mail implements InterfaceMail
     protected $resource = ""; //override in child class
     protected $cmsHolders = array(); //override in child classes
 
-    public function __construct(Guardian $guardian, Web $web) {
+    public function __construct(Guardian $guardian, Web $web, UserToken $userToken) {
         $this->mailContentsPath = HttpParser::root() . "/resources/mail";
         $this->guardian = $guardian;
         $this->web = $web;
+        $this->userToken = $userToken;
         $this->init();
     }
 
@@ -49,9 +51,11 @@ class Mail implements InterfaceMail
         $password = Config::get(Config::EMAIL_PASSWORD);
         $encription = Config::get(Config::EMAIL_ENCRIPTION);
         $port = Config::get(Config::EMAIL_PORT);
+        $emailSmtp = Config::get(Config::EMAIL_SMTP);
 
         $phpMailer = Factory::getLibrary(Factory::LIBRARY_PHP_MAILER);
-        if($encription === self::SMTP) {
+        //$phpMailer->SMTPDebug = SMTP::DEBUG_SERVER;
+        if((int)$emailSmtp === 1) {
             $phpMailer->isSMTP();
             $phpMailer->SMTPAuth = true;
         }
@@ -60,7 +64,7 @@ class Mail implements InterfaceMail
         $phpMailer->Username = $username;
         $phpMailer->Password = $password;
         $phpMailer->Port = $port;
-        if($encription === self::SMTP) {
+        if($encription === self::SSL) {
             $phpMailer->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         } elseif($encription === self::TLS) {
             $phpMailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;

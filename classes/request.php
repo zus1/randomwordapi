@@ -26,6 +26,17 @@ class Request
         return $default;
     }
 
+    public function inputOrThrow(string $key) {
+        if(!isset($this->requestVars[$key])) {
+            throw new Exception("Field {$key} is missing");
+        }
+        if(empty($this->requestVars[$key])) {
+            throw new Exception("Field {$key} can't be empty");
+        }
+
+        return $this->requestVars[$key];
+    }
+
     public function getAll() {
         return $this->requestVars;
     }

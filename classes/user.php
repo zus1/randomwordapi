@@ -6,17 +6,19 @@ class User
     const USER_SESSION_KEY = 'username';
     const ROLE_USER = 'user';
     const ROLE_ADMIN = 'admin';
+    const EMAIL_TYPE_VERIFICATION = "verification";
+    const EMAIL_TYPE_PASSWORD = "password";
     private $roleToDbRoleMapping = array(
         self::ROLE_USER => 1,
         self::ROLE_ADMIN => 2,
     );
 
     private $session;
-    private $verificationMail;
+    private $userToken;
 
-    public function __construct(Session $session) {
+    public function __construct(Session $session, UserToken $token) {
         $this->session = $session;
-
+        $this->userToken = $token;
     }
 
     public function getModel() {
@@ -30,8 +32,23 @@ class User
         }
         $userEmail = $_SESSION[self::USER_SESSION_KEY];
 
-        $authUser = $this->getModel()->select($fields, array("email" => $userEmail));
-        return $authUser[0];
+        return $this->getUser($fields, array("email" => $userEmail));
+    }
+
+    public function getUserById(int $userId, ?array $fields=array()) {
+        return $this->getUser($fields, array("id" => $userId ));
+    }
+
+    public function getUserByEmail(string $email, ?array $fields=array()) {
+        return $this->getUser($fields, array("email" => $email ));
+    }
+
+    public function getUser(?array $fields=array(), ?array $where=array()) {
+        $user = $this->getModel()->select($fields, $where);
+        if(!$user) {
+            throw new Exception("User not found");
+        }
+        return $user[0];
     }
 
     public function setAuthenticatedUser(array $data) {
@@ -130,32 +147,51 @@ class User
     public function register(string $email, string $username, string $password) {
         $hashedPassword = $hashedPassword = password_hash($password,PASSWORD_BCRYPT);
 
-        $existing = $this->getModel()->select(array("username"), array("email" => $email));
-        if($existing) {
+        $existingEmail = $this->getModel()->select(array("id"), array("email" => $email));
+        if($existingEmail) {
             throw new Exception("User with this email already exists");
         }
-        if($existing[0]["username"] === $username) {
+        $existingUsername = $this->getModel()->select(array("id"), array("username" => $username));
+        if($existingUsername) {
             throw new Exception("User with this username already exists");
         }
 
-        $id = $this->getModel()->insert(array(
-            "username" => $username,
-            //"password" => $password,
-            "hashed_password" => $hashedPassword,
-            "role" => $this->roleToDbRoleMapping[self::ROLE_USER]
-        ));
+        Factory::getObject(Factory::TYPE_DATABASE, true)->beginTransaction();
+        try {
+            $id = $this->getModel()->insert(array(
+                "username" => $username,
+                "email" => $email,
+                //"password" => $password,
+                "hashed_password" => $hashedPassword,
+                "role" => $this->roleToDbRoleMapping[self::ROLE_USER]
+            ), true);
 
-        $this->sendVerificationEmail($email, $username);
+            $this->userToken->addToken(UserToken::TOKEN_TYPE_ACCOUNT_VERIFICATION, $id);
+            Factory::getObject(Factory::TYPE_DATABASE, true)->commit();
+        } catch(Exception $e) {
+            Factory::getObject(Factory::TYPE_DATABASE, true)->rollBack();
+            throw $e;
+        }
+
+        $this->sendVerificationEmail($email, $username, $id);
 
         return $id;
     }
 
-    public function sendVerificationEmail(string $email, string $username) {
-        Factory::getObject(Factory::TYPE_ACCOUNT_VERIFICATION_MAIL)->setSender(["random.word.api@gmail.com", "RandomWordApi"])
-            ->setAddress(["zus.ozus@gmaul.com", $username])
+    public function resendEmail(int $userId, string $type) {
+        $user = $this->getUserById($userId, array("username", "email"));
+        if($type === self::EMAIL_TYPE_VERIFICATION) {
+            $this->userToken->addToken(UserToken::TOKEN_TYPE_ACCOUNT_VERIFICATION, $userId);
+            $this->sendVerificationEmail($user["email"], $user["username"], $userId);
+        }
+    }
+
+    public function sendVerificationEmail(string $email, string $username, int $id) {
+        Factory::getObject(Factory::TYPE_ACCOUNT_VERIFICATION_MAIL)->setSender(["sender" => "random.word.api@gmail.com", "name" => "RandomWordApi"])
+            ->setAddress(array(["address" => $email, "name" => $username]))
             ->setSubject("Verify you account")
             ->setResourceObject($this)
-            ->setResourceDataId($email)
+            ->setResourceDataId($id)
             ->setBody() //sets automatically depending on email type. Can be adjusted true CMS
             ->send();
     }

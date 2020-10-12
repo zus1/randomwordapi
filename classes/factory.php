@@ -37,11 +37,13 @@ class Factory
     const TYPE_MAIL = "mail";
     const TYPE_RESET_PASSWORD_MAIL = "reset-password-mail";
     const TYPE_ACCOUNT_VERIFICATION_MAIL = "account-verification-mail";
+    const TYPE_USER_TOKEN = "user-token";
 
     const EXTENDER_HTML_PARSER = "extender_html_parser";
 
     const MODEL_IP_CHECKER = "model-ip-checker";
     const MODEL_USER = "model_user";
+    const MODEL_USER_TOKEN = "model-user-token";
 
     const LIBRARY_PHP_MAILER = 'library-php-mailer';
 
@@ -78,6 +80,7 @@ class Factory
         self::TYPE_MAIL => "getMail",
         self::TYPE_RESET_PASSWORD_MAIL => "getResetPasswordMail",
         self::TYPE_ACCOUNT_VERIFICATION_MAIL => "getAccountVerificationMail",
+        self::TYPE_USER_TOKEN => "getUserToken",
     );
     const EXTENDER_METHOD_MAPPING = array(
         self::EXTENDER_HTML_PARSER => "getExtenderHtmlParser",
@@ -85,6 +88,7 @@ class Factory
     const MODEL_TO_METHOD_MAPPING = array(
         self::MODEL_IP_CHECKER => "getModelIpChecker",
         self::MODEL_USER => "getModelUser",
+        self::MODEL_USER_TOKEN => "getModelUserToken",
     );
     const LIBRARY_TO_TYPE_MAPPING = array(
         self::LIBRARY_PHP_MAILER => "getLibraryPhpMailer",
@@ -157,16 +161,24 @@ class Factory
         return call_user_func([new self(), self::LIBRARY_TO_TYPE_MAPPING[$libraryType]]);
     }
 
+    private function getUserToken() {
+        return new UserToken($this->getGuardian(), $this->getDateHandler());
+    }
+
+    private function getModelUserToken() {
+        return new UserTokenModel($this->getValidator());
+    }
+
     private function getResetPasswordMail() {
-        return new ResetPasswordMail($this->getGuardian(), $this->getWeb());
+        return new ResetPasswordMail($this->getGuardian(), $this->getWeb(), $this->getUserToken());
     }
 
     private function getAccountVerificationMail() {
-        return new AccountVerificationMail($this->getGuardian(), $this->getWeb());
+        return new AccountVerificationMail($this->getGuardian(), $this->getWeb(), $this->getUserToken());
     }
 
     private function getMail() {
-        return new Mail($this->getGuardian(), $this->getWeb());
+        return new Mail($this->getGuardian(), $this->getWeb(), $this->getUserToken());
     }
 
     private function getLibraryPhpMailer() {
@@ -182,7 +194,7 @@ class Factory
     }
 
     private function getController() {
-        return new Controller($this->getRequest(), $this->getHtmlParser(), $this->getValidator(), $this->getUser(), $this->getSession(), $this->getResponse(), $this->getLocalization(), $this->getCms(), $this->getWeb(), $this->getGuardian());
+        return new Controller($this->getRequest(), $this->getHtmlParser(), $this->getValidator(), $this->getUser(), $this->getSession(), $this->getResponse(), $this->getLocalization(), $this->getCms(), $this->getWeb(), $this->getGuardian(), $this->getUserToken());
     }
 
     private function getApiController() {
@@ -202,7 +214,7 @@ class Factory
     }
 
     private function getUser() {
-        return new User($this->getSession());
+        return new User($this->getSession(), $this->getUserToken());
     }
 
     private function getHttpParser() {
@@ -254,7 +266,7 @@ class Factory
     }
 
     private function getGuardian() {
-        return new Guardian($this->getSession(), $this->getUser(), $this->getRequest(), $this->getDateHandler());
+        return new Guardian($this->getSession(), $this->getRequest(), $this->getDateHandler());
     }
 
     private function getCms() {
@@ -278,7 +290,7 @@ class Factory
     }
 
     private function getApiGuardian() {
-        return new ApiGuardian($this->getSession(), $this->getUser(), $this->getRequest(), $this->getDateHandler());
+        return new ApiGuardian($this->getSession(), $this->getRequest(), $this->getDateHandler());
     }
 
     private function getApiControllerInternal() {
@@ -286,7 +298,7 @@ class Factory
     }
 
     private function getApiUser() {
-        return new ApiUser($this->getSession());
+        return new ApiUser($this->getSession(), $this->getUserToken());
     }
 
     private function getApiApp() {

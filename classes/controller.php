@@ -13,8 +13,9 @@ class Controller
     private $cms;
     private $web;
     private $guardian;
+    private $userToken;
 
-    public function __construct(Request $request, HtmlParser $htmlParser, Validator $validator, User $user, Session $session, Response $response, Localization $local, Cms $cms, Web $web, Guardian $guardian) {
+    public function __construct(Request $request, HtmlParser $htmlParser, Validator $validator, User $user, Session $session, Response $response, Localization $local, Cms $cms, Web $web, Guardian $guardian, UserToken $userToken) {
         $this->request = $request;
         $this->htmlParser = $htmlParser;
         $this->validator = $validator;
@@ -25,6 +26,7 @@ class Controller
         $this->cms = $cms;
         $this->web = $web;
         $this->guardian = $guardian;
+        $this->userToken = $userToken;
     }
 
     public function webRoot() {
@@ -90,13 +92,13 @@ class Controller
     }
 
     public function doRegister() {
-        $email = $this->request->input("email");
-        $username = $this->request->input("username");
-        $password = $this->request->input("password");
-        $passwordConfirm = $this->request->input("password-confirm");
-        $captcha = $this->request->input("captcha");
-
         try {
+            $email = $this->request->inputOrThrow("email");
+            $username = $this->request->inputOrThrow("username");
+            $password = $this->request->inputOrThrow("password");
+            $passwordConfirm = $this->request->inputOrThrow("password-confirm");
+            $captcha = $this->request->input("captcha");
+
             if($this->validator->validate("email", array(Validator::FILTER_EMAIL))->isFailed()) {
                 throw new Exception($this->validator->getMessages()[0]);
             }
@@ -122,17 +124,78 @@ class Controller
             $this->guardian->checkCaptcha($captcha);
         } catch(Exception $e) {
             $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_ERROR_KEY, $e->getMessage());
-            Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "auth/register.php");
+            $this->response->withOldData()->returnRedirect(HttpParser::baseUrl() . "views/auth/register.php");
         }
 
         try {
             $newUserId = $this->user->register($email, $username, $password);
         } catch(Exception $e) {
             $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_ERROR_KEY, $e->getMessage());
-            Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "auth/register.php");
+            $this->response->withOldData()->returnRedirect(HttpParser::baseUrl() . "views/auth/register.php");
         }
 
         Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/auth/verifyemail.php", HttpCodes::HTTP_OK, array("id" => $newUserId));
+    }
+
+    public function verifyEmail() {
+        return $this->htmlParser->parseView("auth:verify");
+    }
+
+    public function resendEmail() {
+        try {
+            $userId = $this->request->inputOrThrow("user_id");
+
+            if($this->validator->validate("user_id", array(Validator::FILTER_NUMERIC))->isFailed()) {
+                throw new Exception($this->validator->getMessages()[0]);
+            }
+
+            $this->user->resendEmail($userId, User::EMAIL_TYPE_VERIFICATION);
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage()));
+        }
+
+        return json_encode(array("error" => 0, "message" => "Email sent"));
+    }
+
+    public function doVerifyEmail() {
+        $status = 2; //ok
+        $userId = 0;
+        $noId = false;
+        $message = "Account verified. Please wait few second until we redirect you to login page.";
+        $token = $this->request->input("token");
+        try {
+            if(empty($token)) {
+                $status = 0; //Invalid without email resend
+                throw new Exception("Token missing from request");
+            }
+            if($this->validator->validate("token", array(Validator::FILTER_ALPHA_NUM))->isFailed()) {
+                $status = 0;
+                throw new Exception("Invalid Token");
+            }
+
+            if($this->validator->validate("id", array(Validator::FILTER_NUMERIC))->isFailed()) {
+                $noId = true;
+            }
+
+            try {
+                $this->userToken->checkToken($token, UserToken::TOKEN_TYPE_ACCOUNT_VERIFICATION, $userId);
+            } catch(Exception $e) {
+                if($e->getMessage() === "Token expired" && $noId === false) {
+                    $status = 1; //Invalid with email resend
+                } else {
+                    $status = 0;
+                }
+                throw $e;
+            }
+        } catch(Exception $e) {
+            $message = $e->getMessage();
+        }
+
+        if($status === 2 && $userId > 0) {
+            $this->user->getModel()->update(array("email_verified" => 1), array("id" => $userId));
+        }
+
+        return $this->htmlParser->parseView("auth:verified", array("status" => $status, "message" => $message));
     }
 
     public function adminHome() {

@@ -8,15 +8,8 @@ class ApiGuardian extends Guardian
 
         $accessToken = "";
         while($tokenParts > 0) {
-            //$part = "";
             $size = $tokenPartSize;
             $part = $this->makeTokenString($size, $this->tokenChars);
-            /*while($size > 0) {
-                $pos = rand(0, strlen($this->tokenChars) - 1);
-                $char = $this->tokenChars[$pos];
-                $part .= $char;
-                $size--;
-            }*/
             $accessToken .= $part . "-";
             $tokenParts--;
         }

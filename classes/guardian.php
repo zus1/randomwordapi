@@ -3,7 +3,6 @@
 class Guardian
 {
     private $session;
-    private $user;
     protected $request;
     protected $dateHandler;
     private $csrfTokenSize = 30;
@@ -17,9 +16,8 @@ class Guardian
     protected $csrfTokenChars = "abcdefg12345*+-()@ijkABCDEFG6789Yxhijklmnopr=&yxzqXYZQ";
     protected $tokenChars = "ABCDabcdEFGHefghIJKLijkl1234MNOPR56mnopr789stuvSTUVzZxXyYwW";
 
-    public function __construct(Session $session, User $user, Request $request, DateHandler $dateHandler) {
+    public function __construct(Session $session, Request $request, DateHandler $dateHandler) {
         $this->session = $session;
-        $this->user = $user;
         $this->request = $request;
         $this->dateHandler = $dateHandler;
     }
@@ -53,7 +51,7 @@ class Guardian
     }
 
     public function getCsrfSessionKey() {
-        if(!$this->user->isAuthenticatedUser()) {
+        if(!Factory::getObject(Factory::TYPE_USER)->isAuthenticatedUser()) {
             $key = self::CSRF_SESSION_KEY;
         } else {
             $userEmail = $_SESSION[User::USER_SESSION_KEY];
@@ -88,7 +86,9 @@ class Guardian
         if(!isset($_SESSION[self::CAPTCHA_SESSION_KEY])) {
             throw new Exception("Captcha not found", HttpCodes::INTERNAL_SERVER_ERROR);
         }
-        if($inputCaptcha !== $_SESSION[self::CAPTCHA_SESSION_KEY]) {
+        $captcha = $_SESSION[self::CAPTCHA_SESSION_KEY];
+        unset($_SESSION[self::CAPTCHA_SESSION_KEY]);
+        if($inputCaptcha !== $captcha) {
             throw new Exception("Invalid captcha");
         }
     }

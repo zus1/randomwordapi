@@ -35,6 +35,9 @@ class Config
     const VERIFICATION_TOKEN_SIZE = "VERIFICATION_TOKEN_SIZE";
     const PASSWORD_RESET_TOKEN_SIZE = "PASSWORD_RESET_TOKEN_SIZE";
     const CAPTCHA_SIZE = "CAPTCHA_SIZE";
+    const VERIFICATION_TOKEN_EXPIRES = "VERIFICATION_TOKEN_EXPIRES";
+    const PASSWORD_RESET_TOKEN_EXPIRES = "PASSWORD_RESET_TOKEN_EXPIRES";
+    const EMAIL_SMTP = "EMAIL_SMTP";
     private static $_initialized = false;
     private static $_configArray = array();
 

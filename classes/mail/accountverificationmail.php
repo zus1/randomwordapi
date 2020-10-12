@@ -30,9 +30,9 @@ class AccountVerificationMail extends Mail implements InterfaceMail
     }
 
     public function addContentData(string $content) : string {
-        $data = $this->resourceObject->getModel()->select(array("username"), array("email" => $this->resourceDataId));
-        $token = $this->guardian->getToken(Guardian::TOKEN_TYPE_VERIFICATION);
-        $url = HttpParser::baseUrl() . "email/verify.php?token=" . $token;
+        $data = $this->resourceObject->getModel()->select(array("username"), array("id" => $this->resourceDataId));
+        $token = $this->userToken->getToken(UserToken::TOKEN_TYPE_ACCOUNT_VERIFICATION, $this->resourceDataId);
+        $url = HttpParser::baseUrl() . "email/verify.php?id=" . $this->resourceDataId . "&token=" . $token;
         return str_replace(array("{username}", "{url}"), array($data[0]["username"], $url), $content);
     }
 }

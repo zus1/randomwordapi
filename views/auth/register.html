@@ -22,10 +22,10 @@
                 </div>
                 <form action="{base_url}views/auth/doregister.php" method="post">
                     <div class="form-group">
-                        <input type="text" name="email" class="form-control" placeholder="email (required)">
+                        <input type="text" name="email" class="form-control" placeholder="email (required)" value="@old.(email)">
                     </div>
                     <div class="form-group">
-                        <input type="text" name="username" class="form-control" placeholder="username (required)">
+                        <input type="text" name="username" class="form-control" placeholder="username (required)" value="@old.(username)">
                     </div>
                     <div class="input-group mb-3">
                         <input type="password" class="form-control" name="password" id="pswd" placeholder="password (required)" autocomplete="off">
