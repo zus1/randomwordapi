@@ -90,14 +90,8 @@ class UserToken
     }
 
     private function calculateTokenExpires(string $created, int $duration) {
-        $dt = new DateTime($created);
-        $createdTs = $dt->getTimestamp();
-
+        $createdTs = $this->dateHandler->convertDateToTimestamp($created);
         return date("Y-m-d H:i:s", $createdTs + $duration *60);
-    }
-
-    private function checkIfTokenExpired(string $expiresDate) {
-        $this->dateHandler->checkGreaterThenInterval($expiresDate, date("Y-m-d H:i:s"), 0);
     }
 
     private function makeTokenDurationFields(string $tokenField) {

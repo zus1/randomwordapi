@@ -134,7 +134,7 @@ class Controller
             $this->response->withOldData()->returnRedirect(HttpParser::baseUrl() . "views/auth/register.php");
         }
 
-        Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/auth/verifyemail.php", HttpCodes::HTTP_OK, array("id" => $newUserId));
+        Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/auth/verifyemail.php", HttpCodes::HTTP_OK, array("uuid" => $newUserId["uuid"]));
     }
 
     public function verifyEmail() {
@@ -143,12 +143,15 @@ class Controller
 
     public function resendEmail() {
         try {
-            $userId = $this->request->inputOrThrow("user_id");
+            $uuid = $this->request->inputOrThrow("uuid");
 
-            if($this->validator->validate("user_id", array(Validator::FILTER_NUMERIC))->isFailed()) {
+            if($this->validator->validate("uuid", array(Validator::FILTER_ALPHA_NUM))->isFailed()) {
                 throw new Exception($this->validator->getMessages()[0]);
             }
-
+            $userId = $this->user->getIdFromUuid($uuid);
+            if($this->user->checkIfUserVerified($userId)) {
+                throw new Exception("Already verified");
+            }
             $this->user->resendEmail($userId, User::EMAIL_TYPE_VERIFICATION);
         } catch(Exception $e) {
             return json_encode(array("error" => 1, "message" => $e->getMessage()));
@@ -163,27 +166,29 @@ class Controller
         $noId = false;
         $message = "Account verified. Please wait few second until we redirect you to login page.";
         $token = $this->request->input("token");
+        $uuid = $this->request->input("uuid");
         try {
+            if(empty($uuid)) {
+                $noId = true;
+            }
             if(empty($token)) {
-                $status = 0; //Invalid without email resend
+                $status = 1; //Invalid with email resend
                 throw new Exception("Token missing from request");
             }
             if($this->validator->validate("token", array(Validator::FILTER_ALPHA_NUM))->isFailed()) {
-                $status = 0;
+                $status = 0; //invalid without email resend
                 throw new Exception("Invalid Token");
             }
 
-            if($this->validator->validate("id", array(Validator::FILTER_NUMERIC))->isFailed()) {
+            if($this->validator->validate("uuid", array(Validator::FILTER_ALPHA_NUM))->isFailed()) {
                 $noId = true;
             }
 
             try {
                 $this->userToken->checkToken($token, UserToken::TOKEN_TYPE_ACCOUNT_VERIFICATION, $userId);
             } catch(Exception $e) {
-                if($e->getMessage() === "Token expired" && $noId === false) {
+                if($e->getMessage() === "Token expired") {
                     $status = 1; //Invalid with email resend
-                } else {
-                    $status = 0;
                 }
                 throw $e;
             }
@@ -193,6 +198,9 @@ class Controller
 
         if($status === 2 && $userId > 0) {
             $this->user->getModel()->update(array("email_verified" => 1), array("id" => $userId));
+        }
+        if($noId === true && $userId > 0) {
+            $status = 0; //uuid missing or invalid we can't resend email
         }
 
         return $this->htmlParser->parseView("auth:verified", array("status" => $status, "message" => $message));

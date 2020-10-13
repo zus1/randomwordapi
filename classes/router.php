@@ -259,14 +259,18 @@ class Router
         echo $result;
     }
 
-    public function redirect(string $url, ?int $code=null, ?array $data = array()) {
+    public function redirect(string $url, ?int $code=null, ?array $data = array(), $timeout=0) {
         $code = ($code)? $code : HttpCodes::HTTP_OK;
         http_response_code($code);
         if(!empty($data)) {
             $httpQuery = http_build_query($data);
             $url = $url . "?" . $httpQuery;
         }
-        header("Location: " . $url);
+        if($timeout > 0) {
+            header(sprintf("refresh:%d;url=%s", $timeout, $url));
+        } else  {
+            header("Location: " . $url);
+        }
         die();
     }
 }

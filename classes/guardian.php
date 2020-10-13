@@ -93,6 +93,11 @@ class Guardian
         }
     }
 
+    public function generateUUid() {
+        $size = Config::get(Config::UUID_SIZE);
+        return $this->makeTokenString($size, $this->tokenChars);
+    }
+
     protected function makeTokenString(int $size, string $charset) {
         $token = "";
         while($size > 0) {

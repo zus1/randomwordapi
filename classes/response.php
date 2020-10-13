@@ -6,10 +6,16 @@ class Response
     private $htmlParser;
     private $request;
 
+    private $timeout = 0;
+
     public function __construct(Session $session, HtmlParser $parser, Request $request) {
         $this->session = $session;
         $this->htmlParser = $parser;
         $this->request = $request;
+    }
+
+    public function timeout(int $timeout) {
+        $this->timeout = $timeout;
     }
 
     public function withOldData() {
@@ -26,6 +32,6 @@ class Response
     }
 
     public function returnRedirect(string $url, ?int $code=null, ?array $data=array()) {
-        Factory::getObject(Factory::TYPE_ROUTER)->redirect($url, $code, $data);
+        Factory::getObject(Factory::TYPE_ROUTER)->redirect($url, $code, $data, $this->timeout);
     }
 }

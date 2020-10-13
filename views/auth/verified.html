@@ -16,10 +16,15 @@
                     <p>{message}</p>
                 </div>
             </div>
-            <div class="form-group content-footer", style="display: none">
+            <div class="form-group content-footer" id="resend-email-div" style="display: none">
                 <button type="button" class="btn btn-outline-secondary" onclick="resendEmail()">Resend Email</button>
+            </div>
+            <div class="form-group content-footer" id="loading-div" style="display: none">
+                <img src="{base_url}resources/images/loading-dots.svg" width="100", height="50">
             </div>
         </div>
     </div>
 </div>
+<script src="{base_url}js/resendEmail.js"></script>
+<script src="{base_url}js/verified.js"></script>
 @footer;

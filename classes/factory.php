@@ -214,7 +214,7 @@ class Factory
     }
 
     private function getUser() {
-        return new User($this->getSession(), $this->getUserToken());
+        return new User($this->getSession(), $this->getUserToken(), $this->getGuardian());
     }
 
     private function getHttpParser() {
@@ -298,7 +298,7 @@ class Factory
     }
 
     private function getApiUser() {
-        return new ApiUser($this->getSession(), $this->getUserToken());
+        return new ApiUser($this->getSession(), $this->getUserToken(), $this->getGuardian());
     }
 
     private function getApiApp() {

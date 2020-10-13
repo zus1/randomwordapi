@@ -15,14 +15,31 @@ class User
 
     private $session;
     private $userToken;
+    private $guardian;
 
-    public function __construct(Session $session, UserToken $token) {
+    public function __construct(Session $session, UserToken $token, Guardian $guardian) {
         $this->session = $session;
         $this->userToken = $token;
+        $this->guardian = $guardian;
     }
 
     public function getModel() {
         return Factory::getModel(Factory::MODEL_USER);
+    }
+
+    public function getIdFromUuid(string $uuid) {
+        $id = $this->getUser(array("id"), array("uuid" => $uuid));
+        return $id["id"];
+    }
+
+    public function getUuidFromId(int $id) {
+        try {
+            $uuid = $this->getUser(array("uuid"), array("id" => $id));
+        } catch(Exception $e) {
+            return null;
+        }
+
+        return $uuid["uuid"];
     }
 
     public function getAuthenticatedUser(?array $fields=array()) {
@@ -121,18 +138,21 @@ class User
     }
 
     public function login(string $usernameOrEmail, string $password) {
-        $hashedPassword = $hashedPassword = password_hash($password,PASSWORD_BCRYPT);
-
-        $user = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT role, email, hard_banned, email_verified FROM user WHERE (username = ? OR email = ?) AND hashed_password = ?",
-            array("string", "string", "integer"), array($usernameOrEmail, $usernameOrEmail, $hashedPassword))[0];
+        $user = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT role, email, hard_banned, email_verified, hashed_password FROM user WHERE (username = ? OR email = ?)",
+            array("string", "string", "integer"), array($usernameOrEmail, $usernameOrEmail));
 
         if(!$user) {
             throw new Exception("User not found");
         }
-        if((int)$user[0]["hard_banned"] === 1) {
+        $user = $user[0];
+        if(!password_verify($password, $user["hashed_password"])) {
+            throw new Exception("User not found");
+        }
+
+        if((int)$user["hard_banned"] === 1) {
             throw new Exception("This user has bean banned");
         }
-        if((int)$user[0]["email_verified"] === 0) {
+        if((int)$user["email_verified"] === 0) {
             throw new Exception("Please verify your email first");
         }
 
@@ -145,7 +165,7 @@ class User
     }
 
     public function register(string $email, string $username, string $password) {
-        $hashedPassword = $hashedPassword = password_hash($password,PASSWORD_BCRYPT);
+        $hashedPassword = password_hash($password,PASSWORD_BCRYPT);
 
         $existingEmail = $this->getModel()->select(array("id"), array("email" => $email));
         if($existingEmail) {
@@ -156,6 +176,8 @@ class User
             throw new Exception("User with this username already exists");
         }
 
+        $uuid = $this->guardian->generateUUid();
+
         Factory::getObject(Factory::TYPE_DATABASE, true)->beginTransaction();
         try {
             $id = $this->getModel()->insert(array(
@@ -163,7 +185,8 @@ class User
                 "email" => $email,
                 //"password" => $password,
                 "hashed_password" => $hashedPassword,
-                "role" => $this->roleToDbRoleMapping[self::ROLE_USER]
+                "role" => $this->roleToDbRoleMapping[self::ROLE_USER],
+                'uuid' => $uuid
             ), true);
 
             $this->userToken->addToken(UserToken::TOKEN_TYPE_ACCOUNT_VERIFICATION, $id);
@@ -175,7 +198,7 @@ class User
 
         $this->sendVerificationEmail($email, $username, $id);
 
-        return $id;
+        return array("id" => $id, "uuid" => $uuid);
     }
 
     public function resendEmail(int $userId, string $type) {
@@ -184,6 +207,15 @@ class User
             $this->userToken->addToken(UserToken::TOKEN_TYPE_ACCOUNT_VERIFICATION, $userId);
             $this->sendVerificationEmail($user["email"], $user["username"], $userId);
         }
+    }
+
+    public function checkIfUserVerified(int $userId) {
+        $verified = $this->getUser(array("email_verified"), array("id" => $userId));
+        if((int) $verified["email_verified"] === 1) {
+            return true;
+        }
+
+        return false;
     }
 
     public function sendVerificationEmail(string $email, string $username, int $id) {
