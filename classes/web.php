@@ -8,6 +8,7 @@ class Web
     const PAGE_DOCUMENTATION = "documentation";
     const NAVIGATION = "navigation";
     const MAIL = "Mail";
+    const NEW_PASSWORD = "newPassword";
 
     public function __construct(Localization $localization, Cms $cms) {
         $this->localization = $localization;
@@ -19,6 +20,7 @@ class Web
             self::PAGE_DOCUMENTATION => "getDocumentationData",
             self::NAVIGATION => "getNavigationData",
             self::MAIL => "getMailData",
+            self::NEW_PASSWORD => "getNewPasswordData",
         );
     }
 
@@ -28,6 +30,11 @@ class Web
         }
 
         return call_user_func([$this, $this->getPageToDataMethodMapping()[$page]]);
+    }
+
+    private function getNewPasswordData() {
+        $pageCmsData = $this->getCmsData(Cms::PAGE_DATA_FILTER_PAGE, self::NEW_PASSWORD);
+        return $this->basicCmsDataFormatting($pageCmsData);
     }
 
     private function getNavigationData() {
@@ -54,6 +61,15 @@ class Web
 
     private function getMailData() {
         $pageCmsData = $this->getCmsData(Cms::PAGE_DATA_FILTER_PAGE, self::MAIL);
+        $returnData  = array();
+        array_walk($pageCmsData, function($value) use(&$returnData) {
+            $returnData[$value["placeholder"]] = $value["content"];
+        });
+
+        return $returnData;
+    }
+
+    private function basicCmsDataFormatting(array $pageCmsData) {
         $returnData  = array();
         array_walk($pageCmsData, function($value) use(&$returnData) {
             $returnData[$value["placeholder"]] = $value["content"];

@@ -206,6 +206,102 @@ class Controller
         return $this->htmlParser->parseView("auth:verified", array("status" => $status, "message" => $message));
     }
 
+    public function newPassword() {
+        $pageData = $this->web->getPageData(Web::NEW_PASSWORD);
+        return $this->htmlParser->parseView("auth:newPassword", $pageData);
+    }
+
+    public function newPasswordEmail() {
+        $exception = false;
+        try {
+            $email = $this->request->inputOrThrow("email");
+
+            if($this->validator->validate("email", array(Validator::FILTER_EMAIL))->isFailed()) {
+                throw new Exception($this->validator->getMessages()[0]);
+            }
+
+            $this->user->passwordResetEmail($email);
+        } catch(Exception $e) {
+            $exception = true;
+            $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_ERROR_KEY, $e->getMessage());
+        }
+
+        if($exception === false) {
+            $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_SUCCESS_KEY, "Email sent");
+        }
+
+        Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/auth/passwordnew.php");
+    }
+
+    public function resetPassword() {
+        $status = 2;
+        $message = "";
+        $email = "";
+        $captcha = $this->guardian->generateCaptcha();
+        try {
+            $token = $this->request->inputOrThrow("token");
+
+            if($this->validator->validate("token", array(Validator::FILTER_ALPHA_NUM))->isFailed()) {
+                throw new Exception($this->validator->getErrorMessages()[0]);
+            }
+
+            $email = $this->user->resetPassword($token);
+        } catch (Exception $e) {
+            $status = 1;
+            $message = $e->getMessage();
+        }
+
+        return $this->htmlParser->parseView("auth:resetPassword", array("status" => $status, "message" => $message, "email" => $email, "captcha" => $captcha));
+    }
+
+    public function doResetPassword() {
+        $token = "";
+        try {
+            $token = $this->request->inputOrThrow("token");
+            $email = $this->request->inputOrThrow("email");
+            $newPassword = $this->request->inputOrThrow("password-new");
+            $newPasswordConfirm = $this->request->inputOrThrow("password-confirm");
+            $captcha = $this->request->inputOrThrow("captcha");
+
+            if($this->validator->validate("email", array(Validator::FILTER_EMAIL))->isFailed()) {
+                throw new Exception($this->validator->getMessages()[0]);
+            }
+            $this->validator->resetMessages();
+            $this->validator->resetMessages();
+            if($this->validator->validate("password-new", array(Validator::FILTER_PASSWORD))->isFailed()) {
+                throw new Exception($this->validator->getMessages()[0]);
+            }
+            $this->validator->resetMessages();
+            if($this->validator->validate("password-confirm", array(Validator::FILTER_PASSWORD))->isFailed()) {
+                throw new Exception($this->validator->getMessages()[0]);
+            }
+            $this->validator->resetMessages();
+            if($this->validator->validate("captcha", array(Validator::FILTER_ALPHA_NUM))->isFailed()) {
+                throw new Exception($this->validator->getMessages()[0]);
+            }
+            $this->validator->resetMessages();
+            if($this->validator->validate("token", array(Validator::FILTER_ALPHA_NUM))->isFailed()) {
+                throw new Exception($this->validator->getErrorMessages()[0]);
+            }
+            $this->guardian->checkCaptcha($captcha);
+            if($newPassword !== $newPasswordConfirm) {
+                throw new Exception("Passwords do not match");
+            }
+
+            $this->user->doResetPassword($email, $newPassword, $token);
+        } catch(Exception $e) {
+            $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_ERROR_KEY, $e->getMessage());
+            Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/auth/resetpassword.php", HttpCodes::HTTP_BAD_REQUEST,
+                array("token" => $token));
+        }
+
+        Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/auth/resetpassworddone.php");
+    }
+
+    public function resetPasswordDone() {
+        return $this->htmlParser->parseView("auth:resetPasswordDone", array("message" => "Password reset was successful. Please wait until we redirect you to login page"));
+    }
+
     public function adminHome() {
         $this->response->returnRedirect(HttpParser::baseUrl() . "views/adm/insert.php");
     }

@@ -69,6 +69,11 @@ class Router
             '/views/auth/verifyemail.php',
             '/views/auth/resendemail.php',
             '/email/verify.php',
+            '/views/auth/passwordnew.php',
+            '/views/auth/passwordnewemail.php',
+            '/views/auth/doresetpassword.php',
+            '/views/auth/resetpassword.php',
+            '/views/auth/resetpassworddone.php',
         );
     }
 
@@ -119,6 +124,11 @@ class Router
             '/views/auth/resendemail.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'resendEmail', 'request' => self::REQUEST_POST, 'role' => "", 'auth' => false),
             '/email/verify.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'doVerifyEmail', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/auth/logout.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'logout', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => true),
+            '/views/auth/passwordnew.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'newPassword', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
+            '/views/auth/passwordnewemail.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'newPasswordEmail', 'request' => self::REQUEST_POST, 'role' => "", 'auth' => false),
+            '/views/auth/resetpassword.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'resetPassword', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
+            '/views/auth/doresetpassword.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'doResetPassword', 'request' => self::REQUEST_POST, 'role' => "", 'auth' => false),
+            '/views/auth/resetpassworddone.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'resetPasswordDone', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/error.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'error', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/test.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'test', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/ajaxgetranslation' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'ajaxGetTranslation', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
@@ -218,6 +228,7 @@ class Router
         if(!in_array($route['request'], $this->supportedRequestMethods)) {
             throw new Exception("Method not supported", HttpCodes::METHOD_NOT_ALLOWED);
         }
+
         if($requestMethod !== $route['request']) {
             throw new Exception("Method invalid", HttpCodes::HTTP_FORBIDDEN);
         }

@@ -196,16 +196,40 @@ class User
             throw $e;
         }
 
-        $this->sendVerificationEmail($email, $username, $id);
+        $this->sendUserEmail($email, $username, $id, Factory::TYPE_ACCOUNT_VERIFICATION_MAIL, "Verify you account");
 
         return array("id" => $id, "uuid" => $uuid);
+    }
+
+    public function passwordResetEmail(string $email) {
+        $user = $this->getUserByEmail($email, array("id", "username"));
+        $this->userToken->addToken(UserToken::TOKEN_TYPE_PASSWORD_RESET, $user["id"]);
+        $this->sendUserEmail($email, $user["username"], $user["id"], Factory::TYPE_RESET_PASSWORD_MAIL, "Reset password");
+    }
+
+    public function resetPassword(string $token) {
+        $userId = 0;
+        $this->userToken->checkToken($token, UserToken::TOKEN_TYPE_PASSWORD_RESET, $userId);
+        $user = $this->getUserById($userId, array("email"));
+
+        return $user["email"];
+    }
+
+    public function doResetPassword(string $email, string $newPassword, $token) {
+        $userId = $this->getUserByEmail($email, array("id"));//this will throw exception if user not found
+        $dbToken = $this->userToken->getToken(UserToken::TOKEN_TYPE_PASSWORD_RESET, $userId["id"]);
+        if($dbToken !== $token) {
+            throw new Exception("Token mismatch");
+        }
+        $newHash = password_hash($newPassword,PASSWORD_BCRYPT);
+        $this->getModel()->update(array("hashed_password" => $newHash), array("email" => $email));
     }
 
     public function resendEmail(int $userId, string $type) {
         $user = $this->getUserById($userId, array("username", "email"));
         if($type === self::EMAIL_TYPE_VERIFICATION) {
             $this->userToken->addToken(UserToken::TOKEN_TYPE_ACCOUNT_VERIFICATION, $userId);
-            $this->sendVerificationEmail($user["email"], $user["username"], $userId);
+            $this->sendUserEmail($user["email"], $user["username"], $userId, Factory::TYPE_ACCOUNT_VERIFICATION_MAIL, "Verify you account");
         }
     }
 
@@ -218,7 +242,17 @@ class User
         return false;
     }
 
-    public function sendVerificationEmail(string $email, string $username, int $id) {
+    public function sendUserEmail(string $email, string $username, int $id, string $type, string $subject) {
+        Factory::getObject($type)->setSender(["sender" => "random.word.api@gmail.com", "name" => "RandomWordApi"])
+            ->setAddress(array(["address" => $email, "name" => $username]))
+            ->setSubject($subject)
+            ->setResourceObject($this)
+            ->setResourceDataId($id)
+            ->setBody() //sets automatically depending on email type. Can be adjusted true CMS
+            ->send();
+    }
+
+    /*public function sendVerificationEmail(string $email, string $username, int $id) {
         Factory::getObject(Factory::TYPE_ACCOUNT_VERIFICATION_MAIL)->setSender(["sender" => "random.word.api@gmail.com", "name" => "RandomWordApi"])
             ->setAddress(array(["address" => $email, "name" => $username]))
             ->setSubject("Verify you account")
@@ -227,4 +261,14 @@ class User
             ->setBody() //sets automatically depending on email type. Can be adjusted true CMS
             ->send();
     }
+
+    public function sendPasswordResetEmail(string $email, string $username, int $id) {
+        Factory::getObject(Factory::TYPE_RESET_PASSWORD_MAIL)->setSender(["sender" => "random.word.api@gmail.com", "name" => "RandomWordApi"])
+            ->setAddress(array(["address" => $email, "name" => $username]))
+            ->setSubject("Reset password")
+            ->setResourceObject($this)
+            ->setResourceDataId($id)
+            ->setBody() //sets automatically depending on email type. Can be adjusted true CMS
+            ->send();
+    }*/
 }

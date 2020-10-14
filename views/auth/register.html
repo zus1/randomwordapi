@@ -32,23 +32,17 @@
                         <div class="input-group-append">
                             <button class="btn btn-outline-secondary" type="button" id="generate-password" onclick="generatePassword()">Generate</button>
                             <div id="show">
-                                <button class="btn btn-outline-secondary" type="button" id="show-password">Show</button>
+                                <button class="btn btn-outline-secondary" type="button" onclick="passwordShow()">Show</button>
                             </div>
                             <div id="hide" style="display: none;">
-                                <button class="btn btn-outline-secondary" type="button" id="hide-password">Hide</button>
+                                <button class="btn btn-outline-secondary" type="button" onclick="passwordHide()">Hide</button>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <input type="password" name="password-confirm" id="pswd-confirm" class="form-control" placeholder="confirm password (required)" autocomplete="off">
                     </div>
-                    <div class="form-group content-footer" style="text-align: left">
-                        <p>If you are robot, it's ok, we are just trying to make sure you dont want to take over the wor(l)ds.</p>
-                        <p>Please enter to field below: {captcha}</p>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" name="captcha" class="form-control" placeholder="captcha">
-                    </div>
+                    @include.(captcha)
                     <div class="form-group content-footer">
                         Already have account? Go to login page <a href="{base_url}views/auth/login.php">here</a>
                     </div>
@@ -62,29 +56,4 @@
     </div>
 </div>
 <script src="{base_url}js/password.js"></script>
-<script>
-    const pswd = document.getElementById("pswd");
-    const confirmPassword = document.getElementById("pswd-confirm");
-    const showButton = document.getElementById("show-password");
-    const showDiv = document.getElementById("show");
-    const hideButton = document.getElementById("hide-password");
-    const hideDiv = document.getElementById("hide");
-
-    showButton.addEventListener("click", () => passwordShow());
-    hideButton.addEventListener("click", () => passwordHide());
-
-    function passwordShow() {
-        pswd.type = "text";
-        confirmPassword.type = "text";
-        showDiv.style.display = "none";
-        hideDiv.style.display = "block";
-    }
-
-    function passwordHide() {
-        pswd.type = "password";
-        confirmPassword.type = "password";
-        showDiv.style.display = "block";
-        hideDiv.style.display = "none";
-    }
-</script>
 @footer;
