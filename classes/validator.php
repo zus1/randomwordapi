@@ -184,7 +184,7 @@ class Validator
     }
 
     public function filterPassword($value) {
-        return $this->filter($value, "/[^A-Za-z0-9_@?.!*\-+<>]/");
+        return $this->filter($value, "/[^A-Za-z0-9_@.!-+]/");
     }
 
     public function filterAlphaDash($value) {

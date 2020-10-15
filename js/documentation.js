@@ -1,7 +1,9 @@
+const tryToken = document.getElementById("token");
 const tryTag = document.getElementById("tag");
 const tryMinLength = document.getElementById("min-length");
 const tryMaxLength = document.getElementById("max-length");
 const tryWordsNum = document.getElementById("words-num");
+const tryHeader = document.getElementById("try-header");
 const tryUrl = document.getElementById("try-url");
 const tryResponse = document.getElementById("try-response");
 const tryButton = document.getElementById("try-button");
@@ -11,7 +13,7 @@ tryButton.addEventListener("click", () => tryApi());
 function tryApi() {
     const http = getHttpParams();
     let prefix = http.protocol + "//" + http.host;
-    let endpoint = "/api/v1/generate?"
+    let endpoint = "/api/v1/generate?";
 
     if(tryTag.value !== "") {
         endpoint = endpoint + "&language=" + tryTag.value;
@@ -28,8 +30,9 @@ function tryApi() {
 
     endpoint = formatEndpoint(endpoint);
     tryUrl.innerHTML = prefix + endpoint;
+    tryHeader.innerHTML = "Auth: " + tryToken.value;
 
-    getAjax(endpoint, postTryApi, false)
+    getAjax(endpoint, postTryApi, false, {"Auth": tryToken.value});
 }
 
 function postTryApi(data) {

@@ -54,6 +54,7 @@ class Web
            $returnData[$value["placeholder"]] = $value["content"];
            $this->documentationPairValues($pageCmsData,$returnData, "status", "statuses", $value);
            $this->documentationPairValues($pageCmsData,$returnData, "params", "parameters", $value);
+            $this->documentationPairValues($pageCmsData,$returnData, "rate-limit", "limit_headers", $value);
         });
 
         return $returnData;

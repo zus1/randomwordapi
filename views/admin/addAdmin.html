@@ -1,46 +1,52 @@
 @header-admin;
-@include.(navigation)
-<div class="container">
-    <div class="row content-wrapper">
-        <div class="col-md-12 col-log-12 col-sm-12">
-            <div class="content-title">Add admin account</div>
-            <div class="alert-custom">
-                <div class="row">
-                    <div class="col-md-12 col-lg-12 col-sm-12">
-                        @session.success?
-                        <div class="alert alert-success">
-                            @session.(success)
+<div class="row">
+    <div class="col-md-2 col-lg-2 col-sm-2">
+        @include.(navigation)
+    </div>
+    <div class="col-lg-10 col-sm-10 col-md-10">
+        <div class="row">
+            <div class="col-md-11 col-log-11 col-sm-11">
+                <div class="content-wrapper">
+                    <div class="content-title">Add admin account</div>
+                    <div class="alert-custom">
+                        <div class="row">
+                            <div class="col-md-12 col-lg-12 col-sm-12">
+                                @session.success?
+                                <div class="alert alert-success">
+                                    @session.(success)
+                                </div>
+                                @session?
+                                @session.error?
+                                <div class="alert alert-danger">
+                                    @session.(error)
+                                </div>
+                                @session?
+                            </div>
                         </div>
-                        @session?
-                        @session.error?
-                        <div class="alert alert-danger">
-                            @session.(error)
-                        </div>
-                        @session?
                     </div>
+                    <form action="{base_url}views/adm/doaddadmin.php" method="post">
+                        {csrf_token}
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="email" placeholder="email" value="@old.(email)">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="username" placeholder="username" value="@old.(username)">
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="password" id="pswd" placeholder="password" autocomplete="off">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="generate-password" onclick="generatePassword()">Generate</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="password-confirm" placeholder="confirm password" autocomplete="off">
+                        </div>
+                        <div class="form-group content-footer">
+                            <input type="submit" class="login-button" value="Add Admin">
+                        </div>
+                    </form>
                 </div>
             </div>
-            <form action="{base_url}views/adm/doaddadmin.php" method="post">
-                {csrf_token}
-                <div class="form-group">
-                    <input type="text" class="form-control" name="email" placeholder="email" value="@old.(email)">
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" name="username" placeholder="username" value="@old.(username)">
-                </div>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" name="password" id="pswd" placeholder="password" autocomplete="off">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" id="generate-password" onclick="generatePassword()">Generate</button>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" name="password-confirm" placeholder="confirm password" autocomplete="off">
-                </div>
-                <div class="form-group content-footer">
-                    <input type="submit" class="login-button" value="Add Admin">
-                </div>
-            </form>
         </div>
     </div>
 </div>

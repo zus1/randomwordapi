@@ -2,20 +2,34 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="288e8d99-2ca2-423c-98ad-c98a0ae19105" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/resources/mail/passwordResetEmail.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/views/auth/newPassword.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/views/auth/resetPassword.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/views/auth/resetPasswordDone.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/views/includes/captcha.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/app.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/sticky.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/views/includes/navigationHeader.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/controller.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/mail/resetpasswordmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/mail/resetpasswordmail.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/router.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/router.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/user.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/user.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/validator.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/validator.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/web.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/css/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/main.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/ajax.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/ajax.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/documentation.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/documentation.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/password.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/password.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/auth/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/auth/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/auth/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/auth/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/resendEmail.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/resendEmail.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/admin/addAdmin.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/admin/addAdmin.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/admin/insert.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/admin/insert.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/admin/language.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/admin/language.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/admin/localization.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/admin/localization.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/admin/modify.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/admin/modify.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/admin/translation.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/admin/translation.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/app.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/app.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/auth/verify.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/auth/verify.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/cms/content.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/cms/content.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/cms/pages.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/cms/pages.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/documentation.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/documentation.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/includes/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/includes/footer.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/includes/footerAdmin.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/includes/footerAdmin.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/includes/headerAdmin.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/includes/headerAdmin.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/includes/navigation.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/includes/navigation.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/includes/navigationCms.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/includes/navigationCms.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/includes/navigationWeb.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/includes/navigationWeb.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -32,8 +46,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="CSS File" />
-        <option value="JavaScript File" />
         <option value="HTML File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -133,7 +147,8 @@
       <workItem from="1602490174018" duration="12873000" />
       <workItem from="1602505703466" duration="9471000" />
       <workItem from="1602576655414" duration="17835000" />
-      <workItem from="1602662928527" duration="15152000" />
+      <workItem from="1602662928527" duration="15831000" />
+      <workItem from="1602749822100" duration="21017000" />
     </task>
     <servers />
   </component>

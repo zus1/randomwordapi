@@ -1,72 +1,82 @@
 @header-admin;
-@include.(navigation)
-<div class="container">
-    <div class="row content-wrapper">
-        <div class="col-md-12 col-lg-12 col-sm-12">
-            <div class="content-title">Add Local</div>
-            <div class="form-group">
-                <div style="height: 50px;">
-                    <div id="alert-add" class="notification" style="display: none">
-                        <div id="notification-add"></div>
+<div class="row">
+    <div class="col-md-2 col-lg-2 col-sm-2">
+        @include.(navigation)
+    </div>
+    <div class="col-md-10 col-lg-10 col-sm-10">
+        <div class="row">
+            <div class="col-md-11 col-lg-11 col-sm-11">
+                <div class="content-wrapper">
+                    <div class="content-title">Add Local</div>
+                    <div class="form-group">
+                        <div style="height: 50px;">
+                            <div id="alert-add" class="notification" style="display: none">
+                                <div id="notification-add"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="add-tag" placeholder="Language tag">
+                    </div>
+                    <div class="form-group content-footer">
+                        <button type="button" class="login-button" id="add-button">Add Local</button>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <input type="text" class="form-control" id="add-tag" placeholder="Language tag">
-            </div>
-            <div class="form-group content-footer">
-                <button type="button" class="login-button" id="add-button">Add Local</button>
             </div>
         </div>
-    </div>
-    <div class="row content-wrapper">
-        <div class="col-md-12 col-lg-12 col-sm-12">
-            <div class="content-title">Remove Local</div>
-            <div class="form-group">
-                <div style="height: 50px;">
-                    <div id="alert-remove" class="notification" style="display: none">
-                        <div id="notification-remove"></div>
+        <div class="row">
+            <div class="col-md-11 col-lg-11 col-sm-11">
+                <div class="content-wrapper">
+                    <div class="content-title">Remove Local</div>
+                    <div class="form-group">
+                        <div style="height: 50px;">
+                            <div id="alert-remove" class="notification" style="display: none">
+                                <div id="notification-remove"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" id="remove-tag">
+                            <option value="">Select local to remove</option>
+                            @foreach.(locals)
+                            <option value="@value.(tag)">@value.(tag)</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group content-footer">
+                        <button type="button" class="login-button" id="remove-button">Remove Local</button>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <select class="form-control" id="remove-tag">
-                    <option value="">Select local to remove</option>
-                    @foreach.(locals)
-                        <option value="@value.(tag)">@value.(tag)</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="form-group content-footer">
-                <button type="button" class="login-button" id="remove-button">Remove Local</button>
             </div>
         </div>
-    </div>
-    <div class="row content-wrapper">
-        <div class="col-md-12 col-lg-12 col-sm-12">
-            <div class="content-title">Change Active</div>
-            <div class="form-group">
-                <div style="height: 50px;">
-                    <div id="alert-change" class="notification" style="display: none">
-                        <div id="notification-change"></div>
+        <div class="row">
+            <div class="col-md-11 col-lg-11 col-sm-11">
+                <div class="content-wrapper">
+                    <div class="content-title">Change Active</div>
+                    <div class="form-group">
+                        <div style="height: 50px;">
+                            <div id="alert-change" class="notification" style="display: none">
+                                <div id="notification-change"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" id="change-tag">
+                            <option value="" disabled selected>Select local</option>
+                            @foreach.(locals)
+                            <option value="@value.(tag)">@value.(tag)</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" id="change-active">
+                            <option value="" disabled selected>Set active</option>
+                        </select>
+                    </div>
+                    <div class="form-group content-footer">
+                        <button type="button" class="login-button" id="change-button">Change Active</button>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <select class="form-control" id="change-tag">
-                    <option value="" disabled selected>Select local</option>
-                    @foreach.(locals)
-                        <option value="@value.(tag)">@value.(tag)</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="form-group">
-                <select class="form-control" id="change-active">
-                    <option value="" disabled selected>Set active</option>
-                </select>
-            </div>
-            <div class="form-group content-footer">
-                <button type="button" class="login-button" id="change-button">Change Active</button>
             </div>
         </div>
     </div>

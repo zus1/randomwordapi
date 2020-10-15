@@ -14,23 +14,67 @@ body {
     color: #545b62!important;
 }
 
-.nav-custom {
+.nav-top {
     background-color: black;
-    margin-left: 200px;
-    margin-right: 200px;
-    margin-bottom: 50px;
 }
 
-.nav-custom .logo-custom {
+.nav-top ul {
+    display: flex;
+    list-style-type: none;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding-top: 5px;
+    margin-bottom: 0;
+    padding-bottom: 5px;
+    margin-right: 50px;
+}
+
+.nav-top li {
+    list-style-type: none;
+    margin-right: 10px;
+    margin-left: 10px;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.4s;
+}
+
+.nav-top .logo {
     float: left;
     padding: 7px;
     margin-left: 10px;
 }
 
+.nav-top li:HOVER {
+    background-color: #343a40;
+}
+
+.nav-top a {
+    text-decoration: none;
+    color: white;
+    font-size: small;
+}
+
+.nav-custom {
+    background-color: black;
+    height: 100%;
+    position: fixed;
+    z-index: 9999;
+    width: 14.7%;
+}
+
+/*.nav-custom .logo-custom {
+    float: left;
+    padding: 7px;
+    margin-left: 10px;
+}*/
+
 .nav-custom ul {
     display: flex;
-    flex-direction: row;
-    justify-content: start;
+    list-style-type: none;
+    padding-left: 0;
+    flex-direction: column;
+    justify-content: space-between;
     padding-top: 5px;
     padding-bottom: 5px;
 }
@@ -38,14 +82,18 @@ body {
 .nav-custom li {
     list-style-type: none;
     margin-right: 10px;
-    padding: 10px;
+    margin-left: 10px;
+    padding: 20px 20px 10px 10px;
     cursor: pointer;
-    border-radius: 10px;
+    text-align: center;
+    /*border-radius: 10px;*/
     transition: background-color 0.4s;
+    border-bottom: 1px solid white;
 }
 
 .nav-custom li:last-child {
-    margin-left: 250px;
+    /*margin-left: 250px;*/
+    border-bottom: none;
 }
 
 .nav-custom li:HOVER {
@@ -58,10 +106,20 @@ body {
     font-size: small;
 }
 
+.sticky-top {
+    width: 100%;
+    position: fixed;
+    z-index: 9999;
+}
+
+.sticky-custom {
+    margin-top: 54px;
+}
+
 .content-wrapper {
     background-color: #343a40;
     border-radius: 10px;
-    padding: 10px;
+    padding: 20px;
     margin-bottom: 100px;
 }
 

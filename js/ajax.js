@@ -12,7 +12,7 @@ function postAjax(endpoint, data, callback) {
     xhttp.send(data);
 }
 
-function getAjax(endpoint, callback, statusCondition=true)  {
+function getAjax(endpoint, callback, statusCondition=true, headers={})  {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if(statusCondition === true) {
@@ -30,5 +30,10 @@ function getAjax(endpoint, callback, statusCondition=true)  {
 
     const http = getHttpParams();
     xhttp.open("GET", http.protocol + "//" + http.host + endpoint, true);
+    if(Object.keys(headers).length > 0) {
+        for(const [key, value] of Object.entries(headers)) {
+            xhttp.setRequestHeader(key, value);
+        }
+    }
     xhttp.send();
 }
