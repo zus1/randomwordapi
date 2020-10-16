@@ -5,6 +5,7 @@ class Request
     private $session;
 
     private $requestVars = array();
+    private $cookieVars = array();
     private static $_requestLoaded = false;
 
     public function __construct(Session $session) {
@@ -21,6 +22,14 @@ class Request
     public function input($key, ?string $default="") {
         if(isset($this->requestVars[$key])) {
             return $this->requestVars[$key];
+        }
+
+        return $default;
+    }
+
+    public function cookie(string $key, ?string $default="") {
+        if(isset($this->cookieVars[$key])) {
+            return $this->cookieVars[$key];
         }
 
         return $default;

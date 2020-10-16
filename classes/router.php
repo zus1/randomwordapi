@@ -74,6 +74,8 @@ class Router
             '/views/auth/doresetpassword.php',
             '/views/auth/resetpassword.php',
             '/views/auth/resetpassworddone.php',
+            '/views/auth/cookiedisclaimerenabled.php',
+            '/views/auth/cookiedisclaimeraction.php',
         );
     }
 
@@ -125,6 +127,8 @@ class Router
             '/email/verify.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'doVerifyEmail', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/auth/logout.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'logout', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => true),
             '/views/auth/passwordnew.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'newPassword', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
+            '/views/auth/cookiedisclaimerenabled.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'cookieDisclaimerEnabled', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
+            '/views/auth/cookiedisclaimeraction.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'cookieDisclaimerAction', 'request' => self::REQUEST_POST, 'role' => "", 'auth' => false),
             '/views/auth/passwordnewemail.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'newPasswordEmail', 'request' => self::REQUEST_POST, 'role' => "", 'auth' => false),
             '/views/auth/resetpassword.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'resetPassword', 'request' => self::REQUEST_GET, 'role' => "", 'auth' => false),
             '/views/auth/doresetpassword.php' => array('class' => Factory::TYPE_CONTROLLER, 'method' => 'doResetPassword', 'request' => self::REQUEST_POST, 'role' => "", 'auth' => false),

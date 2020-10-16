@@ -39,6 +39,7 @@ class Config
     const PASSWORD_RESET_TOKEN_EXPIRES = "PASSWORD_RESET_TOKEN_EXPIRES";
     const EMAIL_SMTP = "EMAIL_SMTP";
     const UUID_SIZE = "UUID_SIZE";
+    const COOKIE_DISCLAIMER_ON = "COOKIE_DISCLAIMER_ON";
     private static $_initialized = false;
     private static $_configArray = array();
 

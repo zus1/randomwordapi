@@ -13,8 +13,15 @@ class Session
 
     public function startUserSession(string $userEmail) {
         $this->startSession();
-        $_SESSION[User::USER_SESSION_KEY] = $userEmail;
+        if(!isset($_SESSION[User::USER_SESSION_KEY])) {
+            $_SESSION[User::USER_SESSION_KEY] = $userEmail;
+        }
     }
 
-    //public function addOldRequest()
+    public function endUserSession()  {
+        $this->startSession();
+        if(isset($_SESSION[User::USER_SESSION_KEY])) {
+            unset($_SESSION[User::USER_SESSION_KEY]);
+        }
+    }
 }

@@ -12,18 +12,22 @@ function postAjax(endpoint, data, callback) {
     xhttp.send(data);
 }
 
-function getAjax(endpoint, callback, statusCondition=true, headers={})  {
+function getAjax(endpoint, callback="", statusCondition=true, headers={})  {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if(statusCondition === true) {
             if (this.readyState == 4 && this.status == 200) {
                 console.log(this.responseText);
-                callback(JSON.parse(this.responseText));
+                if(callback !== "") {
+                    callback(JSON.parse(this.responseText));
+                }
             }
         } else {
             if (this.readyState == 4) {
                 console.log(this.responseText);
-                callback(JSON.parse(this.responseText));
+                if(callback !== "") {
+                    callback(JSON.parse(this.responseText));
+                }
             }
         }
     };

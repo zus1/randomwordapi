@@ -60,6 +60,7 @@ class Controller
     public function doLogin() {
         $usernameOrEmail = $this->request->input("user");
         $password = $this->request->input("password");
+        $rememberMe = $this->request->input("remember");
 
         if(strpos($this->request->input("user"), "@") && strpos($this->request->input("user"), ".")) {
             $this->validator->validate("user", array("email"));
@@ -67,13 +68,16 @@ class Controller
             $this->validator->validate("user", array("alpha_num"));
         }
         $this->validator->validate("password", array("password"));
+        if(!empty($rememberMe)) {
+            $this->validator->validate("remember", array(Validator::FILTER_ALPHA));
+        }
         if($this->validator->isFailed()) {
             $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_ERROR_KEY, $this->validator->getFormattedErrorMessagesForDisplay());
             Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/auth/login.php");
         }
 
         try {
-            $this->user->login($usernameOrEmail, $password);
+            $this->user->login($usernameOrEmail, $password, $rememberMe);
         } catch(Exception $e) {
             $this->htmlParser->oneTimeMessage(HtmlParser::ONE_TIME_ERROR_KEY, $e->getMessage());
             Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/auth/login.php");
@@ -81,8 +85,7 @@ class Controller
     }
 
     public function logout() {
-        $this->session->startSession();
-        unset($_SESSION[User::USER_SESSION_KEY]);
+        $this->user->logout();
         Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/documentation.php");
     }
 
@@ -972,6 +975,14 @@ class Controller
 
         $this->localization->setActive($newLocal);
         return json_encode(array("error" => 0));
+    }
+
+    public function cookieDisclaimerEnabled() {
+        return json_encode(array("enabled" => (int)Config::get(Config::COOKIE_DISCLAIMER_ON)));
+    }
+
+    public function cookieDisclaimerAction() {
+
     }
 
     public function error() {

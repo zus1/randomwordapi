@@ -1,8 +1,5 @@
 <?php
 
-//use PHPMailer\PHPMailer\PHPMailer;
-//use PHPMailer\PHPMailer\Exception;
-
 class Factory
 {
     const TYPE_CONTROLLER = "controller";
@@ -38,12 +35,15 @@ class Factory
     const TYPE_RESET_PASSWORD_MAIL = "reset-password-mail";
     const TYPE_ACCOUNT_VERIFICATION_MAIL = "account-verification-mail";
     const TYPE_USER_TOKEN = "user-token";
+    const TYPE_INIT = "init";
+    const TYPE_COOKIE = "cookie";
 
     const EXTENDER_HTML_PARSER = "extender_html_parser";
 
     const MODEL_IP_CHECKER = "model-ip-checker";
     const MODEL_USER = "model_user";
     const MODEL_USER_TOKEN = "model-user-token";
+    const MODEL_COOKIE = "model-cookie";
 
     const LIBRARY_PHP_MAILER = 'library-php-mailer';
 
@@ -81,6 +81,8 @@ class Factory
         self::TYPE_RESET_PASSWORD_MAIL => "getResetPasswordMail",
         self::TYPE_ACCOUNT_VERIFICATION_MAIL => "getAccountVerificationMail",
         self::TYPE_USER_TOKEN => "getUserToken",
+        self::TYPE_INIT => "getInit",
+        self::TYPE_COOKIE => "getCookie",
     );
     const EXTENDER_METHOD_MAPPING = array(
         self::EXTENDER_HTML_PARSER => "getExtenderHtmlParser",
@@ -89,6 +91,7 @@ class Factory
         self::MODEL_IP_CHECKER => "getModelIpChecker",
         self::MODEL_USER => "getModelUser",
         self::MODEL_USER_TOKEN => "getModelUserToken",
+        self::MODEL_COOKIE => "getModelCookie",
     );
     const LIBRARY_TO_TYPE_MAPPING = array(
         self::LIBRARY_PHP_MAILER => "getLibraryPhpMailer",
@@ -98,7 +101,7 @@ class Factory
     /**
      * @param string $type
      * @param bool $singleton
-     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words|WordsBulk|WordsJson|WordsCsv|Response|Localization|Translator|Web|ApiGuardian|ApiApp|DateHandler|IpChecker|AccountVerificationMail|ResetPasswordMail
+     * @return Controller|Database|HtmlParser|Router|User|ApiController|ApiException|Request|Validator|Words|WordsBulk|WordsJson|WordsCsv|Response|Localization|Translator|Web|ApiGuardian|ApiApp|DateHandler|IpChecker|AccountVerificationMail|ResetPasswordMail|Init|Cookie
      */
     public static function getObject(string $type, bool $singleton=false) {
         if(!array_key_exists($type, self::TYPE_METHOD_MAPPING)) {
@@ -161,6 +164,18 @@ class Factory
         return call_user_func([new self(), self::LIBRARY_TO_TYPE_MAPPING[$libraryType]]);
     }
 
+    private function getModelCookie() {
+        return new CookieModel($this->getValidator());
+    }
+
+    private function getCookie() {
+        return new Cookie($this->getRequest());
+    }
+
+    private function getInit() {
+        return new Init($this->getCookie(), $this->getSession());
+    }
+
     private function getUserToken() {
         return new UserToken($this->getGuardian(), $this->getDateHandler());
     }
@@ -214,7 +229,7 @@ class Factory
     }
 
     private function getUser() {
-        return new User($this->getSession(), $this->getUserToken(), $this->getGuardian());
+        return new User($this->getSession(), $this->getUserToken(), $this->getGuardian(), $this->getCookie());
     }
 
     private function getHttpParser() {
@@ -298,7 +313,7 @@ class Factory
     }
 
     private function getApiUser() {
-        return new ApiUser($this->getSession(), $this->getUserToken(), $this->getGuardian());
+        return new ApiUser($this->getSession(), $this->getUserToken(), $this->getGuardian(), $this->getCookie());
     }
 
     private function getApiApp() {

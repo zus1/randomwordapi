@@ -4,6 +4,7 @@
 class User
 {
     const USER_SESSION_KEY = 'username';
+    const USER_REMEMBER_ME_KEY = "remember_me";
     const ROLE_USER = 'user';
     const ROLE_ADMIN = 'admin';
     const EMAIL_TYPE_VERIFICATION = "verification";
@@ -16,11 +17,13 @@ class User
     private $session;
     private $userToken;
     private $guardian;
+    private $cookie;
 
-    public function __construct(Session $session, UserToken $token, Guardian $guardian) {
+    public function __construct(Session $session, UserToken $token, Guardian $guardian, Cookie $cookie) {
         $this->session = $session;
         $this->userToken = $token;
         $this->guardian = $guardian;
+        $this->cookie = $cookie;
     }
 
     public function getModel() {
@@ -137,8 +140,8 @@ class User
         return false;
     }
 
-    public function login(string $usernameOrEmail, string $password) {
-        $user = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT role, email, hard_banned, email_verified, hashed_password FROM user WHERE (username = ? OR email = ?)",
+    public function login(string $usernameOrEmail, string $password, string $rememberMe) {
+        $user = Factory::getObject(Factory::TYPE_DATABASE, true)->select("SELECT role, email, hard_banned, email_verified, hashed_password, uuid FROM user WHERE (username = ? OR email = ?)",
             array("string", "string", "integer"), array($usernameOrEmail, $usernameOrEmail));
 
         if(!$user) {
@@ -157,11 +160,22 @@ class User
         }
 
         $this->session->startUserSession($user['email']);
+        if($rememberMe === "true") {
+            $this->cookie->setCookie(self::USER_REMEMBER_ME_KEY, $user["uuid"], time() + (60*60*24*30), "/", "." . $_SERVER["SERVER_NAME"], 0, 1);
+        }
         if($this->isAdmin(intval($user['role']))) {
             Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/adm/home.php");
         } else {
             Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/documentation.php");
         }
+    }
+
+    public function logout() {
+        $this->session->endUserSession();
+        $this->cookie->removeCookie(self::USER_REMEMBER_ME_KEY, "/", "." . $_SERVER["SERVER_NAME"], 0 , 1);
+        /*if(isset($_COOKIE[self::USER_REMEMBER_ME_KEY])) {
+            setcookie(self::USER_REMEMBER_ME_KEY, "", time() - 3600, "/", "." . $_SERVER["SERVER_NAME"], 0 , 1);
+        }*/
     }
 
     public function register(string $email, string $username, string $password) {

@@ -100,8 +100,28 @@ class Cms
         }
 
         $editHoldersStr = implode(",", $editHoldersArray);
-        Factory::getObject(Factory::TYPE_DATABASE, true)->execute("UPDATE pages SET name = ?, placeholders = ? WHERE id = ?",
-            array("string", "string", "integer"), array($newName, $editHoldersStr, $pageId));
+        Factory::getObject(Factory::TYPE_DATABASE, true)->beginTransaction();
+        try {
+            Factory::getObject(Factory::TYPE_DATABASE, true)->execute("UPDATE pages SET name = ?, placeholders = ? WHERE id = ?",
+                array("string", "string", "integer"), array($newName, $editHoldersStr, $pageId));
+            if($newName !== $oldName) {
+                Factory::getObject(Factory::TYPE_DATABASE, true)->execute("UPDATE page_content SET page_name = ? WHERE page_name = ?",
+                    array("string", "string"), array($newName, $oldName));
+            }
+            if(!empty($changeHoldersArray)) {
+                $pageName = $oldName;
+                if($oldName !== $newName) {
+                    $pageName = $newName;
+                }
+                $changeHoldersStr = "'" . implode("','", $changeHoldersArray) . "'";
+                Factory::getObject(Factory::TYPE_DATABASE, true)->execute(
+                    "DELETE FROM page_content WHERE page_name = ? AND placeholder IN (" . $changeHoldersStr . ")", array("string"), array($pageName));
+            }
+            Factory::getObject(Factory::TYPE_DATABASE, true)->commit();
+        } catch(Exception $e) {
+            Factory::getObject(Factory::TYPE_DATABASE, true)->rollBack();
+            throw $e;
+        }
     }
 
     public function removePage(int $pageId) {
