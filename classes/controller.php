@@ -14,8 +14,9 @@ class Controller
     private $web;
     private $guardian;
     private $userToken;
+    private $cookie;
 
-    public function __construct(Request $request, HtmlParser $htmlParser, Validator $validator, User $user, Session $session, Response $response, Localization $local, Cms $cms, Web $web, Guardian $guardian, UserToken $userToken) {
+    public function __construct(Request $request, HtmlParser $htmlParser, Validator $validator, User $user, Session $session, Response $response, Localization $local, Cms $cms, Web $web, Guardian $guardian, UserToken $userToken, Cookie $cookie) {
         $this->request = $request;
         $this->htmlParser = $htmlParser;
         $this->validator = $validator;
@@ -27,6 +28,7 @@ class Controller
         $this->web = $web;
         $this->guardian = $guardian;
         $this->userToken = $userToken;
+        $this->cookie = $cookie;
     }
 
     public function webRoot() {
@@ -982,7 +984,23 @@ class Controller
     }
 
     public function cookieDisclaimerAction() {
+        $action = (int)$this->request->input("action");
 
+        try {
+            if($this->validator->validate("active", array(Validator::FILTER_NUMERIC))->isFailed()) {
+                throw new Exception($this->validator->getMessages()[0]);
+            }
+
+            $this->cookie->doDisclaimerAction($action);
+        } catch(Exception $e) {
+            return json_encode(array("error" => 1, "message" => $e->getMessage()));
+        }
+
+        return json_encode(array("error" => 0, "message" => "ok"));
+    }
+
+    public function cookieDisclaimerDeclineRedirectUrl() {
+        return json_encode(array("redirect" => $this->cookie->getDisclaimerDeclineRedirectUrl()));
     }
 
     public function error() {

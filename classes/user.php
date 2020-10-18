@@ -161,7 +161,7 @@ class User
 
         $this->session->startUserSession($user['email']);
         if($rememberMe === "true") {
-            $this->cookie->setCookie(self::USER_REMEMBER_ME_KEY, $user["uuid"], time() + (60*60*24*30), "/", "." . $_SERVER["SERVER_NAME"], 0, 1);
+            $this->cookie->setCookie(Cookie::USER_REMEMBER_ME_COOKIE_KEY, $user["uuid"]);
         }
         if($this->isAdmin(intval($user['role']))) {
             Factory::getObject(Factory::TYPE_ROUTER)->redirect(HttpParser::baseUrl() . "views/adm/home.php");
@@ -172,10 +172,7 @@ class User
 
     public function logout() {
         $this->session->endUserSession();
-        $this->cookie->removeCookie(self::USER_REMEMBER_ME_KEY, "/", "." . $_SERVER["SERVER_NAME"], 0 , 1);
-        /*if(isset($_COOKIE[self::USER_REMEMBER_ME_KEY])) {
-            setcookie(self::USER_REMEMBER_ME_KEY, "", time() - 3600, "/", "." . $_SERVER["SERVER_NAME"], 0 , 1);
-        }*/
+        $this->cookie->removeCookie(Cookie::USER_REMEMBER_ME_COOKIE_KEY);
     }
 
     public function register(string $email, string $username, string $password) {
@@ -265,24 +262,4 @@ class User
             ->setBody() //sets automatically depending on email type. Can be adjusted true CMS
             ->send();
     }
-
-    /*public function sendVerificationEmail(string $email, string $username, int $id) {
-        Factory::getObject(Factory::TYPE_ACCOUNT_VERIFICATION_MAIL)->setSender(["sender" => "random.word.api@gmail.com", "name" => "RandomWordApi"])
-            ->setAddress(array(["address" => $email, "name" => $username]))
-            ->setSubject("Verify you account")
-            ->setResourceObject($this)
-            ->setResourceDataId($id)
-            ->setBody() //sets automatically depending on email type. Can be adjusted true CMS
-            ->send();
-    }
-
-    public function sendPasswordResetEmail(string $email, string $username, int $id) {
-        Factory::getObject(Factory::TYPE_RESET_PASSWORD_MAIL)->setSender(["sender" => "random.word.api@gmail.com", "name" => "RandomWordApi"])
-            ->setAddress(array(["address" => $email, "name" => $username]))
-            ->setSubject("Reset password")
-            ->setResourceObject($this)
-            ->setResourceDataId($id)
-            ->setBody() //sets automatically depending on email type. Can be adjusted true CMS
-            ->send();
-    }*/
 }

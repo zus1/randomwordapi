@@ -2,44 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="288e8d99-2ca2-423c-98ad-c98a0ae19105" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/classes/cookie.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classes/init.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/js/newPassword.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/js/resetPassword.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/models/cookiemodel.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/views/includes/cookieDisclaimer.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/views/includes/headerAuth.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/views/includes/navigationHeaderWeb.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/cms.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/cms.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/controller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/cookie.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/cookie.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/factory.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/factory.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/mail/mail.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/mail.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/request.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/request.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/router.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/router.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/session.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/session.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/user.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/user.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/validator.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/validator.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/words/words.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/words.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/main.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include.php" beforeDir="false" afterPath="$PROJECT_DIR$/include.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/init.ini" beforeDir="false" afterPath="$PROJECT_DIR$/init.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/ajax.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/ajax.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/model.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/model.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/app.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/app.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/auth/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/auth/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/auth/newPassword.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/auth/newPassword.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/auth/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/auth/register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/auth/resetPassword.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/auth/resetPassword.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/auth/resetPasswordDone.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/auth/resetPasswordDone.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/auth/verified.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/auth/verified.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/auth/verify.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/auth/verify.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/views/documentation.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/documentation.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/includes/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/includes/footer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/includes/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/includes/header.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/includes/navigationWeb.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/includes/navigationWeb.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/includes/cookieDisclaimer.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/includes/cookieDisclaimer.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -159,7 +131,8 @@
       <workItem from="1602576655414" duration="17835000" />
       <workItem from="1602662928527" duration="15831000" />
       <workItem from="1602749822100" duration="22263000" />
-      <workItem from="1602835920124" duration="26895000" />
+      <workItem from="1602835920124" duration="26990000" />
+      <workItem from="1603020276212" duration="9127000" />
     </task>
     <servers />
   </component>
