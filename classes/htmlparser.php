@@ -518,8 +518,11 @@ class HtmlParser
 
         $nextContents = substr($contents, $endElement + strlen("@endforeach"));
 
+        $data = array();
         $loopDataKey = $this->extractKeyFromHolder($holder);
-        $data = $loopData[$loopDataKey];
+        if(array_key_exists($loopDataKey, $loopData)) {
+            $data = $loopData[$loopDataKey];
+        }
 
         $tempElement = $element;
         foreach($data as $key => $value) {

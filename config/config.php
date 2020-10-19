@@ -9,6 +9,8 @@ class Config
     const DB_NAME = 'DB_NAME';
     const DB_HOST = 'DB_HOST';
     const DB_CHARSET = 'DB_CHARSET';
+    const DB_CONNECTION = "DB_CONNECTION";
+    const DB_PORT = "DB_PORT";
     const API_VERSION = 'API_VERSION';
     const API_MAX_WORD_LENGTH = 'API_MAX_WORD_LENGTH';
     const API_MAX_WORDS = 'API_MAX_WORDS';
@@ -47,8 +49,11 @@ class Config
     private static $_initialized = false;
     private static $_configArray = array();
 
-    private static function init() {
-        $initFile = HttpParser::root() . "/init.ini";
+    public static function init(?string $initFile="") {
+        if($initFile === "") {
+            $initFile = HttpParser::root() . "/init.ini";
+        }
+
         if(!file_exists($initFile)) {
             throw new Exception("No init file", HttpCodes::INTERNAL_SERVER_ERROR);
         }

@@ -3,15 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="288e8d99-2ca2-423c-98ad-c98a0ae19105" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/controller.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/cookie.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/cookie.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/factory.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/factory.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/router.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/router.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/user.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/user.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/htmlparser.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/htmlparser.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/init.ini" beforeDir="false" afterPath="$PROJECT_DIR$/init.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/documentation.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/documentation.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/includes/cookieDisclaimer.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/includes/cookieDisclaimer.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -47,11 +41,11 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\xampp\htdocs\randomwordapi\library\phinx\bin" />
       <recent name="C:\xampp\htdocs\randomwordapi\classes" />
       <recent name="C:\xampp\htdocs\randomwordapi\classes\mail" />
       <recent name="C:\xampp\htdocs\randomwordapi\extenders" />
       <recent name="C:\xampp\htdocs\randomwordapi\models" />
-      <recent name="C:\xampp\htdocs\randomwordapi\library" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -132,7 +126,8 @@
       <workItem from="1602662928527" duration="15831000" />
       <workItem from="1602749822100" duration="22263000" />
       <workItem from="1602835920124" duration="26990000" />
-      <workItem from="1603020276212" duration="9127000" />
+      <workItem from="1603020276212" duration="11026000" />
+      <workItem from="1603095045089" duration="15894000" />
     </task>
     <servers />
   </component>
