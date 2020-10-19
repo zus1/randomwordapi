@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="288e8d99-2ca2-423c-98ad-c98a0ae19105" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/init/.htaccess" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/htmlparser.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/htmlparser.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/init.ini" beforeDir="false" afterPath="$PROJECT_DIR$/init.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/init.ini" beforeDir="false" afterPath="$PROJECT_DIR$/init/init.ini" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -41,11 +42,11 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\xampp\htdocs\randomwordapi\init" />
+      <recent name="C:\xampp\htdocs\randomwordapi" />
+      <recent name="C:\xampp\htdocs\randomwordapi\public" />
       <recent name="C:\xampp\htdocs\randomwordapi\library\phinx\bin" />
       <recent name="C:\xampp\htdocs\randomwordapi\classes" />
-      <recent name="C:\xampp\htdocs\randomwordapi\classes\mail" />
-      <recent name="C:\xampp\htdocs\randomwordapi\extenders" />
-      <recent name="C:\xampp\htdocs\randomwordapi\models" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -127,7 +128,7 @@
       <workItem from="1602749822100" duration="22263000" />
       <workItem from="1602835920124" duration="26990000" />
       <workItem from="1603020276212" duration="11026000" />
-      <workItem from="1603095045089" duration="15894000" />
+      <workItem from="1603095045089" duration="17386000" />
     </task>
     <servers />
   </component>

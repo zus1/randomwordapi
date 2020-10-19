@@ -51,7 +51,7 @@ class Config
 
     public static function init(?string $initFile="") {
         if($initFile === "") {
-            $initFile = HttpParser::root() . "/init.ini";
+            $initFile = HttpParser::root() . "/init/init.ini";
         }
 
         if(!file_exists($initFile)) {
