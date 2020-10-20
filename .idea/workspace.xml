@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="288e8d99-2ca2-423c-98ad-c98a0ae19105" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/init/.htaccess" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/classes/autoinclude.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/init.ini" beforeDir="false" afterPath="$PROJECT_DIR$/init/init.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/mail.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/mail/mail.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/model.php" beforeDir="false" afterPath="$PROJECT_DIR$/models/model.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include.php" beforeDir="false" afterPath="$PROJECT_DIR$/include.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -42,11 +42,11 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\xampp\htdocs\randomwordapi\init" />
-      <recent name="C:\xampp\htdocs\randomwordapi" />
-      <recent name="C:\xampp\htdocs\randomwordapi\public" />
-      <recent name="C:\xampp\htdocs\randomwordapi\library\phinx\bin" />
+      <recent name="C:\xampp\htdocs\randomwordapi\models" />
+      <recent name="C:\xampp\htdocs\randomwordapi\classes\mail" />
       <recent name="C:\xampp\htdocs\randomwordapi\classes" />
+      <recent name="C:\xampp\htdocs\randomwordapi\config" />
+      <recent name="C:\xampp\htdocs\randomwordapi\init" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -71,7 +71,7 @@
     <configuration name="htmlparser.php" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/randomwordapi/classes/htmlparser.php" useBuiltInWebServerPort="true">
       <method v="2" />
     </configuration>
-    <configuration name="mail.php" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/randomwordapi/classes/mail.php" useBuiltInWebServerPort="true">
+    <configuration name="mail.php" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/randomwordapi/classes/mail/mail.php" useBuiltInWebServerPort="true">
       <method v="2" />
     </configuration>
     <configuration name="words.php" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/randomwordapi/classes/words.php" useBuiltInWebServerPort="true">
@@ -128,7 +128,8 @@
       <workItem from="1602749822100" duration="22263000" />
       <workItem from="1602835920124" duration="26990000" />
       <workItem from="1603020276212" duration="11026000" />
-      <workItem from="1603095045089" duration="17386000" />
+      <workItem from="1603095045089" duration="21099000" />
+      <workItem from="1603182014788" duration="25783000" />
     </task>
     <servers />
   </component>
