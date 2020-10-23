@@ -1,6 +1,6 @@
 <?php
 
-class Autoinclude
+abstract class Autoinclude
 {
     public static $alreadyIncluded = array();
 

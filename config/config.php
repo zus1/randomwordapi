@@ -46,27 +46,96 @@ class Config
     const COOKIE_REMEMBER_ME_EXPIRES_DAYS = "COOKIE_REMEMBER_ME_EXPIRES_DAYS";
     const COOKIE_NECESSARY = "COOKIE_NECESSARY";
     const COOKIE_DISCLAIMER_DECLINE_REDIRECT_URL = "COOKIE_DISCLAIMER_DECLINE_REDIRECT_URL";
+
     private static $_initialized = false;
     private static $_configArray = array();
+    private static $_typeInit = "ini";
+    private static $_typeEnv = "env";
 
-    public static function init(?string $initFile="") {
-        if($initFile === "") {
-            $initFile = HttpParser::root() . "/init/init.ini";
+    private static function getAvailableConfigFileTypes()  {
+        return array(self::$_typeInit, self::$_typeEnv);
+    }
+
+    private static function getFileTypeToMethodMapping() {
+        return array(
+            self::$_typeEnv => "loadConfigFromEnv",
+            self::$_typeInit => "loadConfigFromIni",
+        );
+    }
+
+    public static function init(?string $configFile="") {
+        list($configFile, $extension) = self::getConfigFile($configFile);
+
+        $configArray = call_user_func_array(["Config", self::getFileTypeToMethodMapping()[$extension]], array($configFile));
+        $extraConfig = self::getExtraConfig();
+
+        self::$_configArray = array_merge($configArray, $extraConfig);
+        self::$_initialized = true;
+    }
+
+    private static function getConfigFile(string $configFile) {
+        $extension = "";
+        if($configFile !== "") {
+            if(!file_exists($configFile)) {
+                throw new Exception("Config file not found");
+            }
+            $extension = explode(".", $configFile)[1];
+            if(!in_array($extension, self::getAvailableConfigFileTypes())) {
+                throw new Exception("Unsupported config file type");
+            }
+        } else {
+            foreach(self::getAvailableConfigFileTypes() as $fileType) {
+                if($fileType === "env") {
+                    $fullPath = HttpParser::root() . "/." . $fileType;
+                } else {
+                    $fullPath = HttpParser::root() . "/init." . $fileType;
+                }
+                if(file_exists($fullPath)) {
+                    $extension = $fileType;
+                    $configFile = $fullPath;
+                    break;
+                }
+            }
+        }
+        if($configFile === "") {
+            throw new Exception("Unsupported config file type");
         }
 
-        if(!file_exists($initFile)) {
-            throw new Exception("No init file", HttpCodes::INTERNAL_SERVER_ERROR);
-        }
-        $initVariables = parse_ini_file($initFile);
+        return array($configFile, $extension);
+    }
+
+    private static function loadConfigFromIni(string $iniFile) {
+        $initVariables = parse_ini_file($iniFile);
 
         $iniConfig = array();
         foreach($initVariables as $key => $value) {
             $iniConfig[$key] = $value;
         }
-        $extraConfig = self::getExtraConfig();
 
-        self::$_configArray = array_merge($iniConfig, $extraConfig);
-        self::$_initialized = true;
+        return $iniConfig;
+    }
+
+    private static function loadConfigFromEnv(string $envFile) {
+        $envConfig = array();
+        $envContents = file_get_contents($envFile);
+        if($envContents && $envContents !== "") {
+            $envContentsArray = preg_split("/\n|\r\n/", $envContents);
+            array_walk($envContentsArray, function($value) use(&$envConfig) {
+                $value = trim($value);
+                if($value !== "") {
+                    if(!strpos($value, "=")) {
+                        throw new Exception("Env file malformed");
+                    }
+                    $envLineParts = explode("=", $value);
+                    if(count($envLineParts) !== 2) {
+                        throw new Exception("Env file malformed");
+                    }
+                    $envConfig[$envLineParts[0]] = (is_int($envLineParts[1]))? (int)$envLineParts[1] : $envLineParts[1];
+                }
+            });
+        }
+
+        return $envConfig;
     }
 
     public static function getExtraConfig() {

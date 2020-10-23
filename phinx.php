@@ -3,7 +3,7 @@ include_once("classes/httpparser.php");
 include_once("classes/httpcodes.php");
 include_once("config/config.php");
 
-Config::init("init.ini");
+Config::init(".env");
 return
     [
         'paths' => [

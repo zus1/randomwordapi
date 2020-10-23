@@ -10,9 +10,19 @@ class Request
 
     public function __construct(Session $session) {
         $this->session = $session;
-        array_walk($_REQUEST, function($value, $key) {
+        $payload = $this->getPayload();
+        array_walk($payload, function($value, $key) {
             $this->requestVars[$key] = $value;
         });
+    }
+
+    private function getPayload() {
+        $payload = $_GET;
+        if(empty($payload)) {
+            $payload = $_POST;
+        }
+
+        return $payload;
     }
 
     public function __get($name) {

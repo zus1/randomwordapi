@@ -259,6 +259,8 @@ class HtmlParser
             if(array_key_exists($requestKey, $oldRequestData)) {
                 $contents = str_replace($holder, $oldRequestData[$requestKey], $contents);
             }
+
+            $start++;
         }
 
         return $contents;

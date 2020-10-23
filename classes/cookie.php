@@ -11,7 +11,7 @@ class Cookie
     const USER_REMEMBER_ME_COOKIE_KEY = "remember_me";
 
     private $request;
-    private $cookieVars;
+    private $cookieVars = array();
 
     private $necessaryCookies = array();
 
