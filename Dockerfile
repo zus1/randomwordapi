@@ -23,5 +23,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN a2enmod rewrite && \
-    service apache2 restart
+    service apache2 restart && \
+    chown www-data:www-data -R /var/www/html
 EXPOSE 80 3306 443

@@ -46,6 +46,7 @@ class Config
     const COOKIE_REMEMBER_ME_EXPIRES_DAYS = "COOKIE_REMEMBER_ME_EXPIRES_DAYS";
     const COOKIE_NECESSARY = "COOKIE_NECESSARY";
     const COOKIE_DISCLAIMER_DECLINE_REDIRECT_URL = "COOKIE_DISCLAIMER_DECLINE_REDIRECT_URL";
+    const LOG_DRIVER = "LOG_DRIVER";
 
     private static $_initialized = false;
     private static $_configArray = array();

@@ -2,21 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="288e8d99-2ca2-423c-98ad-c98a0ae19105" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.htaccess" beforeDir="false" afterPath="$PROJECT_DIR$/.htaccess" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/classes/Log/logger.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/classes/Log/loggerdb.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/classes/Log/loggerfile.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/classes/exceptionhandler.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/extenders/exceptionhandlerextender.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/interface/loggerinterface.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/loggerapimodel.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/loggermodel.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/loggerwebmodel.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes/autoinclude.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/autoinclude.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/cookie.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/cookie.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/htmlparser.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/htmlparser.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/request.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/request.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/factory.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/factory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/router.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/router.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/init/.htaccess" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/init/init.ini" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/phinx.php" beforeDir="false" afterPath="$PROJECT_DIR$/phinx.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -143,7 +144,8 @@
       <workItem from="1603267929113" duration="977000" />
       <workItem from="1603272375753" duration="11967000" />
       <workItem from="1603354463193" duration="13298000" />
-      <workItem from="1603440734230" duration="6196000" />
+      <workItem from="1603440734230" duration="15061000" />
+      <workItem from="1603635056729" duration="7018000" />
     </task>
     <servers />
   </component>

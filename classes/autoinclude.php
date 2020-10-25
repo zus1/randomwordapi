@@ -8,6 +8,7 @@ abstract class Autoinclude
         $root = $_SERVER["DOCUMENT_ROOT"];
         return array(
             $root . "/classes/mail",
+            $root . "/classes/log",
             $root . "/classes",
             $root . "/interface",
             $root . "/api",

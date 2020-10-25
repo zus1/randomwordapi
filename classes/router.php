@@ -6,12 +6,14 @@ class Router
     const REQUEST_GET = "get";
     private $user;
     private $guardian;
+    private $eHandler;
 
     private $supportedRequestMethods = array(self::REQUEST_GET, self::REQUEST_POST);
 
-    public function __construct(User $user, Guardian $guardian) {
+    public function __construct(User $user, Guardian $guardian, ExceptionHandler $eHandler) {
         $this->user = $user;
         $this->guardian = $guardian;
+        $this->eHandler = $eHandler;
     }
 
     public function webRoutes() {
@@ -175,7 +177,7 @@ class Router
         try {
             $route = $this->validateRequest($requestUri, $routes, $requestMethod);
         } catch(Exception $e) {
-            $this->redirect(HttpParser::baseUrl() . "views/error.php?error=" . $e->getMessage() . "&code=" . $e->getCode(), $e->getCode());
+            $this->eHandler->handle($e, "web");
         }
 
         $this->guardian->regenerateCsrfToken();
@@ -184,14 +186,14 @@ class Router
         try {
             $this->validateClassMethod($classObject, $route['method']);
         } catch(Exception $e) {
-            $this->redirect(HttpParser::baseUrl() . "views/error.php?error=" . $e->getMessage() . "&code=" . $e->getCode(), $e->getCode());
+            $this->eHandler->handle($e, "web");
         }
 
         $result = "";
         try {
             $result = call_user_func([$classObject, $route['method']]);
         } catch(Exception $e) {
-            $this->redirect(HttpParser::baseUrl() . "views/error.php?error=" . $e->getMessage() . "&code=" . $e->getCode(), $e->getCode());
+            $this->eHandler->handle($e, "web");
         }
 
         $this->returnResult($result);
@@ -204,23 +206,20 @@ class Router
         try {
             $route = $this->validateRequest($requestUri, $routes, $requestMethod);
         } catch(Exception $e) {
-            echo Factory::getObject(Factory::TYPE_API_EXCEPTION)->getApiException($e);
-            die();
+            $this->eHandler->handle($e, "api");
         }
 
         $classObject = Factory::getObject($route['class']);
         try {
             $this->validateClassMethod($classObject, $route['method']);
         } catch(Exception $e) {
-            echo Factory::getObject(Factory::TYPE_API_EXCEPTION)->getApiException($e);
-            die();
+            $this->eHandler->handle($e, "api");
         }
 
         try {
             $result = json_encode(call_user_func([$classObject, $route['method']]), JSON_UNESCAPED_UNICODE);
         } catch(Exception $e) {
-            echo Factory::getObject(Factory::TYPE_API_EXCEPTION)->getApiException($e);
-            die();
+            $this->eHandler->handle($e, "api");
         }
 
         $this->returnResult($result);

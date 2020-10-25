@@ -37,15 +37,23 @@ class Factory
     const TYPE_USER_TOKEN = "user-token";
     const TYPE_INIT = "init";
     const TYPE_COOKIE = "cookie";
+    const TYPE_EXCEPTION_HANDLER = "exception-handler";
 
     const EXTENDER_HTML_PARSER = "extender_html_parser";
+    const EXCEPTION_HANDLER_EXTENDER = "extender-exception-handler";
 
     const MODEL_IP_CHECKER = "model-ip-checker";
     const MODEL_USER = "model_user";
     const MODEL_USER_TOKEN = "model-user-token";
     const MODEL_COOKIE = "model-cookie";
+    const MODEL_LOGGER_WEB = "model-logger-web";
+    const MODEL_LOGGER_API = "model-logger-api";
+    const MODEL_LOGGER = "model-logger-default";
 
     const LIBRARY_PHP_MAILER = 'library-php-mailer';
+
+    const LOGGER_FILE = 'file';
+    const LOGGER_DB = "db";
 
     const TYPE_METHOD_MAPPING = array(
         self::TYPE_CONTROLLER => "getController",
@@ -83,20 +91,49 @@ class Factory
         self::TYPE_USER_TOKEN => "getUserToken",
         self::TYPE_INIT => "getInit",
         self::TYPE_COOKIE => "getCookie",
+        self::TYPE_EXCEPTION_HANDLER => "getExceptionHandler",
     );
     const EXTENDER_METHOD_MAPPING = array(
         self::EXTENDER_HTML_PARSER => "getExtenderHtmlParser",
+        self::EXCEPTION_HANDLER_EXTENDER => "getExtenderExceptionHandler",
     );
     const MODEL_TO_METHOD_MAPPING = array(
         self::MODEL_IP_CHECKER => "getModelIpChecker",
         self::MODEL_USER => "getModelUser",
         self::MODEL_USER_TOKEN => "getModelUserToken",
         self::MODEL_COOKIE => "getModelCookie",
+        self::MODEL_LOGGER_WEB => "getModelLoggerWeb",
+        self::MODEL_LOGGER_API => "getModelLoggerApi",
+        self::MODEL_LOGGER => "getModelLogger",
     );
     const LIBRARY_TO_TYPE_MAPPING = array(
         self::LIBRARY_PHP_MAILER => "getLibraryPhpMailer",
     );
+
+    const LOGGER_TO_METHOD_MAPPING = array(
+        self::LOGGER_DB => "getDbLogger",
+        self::LOGGER_FILE => "getFileLogger",
+    );
     private static $instances = array();
+
+    /**
+     * @param string|null $type
+     * @return LoggerFile|LoggerDb
+     */
+    public static function getLogger(?string $type="") {
+        if($type === "") {
+            $type = Config::get(Config::LOG_DRIVER);
+        }
+        if(!array_key_exists($type, self::LOGGER_TO_METHOD_MAPPING)) {
+            return null;
+        }
+        if(!array_key_exists($type, self::$instances)) {
+            $logger = call_user_func([new self(), self::LOGGER_TO_METHOD_MAPPING[$type]]);
+            self::$instances[$type] = $logger;
+        }
+
+        return self::$instances[$type];
+    }
 
     /**
      * @param string $type
@@ -122,7 +159,7 @@ class Factory
 
     /**
      * @param string $extenderType
-     * @return HtmlParserExtender
+     * @return HtmlParserExtender|ExceptionHandlerExtender
      */
     public static function getExtender(string $extenderType) {
         if(!array_key_exists($extenderType, self::EXTENDER_METHOD_MAPPING)) {
@@ -162,6 +199,34 @@ class Factory
         }
 
         return call_user_func([new self(), self::LIBRARY_TO_TYPE_MAPPING[$libraryType]]);
+    }
+
+    private function getExceptionHandler() {
+        return new ExceptionHandler($this->getExtenderExceptionHandler(), self::getLogger());
+    }
+
+    private function getExtenderExceptionHandler() {
+        return new ExceptionHandlerExtender(self::getLogger());
+    }
+
+    private function getDbLogger() {
+        return new LoggerDb();
+    }
+
+    private function getFileLogger() {
+        return new LoggerFile();
+    }
+
+    private function getModelLoggerWeb() {
+        return new LoggerWebModel($this->getValidator());
+    }
+
+    private function getModelLoggerApi() {
+        return new LoggerApiModel($this->getValidator());
+    }
+
+    private function getModelLogger() {
+        return new LoggerModel($this->getValidator());
     }
 
     private function getModelCookie() {
@@ -225,7 +290,7 @@ class Factory
     }
 
     private function getRouter() {
-        return new Router($this->getUser(), $this->getGuardian());
+        return new Router($this->getUser(), $this->getGuardian(), $this->getExceptionHandler());
     }
 
     private function getUser() {
